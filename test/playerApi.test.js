@@ -93,4 +93,35 @@ describe('Player API', () => {
         done();
       });
   });
+  // Prueba para actualizar el nickname de un jugador por playerId
+it('should update the nickname of a player', (done) => {
+  // Simula la respuesta de la base de datos para la actualización
+  dbStub.yields(1); // 1 fila actualizada
+
+  chai.request(app)
+    .put('/api/player/nickname/player1_id')
+    .send({ nickname: 'new_nickname' })
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      expect(res.body).to.be.an('object');
+      expect(res.body).to.have.property('message', 'Nickname updated successfully');
+      done();
+    });
+});
+
+// Prueba para el caso en que el jugador no se encuentra
+it('should return 404 if player is not found', (done) => {
+  // Simula la respuesta de la base de datos para la actualización
+  dbStub.yields(0); // 0 filas actualizadas
+
+  chai.request(app)
+    .put('/api/player/nickname/nonexistent_player_id')
+    .send({ nickname: 'new_nickname' })
+    .end((err, res) => {
+      expect(res).to.have.status(404);
+      expect(res.body).to.be.an('object');
+      expect(res.body).to.have.property('message', 'Player not found');
+      done();
+    });
+});
 });

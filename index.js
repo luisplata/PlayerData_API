@@ -7,8 +7,20 @@ const knex = require('knex');
 const app = express();
 const port = process.env.PORT || 8080;
 
+const jwt = require('jsonwebtoken');
+const secretKey = 'your_secret_key';
+const { expressjwt: expressJwt } = require('express-jwt');
+const playerKey = 'your_player_key';
+
 app.use(cors());
 app.use(express.json());
+app.use((err, req, res, next) => {
+    if (err.name === 'UnauthorizedError') {
+      res.status(401).json({ message: 'Invalid token' });
+    } else {
+      next(err);
+    }
+});
 
 // Configurar la conexión a la base de datos usando Knex
 const db = knex({
@@ -22,35 +34,61 @@ const db = knex({
   }
 });
 
-// Endpoint para agregar un jugador
-app.post('/api/player', async (req, res) => {
-  const { playerId, nickname } = req.body;
+// Middleware para proteger rutas
+const authenticate = expressJwt({ secret: secretKey, algorithms: ['HS256'] });
 
-  try {
-    // Verificar si ya existe un jugador con el mismo nickname o playerId
-    const existingPlayer = await db('players')
-      .where({ nickname })
-      .orWhere({ playerId })
-      .first();
-
-    if (existingPlayer) {
-      return res.status(409).json({ message: "Nickname or Player ID already exists" });
+// Endpoint para autenticar usuarios y generar un token JWT basado en playerId
+app.post('/api/login', async (req, res) => {
+    const { playerId } = req.body;
+  
+    try {
+      const player = await db('players').where({ playerId }).first();
+      if (!player) {
+        return res.status(401).json({ message: 'Invalid playerId' });
+      }
+  
+      const token = jwt.sign({ playerId }, secretKey, { expiresIn: '1h' });
+      res.json({ token });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error while authenticating' });
     }
-
-    // Insertar nuevo jugador
-    const [newPlayer] = await db('players')
-      .insert({ playerId, nickname })
-      .returning(['id', 'playerId', 'nickname']);
-      
-    res.status(201).json(newPlayer);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error while adding player' });
-  }
 });
 
+// Endpoint para agregar un jugador
+app.post('/api/player', async (req, res) => {
+    const { playerId, nickname, key } = req.body;
+  
+    // Validar la clave
+    if (key !== playerKey) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  
+    try {
+      // Verificar si ya existe un jugador con el mismo nickname o playerId
+      const existingPlayer = await db('players')
+        .where({ nickname })
+        .orWhere({ playerId })
+        .first();
+  
+      if (existingPlayer) {
+        return res.status(409).json({ message: "Nickname or Player ID already exists" });
+      }
+  
+      // Insertar nuevo jugador
+      const [newPlayer] = await db('players')
+        .insert({ playerId, nickname })
+        .returning(['id', 'playerId', 'nickname']);
+        
+      res.status(201).json(newPlayer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error while adding player' });
+    }
+  });
+
 // Endpoint para validar si un nickname está disponible
-app.get('/api/player/validate/:nickname', async (req, res) => {
+app.get('/api/player/validate/:nickname', authenticate, async (req, res) => {
   const { nickname } = req.params;
 
   try {
@@ -63,7 +101,7 @@ app.get('/api/player/validate/:nickname', async (req, res) => {
 });
 
 // Endpoint para obtener el Player ID por nickname
-app.get('/api/player/:nickname', async (req, res) => {
+app.get('/api/player/:nickname', authenticate, async (req, res) => {
   const { nickname } = req.params;
 
   try {
@@ -79,7 +117,7 @@ app.get('/api/player/:nickname', async (req, res) => {
 });
 
 // Endpoint para obtener jugador por ID
-app.get('/api/player/id/:id', async (req, res) => {
+app.get('/api/player/id/:id', authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -93,6 +131,27 @@ app.get('/api/player/id/:id', async (req, res) => {
     res.status(500).json({ message: 'Error while getting player by ID' });
   }
 });
+
+// Endpoint para actualizar el nickname de un jugador por playerId
+app.put('/api/player/nickname/:playerId', authenticate, async (req, res) => {
+    const { playerId } = req.params;
+    const { nickname } = req.body;
+  
+    try {
+      const updatedRows = await db('players')
+        .where({ playerId })
+        .update({ nickname });
+  
+      if (updatedRows === 0) {
+        return res.status(404).json({ message: "Player not found" });
+      }
+  
+      res.json({ message: "Nickname updated successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error while updating nickname' });
+    }
+  });
 
 // Iniciar el servidor
 if (require.main === module) {
