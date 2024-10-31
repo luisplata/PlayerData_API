@@ -8,17 +8,9 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 
 # dotenv
 .env
-
-# Docker
-docker-compose.override.yml
-docker-compose.override.env
-
-# Knex
-knexfile.js
 
 # Coverage
 coverage
@@ -29,3 +21,4 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+.git

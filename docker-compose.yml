@@ -1,31 +1,38 @@
 version: '3.8'
 
+networks:
+  player_network:
+    driver: bridge
+
 services:
   playerapi:
     build: .
     image: playerapi-node
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGHOST=db
+      - PGDATABASE=playerdb
+      - PGPORT=5432
     networks:
-      - app-network
+      - player_network
 
   db:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: PlayerDb
+      POSTGRES_DB: playerdb
     ports:
       - "5432:5432"
     volumes:
       - playerdb_data:/var/lib/postgresql/data
     networks:
-      - app-network
-    command: bash -c "apt-get update && apt-get install -y postgresql-client && docker-entrypoint.sh postgres"
-
-networks:
-  app-network:
-    driver: bridge
+      - player_network
 
 volumes:
   playerdb_data:

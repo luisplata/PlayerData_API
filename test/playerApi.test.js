@@ -30,6 +30,17 @@ describe('Player API', () => {
       });
   });
 
+  // Prueba para validar si un nickname no está disponible
+  it('should return false if nickname is taken', (done) => {
+    chai.request(app)
+      .get('/api/player/validate/player1')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.false;
+        done();
+      });
+  });
+
   // Prueba para obtener un Player ID por nickname
   it('should return player ID when nickname exists', (done) => {
     chai.request(app)
