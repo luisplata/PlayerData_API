@@ -39,7 +39,7 @@ namespace PlayerApi.Tests
             var result = await controller.ValidateNickname("player1");
 
             // Assert
-            Assert.True(result.Value);
+            Assert.True(result.Value, "Expected nickname 'player1' to be available, but it was not.");
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace PlayerApi.Tests
             var result = await controller.ValidateNickname("player1");
 
             // Assert
-            Assert.False(result.Value);
+            Assert.False(result.Value, "Expected nickname 'player1' to be taken, but it was available.");
         }
 
         [Fact]
@@ -68,13 +68,13 @@ namespace PlayerApi.Tests
             var controller = new PlayerController(context);
 
             // Act
-            var result = await controller.GetPlayerIdByNickname("player1") as ActionResult<int>;
+            var result = await controller.GetPlayerIdByNickname("player1");
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<OkObjectResult>(result.Result);
             var okResult = result.Result as OkObjectResult;
             Assert.NotNull(okResult);
+            Assert.IsType<int>(okResult.Value);
             Assert.Equal(1, okResult.Value);
         }
 
@@ -107,6 +107,8 @@ namespace PlayerApi.Tests
             // Assert
             Assert.NotNull(result);
             Assert.IsType<CreatedAtActionResult>(result);
+            var createdAtResult = result as CreatedAtActionResult;
+            Assert.Equal(nameof(controller.GetPlayerIdByNickname), createdAtResult?.ActionName);
         }
 
         [Fact]
