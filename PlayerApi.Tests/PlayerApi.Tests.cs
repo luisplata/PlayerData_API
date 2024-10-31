@@ -63,8 +63,10 @@ namespace PlayerApi.Tests
             var result = await controller.GetPlayerIdByNickname("player1") as ActionResult<int>;
 
             // Assert
+            Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result.Result);
             var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
             Assert.Equal(1, okResult.Value);
         }
 
@@ -79,6 +81,7 @@ namespace PlayerApi.Tests
             var result = await controller.GetPlayerIdByNickname("player1");
 
             // Assert
+            Assert.NotNull(result);
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
@@ -94,6 +97,7 @@ namespace PlayerApi.Tests
             var result = await controller.AddPlayer(newPlayer) as ActionResult;
 
             // Assert
+            Assert.NotNull(result);
             Assert.IsType<CreatedAtActionResult>(result);
         }
 
@@ -111,6 +115,7 @@ namespace PlayerApi.Tests
             var result = await controller.AddPlayer(newPlayer);
 
             // Assert
+            Assert.NotNull(result);
             Assert.IsType<ConflictObjectResult>(result);
         }
     }
