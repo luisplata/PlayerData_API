@@ -27,8 +27,11 @@ namespace PlayerApi.Controllers
         public async Task<ActionResult<int>> GetPlayerIdByNickname(string nickname)
         {
             var player = await _context.Players.FirstOrDefaultAsync(p => p.Nickname == nickname);
-            if (player == null) return NotFound();
-            return player.PlayerId;
+            if (player == null)
+            {
+                return NotFound();
+            }
+            return Ok(player.PlayerId);
         }
 
         [HttpPost]
