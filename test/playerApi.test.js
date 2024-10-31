@@ -6,15 +6,20 @@ const app = require('../index'); // Asegúrate de exportar `app` desde `index.js
 chai.use(chaiHttp);
 
 describe('Player API', () => {
+  let playerId1;
+
   // Prueba para agregar un jugador
   it('should add a new player', (done) => {
     chai.request(app)
       .post('/api/player')
-      .send({ playerId: 1, nickname: 'player1' })
+      .send({ playerId: 'player1_id', nickname: 'player1' })
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('nickname', 'player1');
+        expect(res.body).to.have.property('playerId', 'player1_id');
+        expect(res.body).to.have.property('id');
+        playerId1 = res.body.id; // Guardar el id generado para otras pruebas
         done();
       });
   });
@@ -47,7 +52,8 @@ describe('Player API', () => {
       .get('/api/player/player1')
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body).to.equal(1);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('playerId', 'player1_id');
         done();
       });
   });
@@ -56,6 +62,31 @@ describe('Player API', () => {
   it('should return 404 when nickname does not exist', (done) => {
     chai.request(app)
       .get('/api/player/unknown_player')
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.have.property('message', 'Player not found');
+        done();
+      });
+  });
+
+  // Prueba para obtener un jugador por ID
+  it('should return player details when player ID exists', (done) => {
+    chai.request(app)
+      .get(`/api/player/id/${playerId1}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('id', playerId1);
+        expect(res.body).to.have.property('nickname', 'player1');
+        expect(res.body).to.have.property('playerId', 'player1_id');
+        done();
+      });
+  });
+
+  // Prueba para manejar cuando el ID del jugador no existe
+  it('should return 404 when player ID does not exist', (done) => {
+    chai.request(app)
+      .get('/api/player/id/99999')
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.have.property('message', 'Player not found');
