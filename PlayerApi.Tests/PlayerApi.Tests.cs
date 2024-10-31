@@ -70,6 +70,16 @@ namespace PlayerApi.Tests
             // Act
             var result = await controller.GetPlayerIdByNickname("player1");
 
+            // Debugging Log
+            if (result == null)
+            {
+                throw new System.Exception("The result was null. It seems the PlayerController did not return a response.");
+            }
+            else if (result.Result == null)
+            {
+                throw new System.Exception("The result.Result was null. It seems the action result was not created properly.");
+            }
+
             // Assert
             Assert.NotNull(result);
             var okResult = result.Result as OkObjectResult;
