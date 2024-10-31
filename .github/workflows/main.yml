@@ -22,10 +22,13 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Install dependencies
-      run: dotnet restore ./PlayerApi/PlayerApi.csproj
+      working-directory: ./PlayerApi
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build ./PlayerApi/PlayerApi.csproj --configuration Release
+      working-directory: ./PlayerApi
+      run: dotnet build --configuration Release
 
     - name: Run tests
-      run: dotnet test ./PlayerApi.Tests/PlayerApi.Tests.csproj --no-build --verbosity normal
+      working-directory: ./PlayerApi.Tests
+      run: dotnet test --no-build --verbosity normal
