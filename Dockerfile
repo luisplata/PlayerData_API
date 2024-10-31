@@ -1,6 +1,9 @@
-FROM denoland/deno:alpine-1.35.0
+FROM node:18-alpine
 
 WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
 
 COPY . .
 
@@ -8,4 +11,4 @@ COPY . .
 EXPOSE 8080
 
 # Corremos el comando para iniciar la API
-CMD ["run", "--allow-net", "index.ts"]
+CMD ["node", "index.js"]

@@ -1,4 +1,4 @@
-name: Deno API CI/CD
+name: Node.js API Tests
 
 on:
   push:
@@ -9,36 +9,20 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Check out the repository
       uses: actions/checkout@v2
 
-    - name: Install Deno
-      run: |
-        curl -fsSL https://deno.land/install.sh | sh
-        echo "Deno installed"
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
 
-    - name: Add Deno to Path
-      shell: bash
-      run: |
-        echo "${HOME}/.deno/bin" >> $GITHUB_PATH
+    - name: Install dependencies
+      run: npm install
 
-    - name: Run API with Deno in Background
-      run: |
-        nohup deno run --allow-net index.ts &
-      # Espera unos segundos para asegurarse de que la API está levantada antes de los tests.
-    - name: Wait for API to Start
-      run: sleep 10
-
-    - name: Install Python Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3-pip
-        pip3 install requests
-
-    - name: Run API Tests
-      run: |
-        python3 ./PythonTestPlayerApi.py
+    - name: Run unit tests
+      run: npm test

@@ -1,0 +1,19 @@
+{
+    "name": "playerapi",
+    "version": "1.0.0",
+    "description": "A simple RESTful API for managing players using Node.js and Express.",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "test": "mocha"
+    },
+    "dependencies": {
+      "express": "^4.18.2"
+    },
+    "devDependencies": {
+      "mocha": "^10.2.0",
+      "chai": "^4.3.7",
+      "supertest": "^6.3.3"
+    }
+  }
+  

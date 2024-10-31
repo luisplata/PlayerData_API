@@ -3,7 +3,7 @@ version: '3.8'
 services:
   playerapi:
     build: .
-    image: playerapi-deno
+    image: playerapi-node
     ports:
       - "8080:8080"
     networks:
