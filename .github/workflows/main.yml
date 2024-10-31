@@ -16,24 +16,21 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build Docker image for Player API
+    - name: Install Deno
       run: |
-        docker build -t playerapi-deno .
+        curl -fsSL https://deno.land/install.sh | sh
+        echo "Deno installed"
 
-    - name: Run Player API in Docker container
+    - name: Add Deno to Path
+      shell: bash
       run: |
-        docker run -d -p 8080:8080 --name playerapi playerapi-deno
-      # Espera un par de segundos para asegurarse de que el contenedor esté en funcionamiento antes de las pruebas.
-    - name: Wait for API to start
+        echo "${HOME}/.deno/bin" >> $GITHUB_PATH
+
+    - name: Run API with Deno in Background
+      run: |
+        nohup deno run --allow-net index.ts &
+      # Espera unos segundos para asegurarse de que la API está levantada antes de los tests.
+    - name: Wait for API to Start
       run: sleep 10
 
     - name: Install Python Dependencies
@@ -45,9 +42,3 @@ jobs:
     - name: Run API Tests
       run: |
         python3 ./PythonTestPlayerApi.py
-
-    - name: Stop and Remove Docker Container
-      if: always()
-      run: |
-        docker stop playerapi
-        docker rm playerapi
