@@ -20,11 +20,19 @@ namespace PlayerApi.Tests
             return new PlayerContext(options);
         }
 
+        private PlayerContext InitializeInMemoryDbContext()
+        {
+            var context = GetInMemoryDbContext();
+            context.Database.EnsureDeleted(); // Asegurarse de limpiar la base de datos antes de cada prueba
+            context.Database.EnsureCreated();
+            return context;
+        }
+
         [Fact]
         public async Task ValidateNickname_ShouldReturnTrue_WhenNicknameIsAvailable()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             var controller = new PlayerController(context);
 
             // Act
@@ -38,7 +46,7 @@ namespace PlayerApi.Tests
         public async Task ValidateNickname_ShouldReturnFalse_WhenNicknameIsTaken()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             context.Players.Add(new Player { PlayerId = 1, Nickname = "player1" });
             await context.SaveChangesAsync();
             var controller = new PlayerController(context);
@@ -54,7 +62,7 @@ namespace PlayerApi.Tests
         public async Task GetPlayerIdByNickname_ShouldReturnPlayerId_WhenNicknameExists()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             context.Players.Add(new Player { PlayerId = 1, Nickname = "player1" });
             await context.SaveChangesAsync();
             var controller = new PlayerController(context);
@@ -74,7 +82,7 @@ namespace PlayerApi.Tests
         public async Task GetPlayerIdByNickname_ShouldReturnNotFound_WhenNicknameDoesNotExist()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             var controller = new PlayerController(context);
 
             // Act
@@ -89,7 +97,7 @@ namespace PlayerApi.Tests
         public async Task AddPlayer_ShouldReturnCreatedAtAction_WhenPlayerIsAdded()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             var controller = new PlayerController(context);
             var newPlayer = new Player { PlayerId = 2, Nickname = "player2" };
 
@@ -105,7 +113,7 @@ namespace PlayerApi.Tests
         public async Task AddPlayer_ShouldReturnConflict_WhenNicknameExists()
         {
             // Arrange
-            var context = GetInMemoryDbContext();
+            var context = InitializeInMemoryDbContext();
             context.Players.Add(new Player { PlayerId = 1, Nickname = "player1" });
             await context.SaveChangesAsync();
             var controller = new PlayerController(context);
