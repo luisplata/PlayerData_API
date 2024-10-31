@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  playerapi:
+    image: playerapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PlayerDatabase=Host=db;Database=PlayerDb;Username=postgres;Password=postgres
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: PlayerDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - playerdb_data:/var/lib/postgresql/data
+
+volumes:
+  playerdb_data:
