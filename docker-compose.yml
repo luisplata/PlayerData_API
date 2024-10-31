@@ -1,18 +1,11 @@
-version: '3.4'
+version: '3.8'
 
 services:
   playerapi:
-    image: playerapi
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    image: playerapi-deno
     ports:
-      - "8080:80"
-    depends_on:
-      - db
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__PlayerDatabase=Host=db;Database=PlayerDb;Username=postgres;Password=postgres
+      - "8080:8080"
     networks:
       - app-network
 

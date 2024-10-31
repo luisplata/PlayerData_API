@@ -1,20 +1,11 @@
-# Usar la imagen base de .NET 8.0
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
+FROM denoland/deno:alpine-1.35.0
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["PlayerApi/PlayerApi.csproj", "PlayerApi/"]
-RUN dotnet restore "PlayerApi/PlayerApi.csproj"
+WORKDIR /app
+
 COPY . .
-WORKDIR "/src/PlayerApi"
-RUN dotnet build "PlayerApi.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "PlayerApi.csproj" -c Release -o /app/publish
+# Exponemos el puerto donde correrá la API
+EXPOSE 8080
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PlayerApi.dll"]
+# Corremos el comando para iniciar la API
+CMD ["run", "--allow-net", "index.ts"]
