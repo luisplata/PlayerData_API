@@ -13,6 +13,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__PlayerDatabase=Host=db;Database=PlayerDb;Username=postgres;Password=postgres
+    networks:
+      - app-network
 
   db:
     image: postgres:13
@@ -24,6 +26,13 @@ services:
       - "5432:5432"
     volumes:
       - playerdb_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    command: bash -c "apt-get update && apt-get install -y postgresql-client && docker-entrypoint.sh postgres"
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   playerdb_data:
