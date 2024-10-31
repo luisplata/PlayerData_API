@@ -29,6 +29,10 @@ jobs:
       working-directory: ./PlayerApi
       run: dotnet build --configuration Release
 
+    - name: Publish
+      working-directory: ./PlayerApi
+      run: dotnet publish --configuration Release --output ./publish
+
     - name: Run tests
       working-directory: ./PlayerApi.Tests
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
