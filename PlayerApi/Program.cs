@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<PlayerContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("PlayerDatabase")));
 
+builder.Logging.ClearProviders();  // Remueve los loggers existentes, si deseas una configuración limpia
+builder.Logging.AddConsole();      // Agrega un logger a la consola
+builder.Logging.AddDebug();        // Agrega un logger para debugging (útil para desarrollo)
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
