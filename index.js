@@ -23,7 +23,7 @@ app.use((err, req, res, next) => {
 });
 
 // Configurar la conexión a la base de datos usando Knex
-const db = knex({
+/*const db = knex({
   client: 'pg',
   connection: {
     host: process.env.PGHOST,
@@ -31,6 +31,17 @@ const db = knex({
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
     port: process.env.PGPORT
+  }
+});*/
+const db = knex({
+  client: 'mysql2',
+  connection: {
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    port: process.env.MYSQL_PORT,
+    connectTimeout: 60000 // Aumenta el tiempo de espera de la conexión a 60 segundos
   }
 });
 

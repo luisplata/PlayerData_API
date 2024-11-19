@@ -11,17 +11,23 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - db_postgres
+      - db_mysql
     environment:
       - PGUSER=postgres
       - PGPASSWORD=postgres
-      - PGHOST=db
+      - PGHOST=db_postgres
       - PGDATABASE=playerdb
       - PGPORT=5432
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_HOST=db_mysql
+      - MYSQL_DATABASE=playerdb
+      - MYSQL_PORT=3306
     networks:
       - player_network
 
-  db:
+  db_postgres:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
@@ -30,9 +36,22 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - playerdb_data:/var/lib/postgresql/data
+      - playerdb_data_postgres:/var/lib/postgresql/data
+    networks:
+      - player_network
+
+  db_mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: playerdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - playerdb_data_mysql:/var/lib/mysql
     networks:
       - player_network
 
 volumes:
-  playerdb_data:
+  playerdb_data_postgres:
+  playerdb_data_mysql:
