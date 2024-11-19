@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const knex = require('knex');
 
+const { generalLogger, customLogger } = require('./utils/logger.js');
+
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -62,6 +64,7 @@ app.post('/api/login', async (req, res) => {
       res.json({ token });
     } catch (error) {
       console.error(error);
+      customLogger.error(error);
       res.status(500).json({ message: 'Error while authenticating' });
     }
 });
