@@ -117,11 +117,11 @@ app.get('/api/player/:nickname', authenticate, async (req, res) => {
 });
 
 // Endpoint para obtener jugador por ID
-app.get('/api/player/id/:id', authenticate, async (req, res) => {
-  const { id } = req.params;
+app.get('/api/player/id/:playerId', authenticate, async (req, res) => {
+  const { playerId } = req.params;
 
   try {
-    const player = await db('players').where({ id }).first();
+    const player = await db('players').where({ playerId }).first();
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
