@@ -47,8 +47,20 @@ const deleteReward = async (req, res) => {
   }
 };
 
+const getRewards = async (req, res) => {
+  try {
+    const rewards = await battlePassRewardModel.getRewards();
+    res.json(rewards);
+  } catch (error) {
+    console.error(error);
+    customLogger.error(error);
+    res.status(500).json({ message: 'Error while fetching rewards' });
+  }
+};
+
 module.exports = {
   createReward,
   updateReward,
-  deleteReward
+  deleteReward,
+  getRewards
 };

@@ -21,9 +21,14 @@ const deleteReward = async (id) => {
         .del();
 };
 
+const getRewards = async () => {
+    return await db('battle_pass_rewards').select();
+  };
+
 module.exports = {
     getRewardByLevel,
     createReward,
     updateReward,
-    deleteReward
+    deleteReward,
+    getRewards
 };
