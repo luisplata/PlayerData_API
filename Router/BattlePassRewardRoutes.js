@@ -14,6 +14,6 @@ router.put('/:id', authenticate, battlePassRewardController.updateReward);
 router.delete('/:id', authenticate, battlePassRewardController.deleteReward);
 
 // Endpoint para obtener la lista de premios
-router.get('/', authenticate, battlePassRewardController.getRewards);
+router.get('/', battlePassRewardController.getRewards);
 
 module.exports = router;
