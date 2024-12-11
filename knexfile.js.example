@@ -2,23 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-  development_postgres: {
-    client: 'pg',
-    connection: {
-      host: process.env.PGHOST || 'localhost',
-      user: process.env.PGUSER || 'postgres',
-      password: process.env.PGPASSWORD || 'postgres',
-      database: process.env.PGDATABASE || 'playerdb',
-      port: process.env.PGPORT || 5432
-    },
-    migrations: {
-      directory: './migrations'
-    },
-    seeds: {
-      directory: './seeds'
-    }
-  },
-  development_mysql: {
+  development: {
     client: 'mysql2',
     connection: {
       host: process.env.MYSQL_HOST || 'localhost',
@@ -26,6 +10,7 @@ module.exports = {
       password: process.env.MYSQL_PASSWORD || 'password',
       database: process.env.MYSQL_DATABASE || 'playerdb',
       port: process.env.MYSQL_PORT || 3306,
+      connectTimeout: 60000, // Aumenta el tiempo de espera de la conexión a 60 segundos
       options: {
         allowPublicKeyRetrieval: true
       }
