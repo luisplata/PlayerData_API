@@ -2,14 +2,7 @@
 
 set -e
 
-echo "Esperando a que las bases de datos estén listas..."
-
-# Esperar a PostgreSQL
-until nc -z -v -w30 $PGHOST $PGPORT
-do
-  echo "Esperando la base de datos PostgreSQL en host ($PGHOST) y puerto ($PGPORT)..."
-  sleep 1
-done
+echo "Esperando a que la base de datos MySQL esté lista..."
 
 # Esperar a MySQL
 until nc -z -v -w30 $MYSQL_HOST $MYSQL_PORT
@@ -18,7 +11,7 @@ do
   sleep 1
 done
 
-echo "Las bases de datos están listas, ejecutando migraciones..."
+echo "La base de datos MySQL está lista, ejecutando migraciones..."
 
 # Ejecutar las migraciones de Knex
 npm run migrate
