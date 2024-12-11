@@ -39,7 +39,7 @@ services:
     networks:
       - player_network
 
-db_postgres:
+  db_postgres:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
