@@ -21,5 +21,25 @@ module.exports = {
     seeds: {
       directory: './seeds'
     }
+  },
+  development_mysql: {
+    client: 'mysql2',
+    connection: {
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'root',
+      password: process.env.MYSQL_PASSWORD || 'password',
+      database: process.env.MYSQL_DATABASE || 'playerdb',
+      port: process.env.MYSQL_PORT || 3306,
+      connectTimeout: 60000, // Aumenta el tiempo de espera de la conexión a 60 segundos
+      options: {
+        allowPublicKeyRetrieval: true
+      }
+    },
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
+    }
   }
 };
