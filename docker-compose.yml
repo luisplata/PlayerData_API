@@ -9,9 +9,8 @@ services:
     build: .
     image: playerapi-node
     ports:
-      - "8080:8080"
+      - "80:8080"
     depends_on:
-      - db_postgres
       - db_mysql
     environment:
       - PGUSER=postgres
@@ -24,19 +23,6 @@ services:
       - MYSQL_HOST=db_mysql
       - MYSQL_DATABASE=playerdb
       - MYSQL_PORT=3306
-    networks:
-      - player_network
-
-  db_postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: playerdb
-    ports:
-      - "5432:5432"
-    volumes:
-      - playerdb_data_postgres:/var/lib/postgresql/data
     networks:
       - player_network
 
@@ -53,5 +39,4 @@ services:
       - player_network
 
 volumes:
-  playerdb_data_postgres:
   playerdb_data_mysql:
