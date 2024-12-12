@@ -11,7 +11,8 @@ services:
     ports:
       - "80:8080"
     depends_on:
-      - db_mysql
+      db_mysql:
+        condition: service_healthy
     environment:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=password
@@ -20,9 +21,15 @@ services:
       - MYSQL_PORT=3306
     networks:
       - player_network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
   db_mysql:
     image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password --performance_schema=OFF --table_definition_cache=200 --table_open_cache=128 --innodb_buffer_pool_size=128M
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: playerdb
@@ -33,6 +40,18 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - player_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 200M
 
 volumes:
   playerdb_data_mysql:
