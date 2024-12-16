@@ -42,7 +42,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - playerdb_data_mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - player_network
