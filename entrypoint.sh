@@ -16,7 +16,12 @@ echo "La base de datos MySQL está lista, ejecutando migraciones..."
 # Ejecutar las migraciones de Knex
 npm run migrate
 
-echo "Migraciones ejecutadas, iniciando la aplicación..."
+echo "Migraciones ejecutadas, ejecutando semillas..."
+
+# Ejecutar las semillas de Knex
+npm run seed
+
+echo "Semillas ejecutadas, iniciando la aplicación..."
 
 # Iniciar la aplicación Node.js
 npm start
