@@ -8,7 +8,8 @@ const getBattlePass = async (req, res) => {
 
   try {
     const battlePass = await battlePassModel.ensureBattlePassExists(playerId);
-    res.json(battlePass);
+    const playerRewards = await battlePassModel.getPlayerRewards(playerId);
+    res.json({ ...battlePass, playerRewards });
   } catch (error) {
     console.error(error);
     customLogger.error(error);

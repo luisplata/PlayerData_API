@@ -56,10 +56,15 @@ const addExperience = async (playerId, experience) => {
   return { ...battlePass, level: newLevel, experience: newExperience, reward };
 };
 
+const getPlayerRewards = async (playerId) => {
+  return await db('player_rewards').where({ playerId });
+};
+
 module.exports = {
   getBattlePassByPlayerId,
   createBattlePass,
   updateBattlePass,
   ensureBattlePassExists,
-  addExperience
+  addExperience,
+  getPlayerRewards
 };
