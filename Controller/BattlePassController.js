@@ -18,8 +18,7 @@ const getBattlePass = async (req, res) => {
 };
 
 const addExperience = async (req, res) => {
-  const { playerId } = req.params;
-  const { experience } = req.body;
+  const { experience, playerId } = req.body;
 
   try {
     const updatedBattlePass = await battlePassModel.addExperience(playerId, experience);
