@@ -49,6 +49,8 @@ const addExperience = async (playerId, experience) => {
     reward = await battlePassRewardModel.getRewardByLevel(newLevel);
     if (reward) {
       await playerRewardModel.awardReward(playerId, newLevel);
+    }else{
+      await playerRewardModel.createReward(newLevel, reward);
     }
   }
 
