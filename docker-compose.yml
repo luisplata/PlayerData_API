@@ -9,7 +9,7 @@ services:
     build: .
     image: playerapi-node
     ports:
-      - "80:8080"
+      - "80:8080"  # El puerto del host y del contenedor.
     depends_on:
       db_mysql:
         condition: service_healthy
@@ -22,14 +22,6 @@ services:
     networks:
       - player_network
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-        reservations:
-          memory: 200M
-      restart_policy:
-        condition: on-failure
     logging:
       driver: "json-file"
       options:
