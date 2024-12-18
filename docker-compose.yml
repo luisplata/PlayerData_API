@@ -14,8 +14,8 @@ services:
       db_mysql:
         condition: service_healthy
     environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=app_password
       - MYSQL_HOST=db_mysql
       - MYSQL_DATABASE=playerdb
       - MYSQL_PORT=3306
@@ -23,11 +23,19 @@ services:
       - player_network
     restart: unless-stopped
     deploy:
+      replicas: 3  # Escalabilidad
       resources:
         limits:
           memory: 300M
         reservations:
           memory: 200M
+      restart_policy:
+        condition: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db_mysql:
     image: mysql:8.0.35
@@ -38,12 +46,10 @@ services:
       - --max_connections=50
       - --sort_buffer_size=2M
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: playerdb
       MYSQL_USER: app_user
       MYSQL_PASSWORD: app_password
-    ports:
-      - "3306:3306"
     volumes:
       - playerdb_data_mysql:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -51,16 +57,15 @@ services:
       - player_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-        reservations:
-          memory: 300M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   playerdb_data_mysql:
