@@ -23,7 +23,6 @@ services:
       - player_network
     restart: unless-stopped
     deploy:
-      replicas: 3  # Escalabilidad
       resources:
         limits:
           memory: 300M
