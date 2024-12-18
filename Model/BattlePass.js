@@ -39,6 +39,10 @@ const addExperience = async (playerId, experience) => {
   let newExperience = battlePass.experience + experience;
   let newLevel = battlePass.level;
   let reward = null;
+  let rewardOld = await battlePassRewardModel.getRewardByLevel(newLevel);
+  if(!rewardOld){
+    await playerRewardModel.createReward(newLevel, reward);
+  }
 
   // Lógica para subir de nivel si la experiencia supera un umbral
   if (newExperience >= 100) {
