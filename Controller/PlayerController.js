@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const playerModel = require('../Model/Player');
 const playerReward = require('../Model/PlayerReward');
+const battlePassRewardModel = require('../Model/BattlePassReward.js');
 const customLogger = require('../utils/logger').customLogger;
 
 const secretKey = 'your_secret_key';
@@ -51,7 +52,11 @@ const addPlayer = async (req, res) => {
       // Insertar nuevo jugador
       const newPlayer = await playerModel.createPlayer(playerId, nickname);
       //Create player_rewards row
-      await playerReward.createPlayerReward(playerId, 1);
+      const reward = await battlePassRewardModel.getRewardByLevel(1);
+      if (!reward) {
+        throw new RewardNotFoundError('Reward for this level does not exist');
+      }
+      await playerReward.createPlayerReward(playerId, reward);
       res.status(201).json(newPlayer);
     }
   } catch (error) {
