@@ -1,6 +1,7 @@
 // controllers/playerController.js
 const jwt = require('jsonwebtoken');
 const playerModel = require('../Model/Player');
+const playerReward = require('../Model/PlayerReward');
 const customLogger = require('../utils/logger').customLogger;
 
 const secretKey = 'your_secret_key';
@@ -49,6 +50,8 @@ const addPlayer = async (req, res) => {
     } else {
       // Insertar nuevo jugador
       const newPlayer = await playerModel.createPlayer(playerId, nickname);
+      //Create player_rewards row
+      await playerReward.createPlayerReward(playerId, 1);
       res.status(201).json(newPlayer);
     }
   } catch (error) {

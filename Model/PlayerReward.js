@@ -42,6 +42,11 @@ const createReward = async (level, reward) => {
     .insert({ level, reward });
 };
 
+const createPlayerReward = async (playerId, reward) => {
+  await db('player_rewards')
+    .insert({ playerId, rewardId: reward.id });
+};
+
 const awardReward = async (playerId, level) => {
   // Verificar si el premio para el nivel existe
   const reward = await battlePassRewardModel.getRewardByLevel(level);
@@ -70,5 +75,6 @@ module.exports = {
   awardReward,
   claimReward,
   getUnclaimedRewards,
-  createReward
+  createReward,
+  createPlayerReward
 };
