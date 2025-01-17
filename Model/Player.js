@@ -27,10 +27,16 @@ const updatePlayerNickname = async (playerId, nickname) => {
     .update({ nickname });
 };
 
+const isValidNickname = async (nickname) => {
+  const player = await getPlayerByNickname(nickname);
+  return !player;
+};
+
 module.exports = {
   getPlayerById,
   createPlayer,
   getPlayerByNicknameOrId,
   getPlayerByNickname,
-  updatePlayerNickname
+  updatePlayerNickname,
+  isValidNickname
 };

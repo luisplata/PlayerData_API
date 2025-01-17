@@ -116,6 +116,10 @@ const updatePlayerNickname = async (req, res) => {
   const { nickname } = req.body;
 
   try {
+    //validamos si el nickname esta disponible
+    if (await !playerModel.isValidNickname(nickname)) {
+      return res.status(400).json({ message: "Nickname already in use" });
+    }
     const updatedRows = await playerModel.updatePlayerNickname(playerId, nickname);
 
     if (updatedRows === 0) {
