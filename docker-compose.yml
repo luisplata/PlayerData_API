@@ -11,11 +11,10 @@ services:
     depends_on:
       db_mysql:
         condition: service_healthy
+    env_file:
+      - .env  # Cargar variables de entorno desde .env
     environment:
-      - MYSQL_USER=app_user
-      - MYSQL_PASSWORD=app_password
-      - MYSQL_HOST=db_mysql
-      - MYSQL_DATABASE=playerdb
+      - MYSQL_HOST=db_mysql  # Override para usar el contenedor de DB
       - MYSQL_PORT=3306
     networks:
       - player_network
@@ -27,18 +26,21 @@ services:
         max-file: "3"
 
   db_mysql:
-    image: mysql:8.0.35
+    image: mysql:5.7.44  # Misma versión que producción
     command: 
       - --performance_schema=OFF
       - --table_open_cache=128
       - --innodb_buffer_pool_size=256M
       - --max_connections=50
       - --sort_buffer_size=2M
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: playerdb
-      MYSQL_USER: app_user
-      MYSQL_PASSWORD: app_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-playerdb}
+      MYSQL_USER: ${MYSQL_USER:-app_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app_password}
     ports:
       - "3306:3306"
     volumes:

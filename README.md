@@ -37,8 +37,15 @@ npm install
 
 2. **Configurar variables de entorno**:
 ```bash
+# Para desarrollo local (Docker)
 cp env.example .env
-# Editar .env con tus valores
+
+# Para producción, editar .env con tus valores reales:
+# - MYSQL_HOST=tu_host_produccion
+# - MYSQL_USER=tu_usuario_produccion  
+# - MYSQL_PASSWORD=tu_password_produccion
+# - JWT_SECRET=tu_secret_real
+# - PLAYER_API_KEY=tu_api_key_real
 ```
 
 3. **Ejecutar migraciones**:
