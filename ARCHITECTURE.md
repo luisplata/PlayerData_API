@@ -116,33 +116,61 @@ src/
 
 ## 🚀 Cómo Usar la Nueva Arquitectura
 
-### Endpoints Nuevos (Clean Architecture)
+### Endpoints API Version 1 (Recomendado)
 ```
-POST /api/player/login          # Login con validación mejorada
-POST /api/player                # Crear jugador con validación
-GET  /api/player/validate/:nick # Validar nickname
-GET  /api/player/:nick          # Obtener por nickname
-GET  /api/player/id/:id         # Obtener por ID
-PUT  /api/player/nickname/:id   # Actualizar nickname
-GET  /api/battle-pass/:id       # Obtener battle pass
-POST /api/battle-pass/experience # Agregar experiencia
-GET  /health                    # Health check
+POST /api/v1/player/login          # Login con validación mejorada
+POST /api/v1/player                # Crear jugador con validación
+GET  /api/v1/player/validate/:nick # Validar nickname
+GET  /api/v1/player/:nick          # Obtener por nickname
+GET  /api/v1/player/id/:id         # Obtener por ID
+PUT  /api/v1/player/nickname/:id   # Actualizar nickname
+GET  /api/v1/battle-pass/:id       # Obtener battle pass
+POST /api/v1/battle-pass/experience # Agregar experiencia
 ```
 
-### Endpoints Legacy (Compatibilidad)
+### Endpoints Legacy (Deprecados)
 ```
-/api/legacy/player/*
-/api/legacy/battle-pass/*
-/api/legacy/battle-pass-reward/*
-/api/legacy/player-reward/*
+POST /api/player/login          # ⚠️ Deprecado - usar /api/v1/
+POST /api/player                # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/validate/:nick # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/:nick          # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/id/:id         # ⚠️ Deprecado - usar /api/v1/
+PUT  /api/player/nickname/:id   # ⚠️ Deprecado - usar /api/v1/
+GET  /api/battle-pass/:id       # ⚠️ Deprecado - usar /api/v1/
+POST /api/battle-pass/experience # ⚠️ Deprecado - usar /api/v1/
+```
+
+### Endpoints de Sistema
+```
+GET  /health                    # Health check básico
+GET  /health/detailed           # Health check detallado
+GET  /health/live               # Liveness probe
+GET  /health/ready              # Readiness probe
+GET  /api/versions              # Información de versiones
+GET  /api-docs                  # Documentación Swagger
 ```
 
 ## 🔄 Migración Gradual
 
 1. **Fase 1**: Nuevos endpoints con Clean Architecture ✅
 2. **Fase 2**: Endpoints legacy mantenidos para compatibilidad ✅
-3. **Fase 3**: Migración gradual de clientes a nuevos endpoints
-4. **Fase 4**: Deprecación de endpoints legacy
+3. **Fase 3**: Versionado de API con `/api/v1/` ✅
+4. **Fase 4**: Migración gradual de clientes a `/api/v1/`
+5. **Fase 5**: Deprecación de endpoints legacy (2025-12-31)
+
+## 🔄 **Versionado de API**
+
+### **Beneficios del Versionado**
+- **Compatibilidad**: Mantiene endpoints legacy funcionando
+- **Evolución**: Permite cambios sin romper integraciones existentes
+- **Claridad**: Versiones claras y documentadas
+- **Migración**: Proceso gradual y controlado
+
+### **Estrategia de Versionado**
+- **v1**: Versión actual con Clean Architecture
+- **Legacy**: Versión anterior (deprecada)
+- **Headers**: Información de versión en respuestas
+- **Warnings**: Avisos de deprecación para legacy
 
 ## 📊 Métricas de Mejora
 

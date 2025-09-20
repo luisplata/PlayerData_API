@@ -11,6 +11,9 @@
 - ✅ **Índices de base de datos** para mejor performance
 - ✅ **Tests expandidos** con cobertura de arquitectura
 - ✅ **Health check endpoint** para monitoreo
+- ✅ **Versionado de API** con `/api/v1/`
+- ✅ **Documentación Swagger** completa
+- ✅ **Transacciones de base de datos**
 
 ## 🏗️ Arquitectura
 
@@ -53,6 +56,47 @@ npm run seed
 npm start
 # o para desarrollo
 npm run dev
+```
+
+## 🔄 **Versionado de API**
+
+### **API Version 1 (Recomendado)**
+```
+POST /api/v1/player/login          # Login con validación mejorada
+POST /api/v1/player                # Crear jugador
+GET  /api/v1/player/validate/:nick # Validar nickname
+GET  /api/v1/player/:nick          # Obtener por nickname
+GET  /api/v1/player/id/:id         # Obtener por ID
+PUT  /api/v1/player/nickname/:id   # Actualizar nickname
+GET  /api/v1/battle-pass/:id       # Obtener battle pass
+POST /api/v1/battle-pass/experience # Agregar experiencia
+```
+
+### **Legacy API (Deprecado)**
+```
+POST /api/player/login          # ⚠️ Deprecado - usar /api/v1/
+POST /api/player                # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/validate/:nick # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/:nick          # ⚠️ Deprecado - usar /api/v1/
+GET  /api/player/id/:id         # ⚠️ Deprecado - usar /api/v1/
+PUT  /api/player/nickname/:id   # ⚠️ Deprecado - usar /api/v1/
+GET  /api/battle-pass/:id       # ⚠️ Deprecado - usar /api/v1/
+POST /api/battle-pass/experience # ⚠️ Deprecado - usar /api/v1/
+```
+
+### **Sistema y Monitoreo**
+```
+GET  /health                    # Health check básico
+GET  /health/detailed           # Health check detallado
+GET  /health/live               # Liveness probe
+GET  /health/ready              # Readiness probe
+GET  /api/versions              # Información de versiones
+GET  /api-docs                  # Documentación Swagger
+```
+
+### **Información de Versiones**
+```bash
+curl http://localhost:8080/api/versions
 ```
 
 ## 📋 Migraciones y Seeds (llenar datos iniciales)

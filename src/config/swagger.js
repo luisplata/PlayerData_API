@@ -23,8 +23,12 @@ const options = {
     },
     servers: [
       {
-        url: process.env.API_BASE_URL || 'http://localhost:8080',
-        description: 'Development server'
+        url: `${process.env.API_BASE_URL || 'http://localhost:8080'}/api/v1`,
+        description: 'API Version 1 - Current stable version'
+      },
+      {
+        url: `${process.env.API_BASE_URL || 'http://localhost:8080'}/api`,
+        description: 'Legacy API - Deprecated, use v1 instead'
       }
     ],
     components: {

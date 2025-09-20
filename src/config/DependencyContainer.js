@@ -4,6 +4,7 @@
  */
 const db = require('../../DB/db.js');
 const JwtService = require('../services/JwtService');
+const AuthServiceV2 = require('../services/v2/AuthServiceV2');
 
 // Repositories
 const PlayerRepository = require('../repositories/PlayerRepository');
@@ -16,6 +17,9 @@ const PlayerController = require('../controllers/PlayerController');
 const BattlePassController = require('../controllers/BattlePassController');
 const HealthController = require('../controllers/HealthController');
 
+// V2 Controllers
+const PlayerV2Controller = require('../controllers/v2/PlayerV2Controller');
+
 class DependencyContainer {
   constructor() {
     this.services = {};
@@ -27,6 +31,7 @@ class DependencyContainer {
   initialize() {
     // Initialize services
     this.services.jwtService = new JwtService();
+    this.services.authServiceV2 = new AuthServiceV2();
 
     // Initialize repositories
     this.repositories.playerRepository = new PlayerRepository(db);
@@ -50,6 +55,15 @@ class DependencyContainer {
     );
 
     this.controllers.healthController = new HealthController();
+
+    // Initialize V2 controllers
+    this.controllers.playerV2Controller = new PlayerV2Controller(
+      this.repositories.playerRepository,
+      this.services.authServiceV2,
+      this.repositories.battlePassRepository,
+      this.repositories.playerRewardRepository,
+      this.repositories.battlePassRewardRepository
+    );
   }
 
   getService(name) {

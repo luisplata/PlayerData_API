@@ -24,7 +24,7 @@ class PlayerController {
 
   /**
    * @swagger
-   * /api/player/login:
+   * /api/v1/player/login:
    *   post:
    *     summary: Player login
    *     tags: [Players]
