@@ -135,7 +135,7 @@ class PlayerController {
       res.status(500).json({
         success: false,
         error: {
-          message: 'Error while validating nickname',
+          message: `Error while validating nickname: ${nickname}`,
           statusCode: 500
         }
       });
@@ -151,7 +151,7 @@ class PlayerController {
         return res.status(404).json({
           success: false,
           error: {
-            message: 'Player not found',
+            message: `Player not found: ${nickname}`,
             statusCode: 404
           }
         });
@@ -167,7 +167,7 @@ class PlayerController {
       res.status(500).json({
         success: false,
         error: {
-          message: 'Error while getting player ID',
+          message: `Error while getting player ID: ${nickname}`,
           statusCode: 500
         }
       });
@@ -183,7 +183,7 @@ class PlayerController {
         return res.status(404).json({
           success: false,
           error: {
-            message: 'Player not found',
+            message: `Player not found: ${playerId}`,
             statusCode: 404
           }
         });
@@ -197,7 +197,7 @@ class PlayerController {
       res.status(500).json({
         success: false,
         error: {
-          message: 'Error while getting player by ID',
+          message: `Error while getting player by ID: ${playerId}`,
           statusCode: 500
         }
       });
@@ -215,7 +215,7 @@ class PlayerController {
         return res.status(400).json({
           success: false,
           error: {
-            message: 'Nickname already in use',
+            message: `Nickname already in use: ${nickname}`,
             statusCode: 400
           }
         });
@@ -227,7 +227,7 @@ class PlayerController {
         return res.status(404).json({
           success: false,
           error: {
-            message: 'Player not found',
+            message: `Player not found: ${playerId}`,
             statusCode: 404
           }
         });
@@ -241,7 +241,7 @@ class PlayerController {
       res.status(500).json({
         success: false,
         error: {
-          message: 'Error while updating nickname',
+          message: `Error while updating nickname: ${error.message}`,
           statusCode: 500
         }
       });

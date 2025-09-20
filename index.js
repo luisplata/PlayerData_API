@@ -65,7 +65,7 @@ const v1Router = express.Router();
 
 // Player routes v1
 v1Router.post('/player/login', 
-  ValidationMiddleware.validatePlayerData,
+  ValidationMiddleware.validatePlayerLogin,
   container.getController('playerController').login
 );
 
@@ -94,7 +94,7 @@ v1Router.get('/player/id/:playerId',
 v1Router.put('/player/nickname/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
-  ValidationMiddleware.validateNickname,
+  ValidationMiddleware.validateBodyNickname,
   container.getController('playerController').updatePlayerNickname
 );
 

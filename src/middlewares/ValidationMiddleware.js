@@ -38,6 +38,41 @@ class ValidationMiddleware {
     
     next();
   }
+  static validatePlayerLogin(req, res, next) {
+    const { playerId } = req.body;
+    
+    if (!playerId || typeof playerId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (playerId.length < 3 || playerId.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID must be between 3 and 50 characters',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+    
+    next();
+  }
 
   static validateNickname(req, res, next) {
     const { nickname } = req.params;
@@ -63,6 +98,42 @@ class ValidationMiddleware {
     }
     
     if (!/^[a-zA-Z0-9_-]+$/.test(nickname)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Nickname can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+    
+    next();
+  }
+
+  static validateBodyNickname(req, res, next) {
+    const { nickname } = req.body;
+    
+    if (!nickname || typeof nickname !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Nickname is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (nickname.length < 2 || nickname.length > 30) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Nickname must be between 2 and 30 characters',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (!/^[a-zA-Z0-9._-]+$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {

@@ -19,8 +19,8 @@ class BattlePassRepository {
         playerId,
         level: 1,
         experience: 0,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        created_at: new Date(),
+        updated_at: new Date()
       });
 
       return {
@@ -49,7 +49,7 @@ class BattlePassRepository {
         .update({ 
           level,
           experience,
-          updatedAt: new Date()
+          updated_at: new Date()
         });
       
       if (updatedRows === 0) {

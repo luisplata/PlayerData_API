@@ -7,8 +7,8 @@ class Player {
     this.id = id;
     this.playerId = playerId;
     this.nickname = nickname;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.created_at = new Date();
+    this.updated_at = new Date();
   }
 
   static validatePlayerId(playerId) {
@@ -46,7 +46,7 @@ class Player {
   updateNickname(newNickname) {
     Player.validateNickname(newNickname);
     this.nickname = newNickname;
-    this.updatedAt = new Date();
+    this.updated_at = new Date();
   }
 }
 
