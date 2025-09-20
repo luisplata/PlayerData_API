@@ -22,8 +22,29 @@ const deleteReward = async (id) => {
 };
 
 const getRewards = async () => {
-    return await db('battle_pass_rewards').select();
-  };
+    const rewards = await db('battle_pass_rewards').select();
+
+    return rewards.map(r => {
+        let parsedReward = null;
+
+        try {
+            parsedReward = JSON.parse(r.reward);
+
+            // stringify solo body
+            if (parsedReward.body && typeof parsedReward.body === 'object') {
+                parsedReward.body = JSON.stringify(parsedReward.body);
+            }
+        } catch (err) {
+            parsedReward = r.reward; // fallback si no es JSON válido
+        }
+
+        return {
+            ...r,
+            reward: parsedReward
+        };
+    });
+};
+
 
 module.exports = {
     getRewardByLevel,
