@@ -12,16 +12,16 @@ class PlayerRepository {
       const [id] = await this.db('players').insert({
         playerId: player.playerId,
         nickname: player.nickname,
-        createdAt: player.createdAt,
-        updatedAt: player.updatedAt
+        created_at: player.created_at,
+        updated_at: player.updated_at
       });
       
       return {
         id,
         playerId: player.playerId,
         nickname: player.nickname,
-        createdAt: player.createdAt,
-        updatedAt: player.updatedAt
+        created_at: player.created_at,
+        updated_at: player.updated_at
       };
     } catch (error) {
       throw new Error(`Failed to create player: ${error.message}`);

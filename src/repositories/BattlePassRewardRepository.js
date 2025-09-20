@@ -12,8 +12,8 @@ class BattlePassRewardRepository {
       const [id] = await this.db('battle_pass_rewards').insert({
         level: reward.level,
         reward: JSON.stringify(reward.toJSON()),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        created_at: new Date(),
+        updated_at: new Date()
       });
 
       return {

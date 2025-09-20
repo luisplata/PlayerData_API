@@ -26,8 +26,8 @@ class PlayerRewardRepository {
         rewardId: reward.id,
         claimed: false,
         awarded_at: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        created_at: new Date(),
+        updated_at: new Date()
       });
 
       return {
@@ -134,7 +134,7 @@ class PlayerRewardRepository {
         .where('id', reward.id)
         .update({
           claimed: true,
-          updatedAt: new Date()
+          updated_at: new Date()
         });
 
       if (updatedRows === 0) {

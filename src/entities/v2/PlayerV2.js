@@ -15,8 +15,8 @@ class PlayerV2 {
       gamesPlayed: 0,
       achievements: []
     };
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.created_at = new Date();
+    this.updated_at = new Date();
   }
 
   static validatePlayerId(playerId) {
@@ -105,7 +105,7 @@ class PlayerV2 {
       PlayerV2.validatePreferences(updates.preferences);
       this.preferences = { ...this.preferences, ...updates.preferences };
     }
-    this.updatedAt = new Date();
+    this.updated_at = new Date();
   }
 
   addAchievement(achievement) {
@@ -120,7 +120,7 @@ class PlayerV2 {
   updateStatistics(playTime, gamesPlayed) {
     this.statistics.totalPlayTime += playTime;
     this.statistics.gamesPlayed += gamesPlayed;
-    this.updatedAt = new Date();
+    this.updated_at = new Date();
   }
 
   toPublicProfile() {
@@ -134,8 +134,8 @@ class PlayerV2 {
         gamesPlayed: this.statistics.gamesPlayed,
         achievementsCount: this.statistics.achievements.length
       },
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      created_at: this.created_at,
+      updated_at: this.updated_at
     };
   }
 
@@ -148,8 +148,8 @@ class PlayerV2 {
       avatar: this.avatar,
       preferences: this.preferences,
       statistics: this.statistics,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      created_at: this.created_at,
+      updated_at: this.updated_at
     };
   }
 }

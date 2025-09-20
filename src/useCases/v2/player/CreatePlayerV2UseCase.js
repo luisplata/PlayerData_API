@@ -2,8 +2,8 @@
  * CreatePlayerV2UseCase - Use Case Layer
  * Enhanced player creation for API v2 with new fields
  */
-const PlayerV2 = require('../../entities/v2/PlayerV2');
-const TransactionService = require('../../services/TransactionService');
+const PlayerV2 = require('../../../entities/v2/PlayerV2');
+const TransactionService = require('../../../services/TransactionService');
 
 class CreatePlayerV2UseCase {
   constructor(playerRepository, battlePassRepository, playerRewardRepository, battlePassRewardRepository) {
