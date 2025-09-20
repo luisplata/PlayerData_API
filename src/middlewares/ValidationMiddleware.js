@@ -3,6 +3,42 @@
  * Input validation middleware
  */
 class ValidationMiddleware {
+  
+  static validatePlayerLogin(req, res, next) {
+    const { playerId } = req.body;
+    
+    if (!playerId || typeof playerId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (playerId.length < 3 || playerId.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID must be between 3 and 50 characters',
+          statusCode: 400
+        }
+      });
+    }
+    
+    if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+    
+    next();
+  }
   static validatePlayerId(req, res, next) {
     const { playerId } = req.params;
     

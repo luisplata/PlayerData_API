@@ -145,7 +145,7 @@ app.use('/api/v2', v2Router);
 
 // Legacy routes (backward compatibility)
 app.post('/api/player/login', 
-  ValidationMiddleware.validatePlayerData,
+  ValidationMiddleware.validatePlayerLogin,
   container.getController('playerController').login
 );
 
