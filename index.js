@@ -41,7 +41,7 @@ app.get('/health/ready', container.getController('healthController').readiness);
 
 // Player routes
 app.post('/api/player/login', 
-  ValidationMiddleware.validatePlayerData,
+  ValidationMiddleware.validatePlayerLogin,
   container.getController('playerController').login
 );
 

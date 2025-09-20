@@ -12,11 +12,12 @@ services:
       db_mysql:
         condition: service_healthy
     environment:
-      - MYSQL_USER=app_user
-      - MYSQL_PASSWORD=app_password
-      - MYSQL_HOST=db_mysql
-      - MYSQL_DATABASE=playerdb
-      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - PLAYER_API_KEY=${PLAYER_API_KEY}
     networks:
       - player_network
     restart: unless-stopped
@@ -35,12 +36,12 @@ services:
       - --max_connections=50
       - --sort_buffer_size=2M
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: playerdb
-      MYSQL_USER: app_user
-      MYSQL_PASSWORD: app_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
       - playerdb_data_mysql:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql

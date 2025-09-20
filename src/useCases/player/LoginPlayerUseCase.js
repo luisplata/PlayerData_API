@@ -34,6 +34,7 @@ class LoginPlayerUseCase {
         }
       };
     } catch (error) {
+      console.error('Error in LoginPlayerUseCase:', error);
       return {
         success: false,
         error: error.message
