@@ -62,11 +62,11 @@ const options = {
               maxLength: 30,
               pattern: '^[a-zA-Z0-9_-]+$'
             },
-            createdAt: {
+            created_at: {
               type: 'string',
               format: 'date-time'
             },
-            updatedAt: {
+            updated_at: {
               type: 'string',
               format: 'date-time'
             }
@@ -91,11 +91,11 @@ const options = {
               minimum: 0,
               maximum: 10000
             },
-            createdAt: {
+            created_at: {
               type: 'string',
               format: 'date-time'
             },
-            updatedAt: {
+            updated_at: {
               type: 'string',
               format: 'date-time'
             }

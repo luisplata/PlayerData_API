@@ -8,8 +8,8 @@ class BattlePass {
     this.playerId = playerId;
     this.level = level;
     this.experience = experience;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.created_at = new Date();
+    this.updated_at = new Date();
   }
 
   static validatePlayerId(playerId) {
@@ -62,7 +62,7 @@ class BattlePass {
 
     this.level = newLevel;
     this.experience = newExperience;
-    this.updatedAt = new Date();
+    this.updated_at = new Date();
 
     return {
       level: this.level,

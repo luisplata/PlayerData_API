@@ -76,6 +76,8 @@ class ValidationMiddleware {
 
   static validateNickname(req, res, next) {
     const { nickname } = req.params;
+
+    console.log('nickname', nickname);
     
     if (!nickname || typeof nickname !== 'string') {
       return res.status(400).json({
@@ -87,11 +89,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (nickname.length < 2 || nickname.length > 30) {
+    if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname must be between 2 and 30 characters',
+          message: 'Nickname must be between 2 and 50 characters',
           statusCode: 400
         }
       });
@@ -123,11 +125,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (nickname.length < 2 || nickname.length > 30) {
+    if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname must be between 2 and 30 characters',
+          message: 'Nickname must be between 2 and 50 characters',
           statusCode: 400
         }
       });
@@ -179,11 +181,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (nickname.length < 2 || nickname.length > 30) {
+    if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname must be between 2 and 30 characters',
+          message: 'Nickname must be between 2 and 50 characters',
           statusCode: 400
         }
       });
