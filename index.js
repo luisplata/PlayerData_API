@@ -2,32 +2,96 @@ require('dotenv').config(); // Carga las variables de entorno desde el archivo .
 
 const express = require('express');
 const cors = require('cors');
+const { expressjwt: expressJwt } = require('express-jwt');
 
 const { generalLogger, customLogger } = require('./utils/logger.js');
+const ErrorHandlerMiddleware = require('./src/middlewares/ErrorHandlerMiddleware');
+const ValidationMiddleware = require('./src/middlewares/ValidationMiddleware');
+const DependencyContainer = require('./src/config/DependencyContainer');
+const { swaggerUi, specs } = require('./src/config/swagger');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Initialize dependency container
+const container = new DependencyContainer();
+
+// Middleware setup
 app.use(cors());
 app.use(express.json());
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ message: 'Invalid token' });
-  } else {
-    next(err);
-  }
+
+// JWT Authentication middleware
+const authenticate = expressJwt({ 
+  secret: process.env.JWT_SECRET || 'your_secret_key', 
+  algorithms: ['HS256'] 
 });
 
-const Player = require('./Router/PlayerApi.js');
-const BattlePass = require('./Router/BattlePassRoutes.js');
-const BattlePassReward = require('./Router/BattlePassRewardRoutes.js');
-const PlayerReward = require('./Router/PlayerRewardRoutes.js');
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'PlayerData API Documentation'
+}));
 
-app.use('/api/player', Player);
-app.use('/api/battle-pass', BattlePass);
-app.use('/api/battle-pass-reward', BattlePassReward);
-app.use('/api/player-reward', PlayerReward);
+// Health check endpoints
+app.get('/health', container.getController('healthController').basic);
+app.get('/health/detailed', container.getController('healthController').detailed);
+app.get('/health/live', container.getController('healthController').liveness);
+app.get('/health/ready', container.getController('healthController').readiness);
 
+// Player routes
+app.post('/api/player/login', 
+  ValidationMiddleware.validatePlayerData,
+  container.getController('playerController').login
+);
+
+app.post('/api/player', 
+  ValidationMiddleware.validatePlayerData,
+  container.getController('playerController').createPlayer
+);
+
+app.get('/api/player/validate/:nickname',
+  ValidationMiddleware.validateNickname,
+  container.getController('playerController').validateNickname
+);
+
+app.get('/api/player/:nickname',
+  authenticate,
+  ValidationMiddleware.validateNickname,
+  container.getController('playerController').getPlayerIdByNickname
+);
+
+app.get('/api/player/id/:playerId',
+  authenticate,
+  ValidationMiddleware.validatePlayerId,
+  container.getController('playerController').getPlayerById
+);
+
+app.put('/api/player/nickname/:playerId',
+  authenticate,
+  ValidationMiddleware.validatePlayerId,
+  ValidationMiddleware.validateNickname,
+  container.getController('playerController').updatePlayerNickname
+);
+
+// Battle Pass routes
+app.get('/api/battle-pass/:playerId',
+  authenticate,
+  ValidationMiddleware.validatePlayerId,
+  container.getController('battlePassController').getBattlePassByPlayerId
+);
+
+app.post('/api/battle-pass/experience',
+  authenticate,
+  ValidationMiddleware.validateExperience,
+  container.getController('battlePassController').addExperience
+);
+
+// Note: Legacy routes removed - all functionality now available through Clean Architecture endpoints
+
+// Error handling middleware (must be last)
+app.use(ErrorHandlerMiddleware.notFound);
+app.use(ErrorHandlerMiddleware.handle);
 
 // Iniciar el servidor
 if (require.main === module) {

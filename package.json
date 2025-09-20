@@ -5,9 +5,17 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
+        "dev": "nodemon index.js",
         "migrate": "knex migrate:latest --env development_mysql",
+        "migrate:rollback": "knex migrate:rollback --env development_mysql",
         "seed": "knex seed:run",
-        "test": "mocha"
+        "test": "mocha",
+        "test:watch": "mocha --watch",
+        "test:coverage": "nyc mocha",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "dependencies": {
         "cors": "^2.8.5",
@@ -18,11 +26,19 @@
         "knex": "^1.0.0",
         "mysql2": "^3.11.4",
         "pg": "^8.7.1",
-        "winston": "^3.17.0"
+        "winston": "^3.17.0",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.0"
     },
     "devDependencies": {
         "chai": "^4.3.7",
         "chai-http": "^4.3.0",
-        "mocha": "^10.2.0"
+        "mocha": "^10.2.0",
+        "nodemon": "^3.0.1",
+        "eslint": "^8.50.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-prettier": "^5.0.0",
+        "prettier": "^3.0.0",
+        "nyc": "^15.1.0"
     }
 }
