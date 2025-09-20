@@ -8,8 +8,8 @@ class Reward {
     this.type = type;
     this.body = body;
     this.level = level;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.created_at = new Date();
+    this.updated_at = new Date();
   }
 
   static validateType(type) {

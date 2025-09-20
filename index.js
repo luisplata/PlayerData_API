@@ -190,6 +190,12 @@ app.post('/api/battle-pass/experience',
   container.getController('battlePassController').addExperience
 );
 
+const BattlePassReward = require('./Router/BattlePassRewardRoutes.js');
+const PlayerReward = require('./Router/PlayerRewardRoutes.js');
+
+app.use('/api/v1/battle-pass-reward', BattlePassReward);
+app.use('/api/v1/player-reward', PlayerReward);
+
 // Note: Legacy routes removed - all functionality now available through Clean Architecture endpoints
 
 // Error handling middleware (must be last)

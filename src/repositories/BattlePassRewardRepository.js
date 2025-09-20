@@ -48,7 +48,7 @@ class BattlePassRewardRepository {
         .where({ id })
         .update({
           reward: JSON.stringify(reward.toJSON()),
-          updatedAt: new Date()
+          updated_at: new Date()
         });
 
       if (updatedRows === 0) {

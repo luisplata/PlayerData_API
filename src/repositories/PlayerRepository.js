@@ -61,7 +61,7 @@ class PlayerRepository {
         .where({ playerId })
         .update({ 
           nickname,
-          updatedAt: new Date()
+          updated_at: new Date()
         });
       
       return updatedRows;
