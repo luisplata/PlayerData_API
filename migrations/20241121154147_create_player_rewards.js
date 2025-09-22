@@ -5,7 +5,6 @@ exports.up = function (knex) {
         table.string('playerId').references('playerId').inTable('players').onDelete('CASCADE');
         table.integer('rewardId').unsigned().references('id').inTable('battle_pass_rewards').onDelete('CASCADE');
         table.timestamp('awarded_at').defaultTo(knex.fn.now());
-        table.timestamps(true, true);
     });
 };
 
