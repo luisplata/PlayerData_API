@@ -1,7 +1,6 @@
 // migrations/YYYYMMDDHHMMSS_create_players_table.js
 exports.up = function (knex) {
   return knex.schema.createTable('players', function (table) {
-    table.timestamp('createdAt').defaultTo(knex.fn.now());
     table.string('playerId').primary();
     table.string('nickname').notNullable();
     table.timestamps(true, true);
