@@ -130,10 +130,15 @@ npm run migrate
 
 - O directamente con Knex (equivalente):
 ```bash
-npx knex migrate:latest --env development_mysql
+npx knex migrate:latest
 ```
 
 Esto creará las tablas definidas en `migrations/`.
+
+- Crear migracion
+```bash
+npx knex migrate:make add_timestamps_to_player_rewards
+```
 
 ### 4) Ejecutar seeds
 - Con script de npm:
@@ -143,7 +148,7 @@ npm run seed
 
 - O directamente con Knex (opcionalmente especificando el entorno):
 ```bash
-npx knex seed:run --env development_mysql
+npx knex seed:run
 ```
 
 Esto llenará la base con los datos iniciales definidos en `seeds/` (por ejemplo `seeds/seed_levels.js`).
@@ -153,13 +158,13 @@ Esto llenará la base con los datos iniciales definidos en `seeds/` (por ejemplo
 - Variables de entorno usadas por la app/Knex (con defaults): `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_PORT`.
 - Para revertir la última migración:
 ```bash
-npx knex migrate:rollback --env development_mysql
+npx knex migrate:rollback
 ```
 
 ### Ejemplos rápidos
 - Migrar y seed en un paso:
 ```bash
-npx knex migrate:latest --env development_mysql && npx knex seed:run --env development_mysql
+npx knex migrate:latest && npx knex seed:run
 ```
 
 ## cURL para probar la API
