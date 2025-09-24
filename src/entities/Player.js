@@ -28,10 +28,10 @@ class Player {
     if (!nickname || typeof nickname !== 'string') {
       throw new Error('Nickname is required and must be a string');
     }
-    if (nickname.length < 2 || nickname.length > 30) {
-      throw new Error('Nickname must be between 2 and 30 characters');
+    if (nickname.length < 2 || nickname.length > 50) {
+      throw new Error('Nickname must be between 2 and 50 characters');
     }
-    if (!/^[a-zA-Z0-9_-]+$/.test(nickname)) {
+    if (!/^[a-zA-Z0-9_.-]+$/.test(nickname)) {
       throw new Error('Nickname can only contain letters, numbers, underscores, and hyphens');
     }
     return true;
