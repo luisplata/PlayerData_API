@@ -39,8 +39,8 @@ class PlayerV2 {
     if (nickname.length < 2 || nickname.length > 50) {
       throw new Error('Nickname must be between 2 and 50 characters');
     }
-    if (!/^[a-zA-Z0-9_.-]+$/.test(nickname)) {
-      throw new Error('Nickname can only contain letters, numbers, underscores, and hyphens');
+    if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
+      throw new Error('Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots');
     }
     return true;
   }

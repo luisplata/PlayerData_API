@@ -135,11 +135,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (!/^[a-zA-Z0-9_-]+$/.test(nickname)) {
+    if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, underscores, and hyphens',
+          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });
@@ -171,11 +171,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (!/^[a-zA-Z0-9._-]+$/.test(nickname)) {
+    if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, underscores, and hyphens',
+          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });
@@ -237,11 +237,11 @@ class ValidationMiddleware {
       });
     }
     
-    if (!/^[a-zA-Z0-9_-]+$/.test(nickname)) {
+    if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, underscores, and hyphens',
+          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });

@@ -65,6 +65,13 @@ npm start
 npm run dev
 ```
 
+## 📚 Documentación
+
+- **[CURL_EXAMPLES.md](./CURL_EXAMPLES.md)** - Ejemplos de cURL para todos los endpoints
+- **[AUTHENTICATION_GUIDE.md](./AUTHENTICATION_GUIDE.md)** - Guía completa de autenticación (JWT, API Key, públicos)
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitectura del proyecto
+- **[API_VERSIONING_GUIDE.md](./API_VERSIONING_GUIDE.md)** - Guía de versionado de API
+
 ## 🔄 **Versionado de API**
 
 ### **API Version 1 (Recomendado)**
