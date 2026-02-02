@@ -19,13 +19,13 @@
 
 ```
 src/
-├── entities/          # Entidades de dominio
+├── entities/         # Entidades de dominio
 ├── useCases/         # Casos de uso (lógica de negocio)
 ├── repositories/     # Acceso a datos
 ├── controllers/      # Controladores HTTP
 ├── services/         # Servicios externos
 ├── middlewares/      # Middlewares
-└── config/          # Configuración
+└── config/           # Configuración
 ```
 
 ## 🚀 Inicio Rápido

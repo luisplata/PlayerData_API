@@ -86,6 +86,20 @@ class PlayerRepository {
       throw new Error(`Failed to check nickname availability: ${error.message}`);
     }
   }
+
+  async updateLastLogin(playerId) {
+    try {
+      const updatedRows = await this.db('players')
+        .where({ playerId })
+        .update({ 
+          updated_at: new Date()
+        });
+      
+      return updatedRows;
+    } catch (error) {
+      throw new Error(`Failed to update last login: ${error.message}`);
+    }
+  }
 }
 
 module.exports = PlayerRepository;

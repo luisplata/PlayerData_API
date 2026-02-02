@@ -10,8 +10,14 @@ RUN npm install
 # Copiar el resto de los archivos
 COPY . .
 
-# Copiar y dar permisos al script de espera
+# Crear knexfile.js desde el ejemplo si no existe
+RUN if [ ! -f knexfile.js ] && [ -f knexfile.js.example ]; then \
+    cp knexfile.js.example knexfile.js; \
+    fi
+
+# Copiar y dar permisos al script de espera (convertir line endings)
 COPY entrypoint.sh /entrypoint.sh
+RUN dos2unix /entrypoint.sh || sed -i 's/\r$//' /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Exponer el puerto donde correrá la API

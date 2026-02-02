@@ -2,12 +2,20 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
-    return knex.schema.alterTable('player_rewards', function (table) {
-      table.timestamps(true, true); 
-      // crea columnas created_at y updated_at
-      // true, true => con zona horaria y default a now()
-    });
+exports.up = async function (knex) {
+    const hasCreatedAt = await knex.schema.hasColumn('player_rewards', 'created_at');
+    const hasUpdatedAt = await knex.schema.hasColumn('player_rewards', 'updated_at');
+    
+    if (!hasCreatedAt || !hasUpdatedAt) {
+      return knex.schema.alterTable('player_rewards', function (table) {
+        if (!hasCreatedAt) {
+          table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
+        }
+        if (!hasUpdatedAt) {
+          table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now());
+        }
+      });
+    }
   };
   
   /**
@@ -16,8 +24,8 @@ exports.up = function (knex) {
    */
   exports.down = function (knex) {
     return knex.schema.alterTable('player_rewards', function (table) {
-      table.dropTimestamps();
-      // elimina las columnas created_at y updated_at
+      table.dropColumn('created_at');
+      table.dropColumn('updated_at');
     });
   };
   
