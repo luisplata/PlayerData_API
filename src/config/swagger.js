@@ -23,7 +23,7 @@ const options = {
     },
     servers: [
       {
-        url: `${process.env.API_BASE_URL || 'http://localhost:8080'}/api/v1`,
+        url: `${process.env.API_BASE_URL || 'http://localhost:8080'}`,
         description: 'API Version 1 - Current active version'
       }
     ],

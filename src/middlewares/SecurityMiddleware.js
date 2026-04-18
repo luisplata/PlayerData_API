@@ -17,8 +17,20 @@ function parsePositiveInt(value, defaultValue) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : defaultValue;
 }
 
+function isLocalhostOrigin(origin) {
+  try {
+    const parsedUrl = new URL(origin);
+    const hostname = parsedUrl.hostname;
+
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]';
+  } catch (error) {
+    return false;
+  }
+}
+
 function getCorsOptions(env = process.env) {
   const allowedOrigins = parseAllowedOrigins(env.CORS_ALLOWED_ORIGINS);
+  const isDevelopment = (env.NODE_ENV || '').toLowerCase() !== 'production';
 
   return {
     origin(origin, callback) {
@@ -29,6 +41,12 @@ function getCorsOptions(env = process.env) {
       }
 
       if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      // Keep dev UX smooth without requiring manual allowlist setup for localhost.
+      if (isDevelopment && isLocalhostOrigin(origin)) {
         callback(null, true);
         return;
       }
