@@ -114,6 +114,175 @@ const options = {
             }
           }
         },
+        Hero: {
+          type: 'object',
+          required: ['heroId', 'name'],
+          properties: {
+            id: {
+              type: 'integer',
+              description: 'Auto-generated hero row ID'
+            },
+            heroId: {
+              type: 'string',
+              description: 'Unique hero identifier',
+              minLength: 3,
+              maxLength: 50,
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            name: {
+              type: 'string',
+              description: 'Hero display name',
+              minLength: 2,
+              maxLength: 80
+            },
+            metadata: {
+              type: 'object',
+              description: 'Flexible hero metadata payload',
+              additionalProperties: true
+            },
+            created_at: {
+              type: 'string',
+              format: 'date-time'
+            },
+            updated_at: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
+        Passive: {
+          type: 'object',
+          required: ['passiveId', 'heroId', 'name'],
+          properties: {
+            id: {
+              type: 'integer'
+            },
+            passiveId: {
+              type: 'string',
+              minLength: 3,
+              maxLength: 50,
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            heroId: {
+              type: 'string',
+              minLength: 3,
+              maxLength: 50,
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            name: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 80
+            },
+            metadata: {
+              type: 'object',
+              additionalProperties: true
+            },
+            assigned_at: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
+        DialogQuestionPublic: {
+          type: 'object',
+          required: ['questionId', 'question'],
+          properties: {
+            id: {
+              type: 'integer'
+            },
+            questionId: {
+              type: 'string'
+            },
+            dialogId: {
+              type: 'integer'
+            },
+            question: {
+              type: 'string'
+            },
+            order_index: {
+              type: 'integer'
+            }
+          },
+          description: 'Public dialog question payload. Does not expose correct answer keys.'
+        },
+        DialogStartRequest: {
+          type: 'object',
+          required: ['playerId', 'heroId'],
+          properties: {
+            playerId: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            heroId: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9_-]+$'
+            }
+          }
+        },
+        DialogStartResponseData: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer'
+            },
+            heroId: {
+              type: 'string'
+            },
+            title: {
+              type: 'string'
+            },
+            metadata: {
+              type: 'object',
+              additionalProperties: true
+            },
+            questions: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/DialogQuestionPublic'
+              }
+            }
+          }
+        },
+        DialogAnswerRequest: {
+          type: 'object',
+          required: ['playerId', 'heroId', 'questionId', 'answer'],
+          properties: {
+            playerId: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            heroId: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            questionId: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9_-]+$'
+            },
+            answer: {
+              type: 'string'
+            }
+          }
+        },
+        DialogAnswerResponseData: {
+          type: 'object',
+          properties: {
+            correct: {
+              type: 'boolean'
+            },
+            assignedPassive: {
+              oneOf: [
+                {
+                  $ref: '#/components/schemas/Passive'
+                },
+                {
+                  type: 'null'
+                }
+              ]
+            }
+          }
+        },
         Error: {
           type: 'object',
           properties: {

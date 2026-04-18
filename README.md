@@ -15,6 +15,29 @@
 - ✅ **Documentación Swagger** completa
 - ✅ **Transacciones de base de datos**
 
+## Swagger / OpenAPI (Fase 6)
+
+La documentación interactiva está disponible en:
+
+- `GET /api-docs`
+- URL local típica: `http://localhost:8080/api-docs`
+
+### Verificación rápida de endpoints heroes/passives
+
+En Swagger UI validar que aparezcan y estén documentados estos endpoints:
+
+- `POST /api/v1/heroes`
+- `GET /api/v1/heroes`
+- `POST /api/v1/heroes/dialog/start`
+- `POST /api/v1/heroes/dialog/answer`
+- `GET /api/v1/heroes/passive/{playerId}`
+
+Checklist de revisión:
+
+1. Los endpoints protegidos muestran `bearerAuth`.
+2. Cada endpoint define `requestBody`/`parameters` y respuestas `400/401/500` según corresponda.
+3. `StartDialog` NO expone `correct_answer` en el schema público de preguntas.
+
 ### 3) Ejecutar migraciones
 - Con script de npm:
 ```bash

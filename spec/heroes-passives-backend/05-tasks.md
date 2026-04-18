@@ -38,16 +38,16 @@
 
 ## Phase 5: Integration Tests and Coverage
 
-- [ ] 5.1 Create `test/heroesPassivesApi.test.js` covering spec scenarios: CreateHero, GetHeroList, StartDialog, SendAnswer, GetPassive.
-- [ ] 5.2 Add migration integrity tests for FK, unique constraints, and rollback paths (up/down).
-- [ ] 5.3 Enforce and verify >=90% coverage for new heroes/passives modules; block completion if below threshold.
-- [ ] 5.4 Update `spec/heroes-passives-backend/06-apply.md` with implementation evidence per batch.
-- [ ] 5.5 Update `spec/heroes-passives-backend/07-verify.md` with scenario pass/fail matrix and risk notes.
+- [x] 5.1 Create `test/heroesPassivesApi.test.js` covering spec scenarios: CreateHero, GetHeroList, StartDialog, SendAnswer, GetPassive.
+- [x] 5.2 Add migration integrity tests for FK, unique constraints, and rollback paths (up/down).
+- [x] 5.3 Enforce and verify >=90% coverage for new heroes/passives modules; block completion if below threshold.
+- [x] 5.4 Update `spec/heroes-passives-backend/06-apply.md` with implementation evidence per batch.
+- [x] 5.5 Update `spec/heroes-passives-backend/07-verify.md` with scenario pass/fail matrix and risk notes.
 
 ## Phase 6: API Documentation (Swagger / OpenAPI)
 
-- [ ] 6.1 Extend `src/config/swagger.js` schemas for Hero/Passive/Dialog and dialog-answer payloads/responses.
-- [ ] 6.2 Add OpenAPI annotations for new endpoints: `POST /api/v1/heroes`, `GET /api/v1/heroes`, `POST /api/v1/heroes/dialog/start`, `POST /api/v1/heroes/dialog/answer`, `GET /api/v1/heroes/passive/{playerId}`.
-- [ ] 6.3 Document security requirements (Bearer token where applicable) and request validation/error responses for each endpoint.
-- [ ] 6.4 Update `README.md` with a short section describing where to access Swagger UI and how to verify the heroes/passives endpoints are documented.
-- [ ] 6.5 Add a documentation verification checklist entry in `spec/heroes-passives-backend/07-verify.md` to confirm no `correct_answer` field is exposed in public API docs.
+- [x] 6.1 Extend `src/config/swagger.js` schemas for Hero/Passive/Dialog and dialog-answer payloads/responses.
+- [x] 6.2 Add OpenAPI annotations for new endpoints: `POST /api/v1/heroes`, `GET /api/v1/heroes`, `POST /api/v1/heroes/dialog/start`, `POST /api/v1/heroes/dialog/answer`, `GET /api/v1/heroes/passive/{playerId}`.
+- [x] 6.3 Document security requirements (Bearer token where applicable) and request validation/error responses for each endpoint.
+- [x] 6.4 Update `README.md` with a short section describing where to access Swagger UI and how to verify the heroes/passives endpoints are documented.
+- [x] 6.5 Add a documentation verification checklist entry in `spec/heroes-passives-backend/07-verify.md` to confirm no `correct_answer` field is exposed in public API docs.

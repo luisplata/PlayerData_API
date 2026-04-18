@@ -1,6 +1,10 @@
 /**
  * HeroController - Interface Adapter Layer
  * Handles HTTP requests for Hero operations.
+ * @swagger
+ * tags:
+ *   name: Heroes
+ *   description: Hero catalog and passive/dialog interaction operations
  */
 const CreateHeroUseCase = require('../useCases/heroes/CreateHeroUseCase');
 const GetHeroListUseCase = require('../useCases/heroes/GetHeroListUseCase');
@@ -12,6 +16,60 @@ class HeroController {
     this.getHeroListUseCase = new GetHeroListUseCase(heroRepository);
   }
 
+  /**
+   * @swagger
+   * /api/v1/heroes:
+   *   post:
+   *     summary: Create a new hero
+   *     tags: [Heroes]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - heroId
+   *               - name
+   *             properties:
+   *               heroId:
+   *                 type: string
+   *                 example: hero_001
+   *               name:
+   *                 type: string
+   *                 example: Astra
+   *               metadata:
+   *                 type: object
+   *                 additionalProperties: true
+   *                 example:
+   *                   role: support
+   *     responses:
+   *       201:
+   *         description: Hero created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               allOf:
+   *                 - $ref: '#/components/schemas/Success'
+   *                 - type: object
+   *                   properties:
+   *                     data:
+   *                       $ref: '#/components/schemas/Hero'
+   *       400:
+   *         description: Validation error for request payload
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Missing or invalid bearer token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   createHero = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { heroId, name, metadata } = req.body;
 
@@ -33,6 +91,44 @@ class HeroController {
     });
   });
 
+  /**
+   * @swagger
+   * /api/v1/heroes:
+   *   get:
+   *     summary: Get hero catalog
+   *     tags: [Heroes]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Hero list returned successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               allOf:
+   *                 - $ref: '#/components/schemas/Success'
+   *                 - type: object
+   *                   properties:
+   *                     data:
+   *                       type: object
+   *                       properties:
+   *                         heroes:
+   *                           type: array
+   *                           items:
+   *                             $ref: '#/components/schemas/Hero'
+   *       401:
+   *         description: Missing or invalid bearer token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Server error while loading heroes
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   getHeroList = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const result = await this.getHeroListUseCase.execute();
     if (!result.success) {
