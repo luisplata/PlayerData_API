@@ -371,6 +371,194 @@ class ValidationMiddleware {
     
     next();
   }
+
+  static validateHeroData(req, res, next) {
+    const { heroId, name, metadata } = req.body;
+
+    if (!heroId || typeof heroId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!name || typeof name !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero name is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (heroId.length < 3 || heroId.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID must be between 3 and 50 characters',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (name.length < 2 || name.length > 80) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero name must be between 2 and 80 characters',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(heroId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (metadata !== undefined && (metadata === null || Array.isArray(metadata) || typeof metadata !== 'object')) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero metadata must be an object',
+          statusCode: 400
+        }
+      });
+    }
+
+    next();
+  }
+
+  static validateDialogStart(req, res, next) {
+    const { playerId, heroId } = req.body;
+
+    if (!playerId || typeof playerId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!heroId || typeof heroId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(heroId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    next();
+  }
+
+  static validateDialogAnswer(req, res, next) {
+    const { playerId, heroId, questionId, answer } = req.body;
+
+    if (!playerId || typeof playerId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!heroId || typeof heroId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!questionId || typeof questionId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Question ID is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!answer || typeof answer !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Answer is required and must be a string',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(heroId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(questionId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Question ID can only contain letters, numbers, underscores, and hyphens',
+          statusCode: 400
+        }
+      });
+    }
+
+    next();
+  }
 }
 
 module.exports = ValidationMiddleware;

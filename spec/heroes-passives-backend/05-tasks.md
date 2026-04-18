@@ -31,10 +31,10 @@
 
 ## Phase 4: Integration / Wiring
 
-- [ ] 4.1 Create `src/controllers/HeroController.js`, `src/controllers/DialogController.js`, `src/controllers/PassiveController.js`.
-- [ ] 4.2 Modify `src/middlewares/ValidationMiddleware.js` adding validators for hero/dialog/answer payloads.
-- [ ] 4.3 Modify `src/config/DependencyContainer.js` to register new repositories/use-case dependencies/controllers.
-- [ ] 4.4 Modify `index.js` to add `/api/v1/heroes`, `/api/v1/heroes/dialog/start`, `/api/v1/heroes/dialog/answer`, `/api/v1/heroes/passive/:playerId`.
+- [x] 4.1 Create `src/controllers/HeroController.js`, `src/controllers/DialogController.js`, `src/controllers/PassiveController.js`.
+- [x] 4.2 Modify `src/middlewares/ValidationMiddleware.js` adding validators for hero/dialog/answer payloads.
+- [x] 4.3 Modify `src/config/DependencyContainer.js` to register new repositories/use-case dependencies/controllers.
+- [x] 4.4 Modify `index.js` to add `/api/v1/heroes`, `/api/v1/heroes/dialog/start`, `/api/v1/heroes/dialog/answer`, `/api/v1/heroes/passive/:playerId`.
 
 ## Phase 5: Integration Tests and Coverage
 

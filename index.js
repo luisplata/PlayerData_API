@@ -111,6 +111,36 @@ v1Router.post('/battle-pass/experience',
   container.getController('battlePassController').addExperience
 );
 
+// Heroes routes v1
+v1Router.post('/heroes',
+  authenticate,
+  ValidationMiddleware.validateHeroData,
+  container.getController('heroController').createHero
+);
+
+v1Router.get('/heroes',
+  authenticate,
+  container.getController('heroController').getHeroList
+);
+
+v1Router.post('/heroes/dialog/start',
+  authenticate,
+  ValidationMiddleware.validateDialogStart,
+  container.getController('dialogController').startDialog
+);
+
+v1Router.post('/heroes/dialog/answer',
+  authenticate,
+  ValidationMiddleware.validateDialogAnswer,
+  container.getController('dialogController').sendAnswer
+);
+
+v1Router.get('/heroes/passive/:playerId',
+  authenticate,
+  ValidationMiddleware.validatePlayerId,
+  container.getController('passiveController').getPassive
+);
+
 // Mount versioned routes
 app.use('/api/v1', v1Router);
 
