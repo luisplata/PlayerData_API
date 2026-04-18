@@ -4,7 +4,7 @@ exports.up = function(knex) {
         table.string('dialogId').notNullable().unique();
         table.string('heroId').notNullable().references('heroId').inTable('heroes').onDelete('CASCADE');
         table.string('title').notNullable();
-        table.json('metadata').defaultTo('{}');
+        table.json('metadata').notNullable();
         table.timestamps(true, true);
     });
 };

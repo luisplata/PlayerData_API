@@ -15,69 +15,65 @@
 - ✅ **Documentación Swagger** completa
 - ✅ **Transacciones de base de datos**
 
-## 🏗️ Arquitectura
-
-```
-src/
-├── entities/         # Entidades de dominio
-├── useCases/         # Casos de uso (lógica de negocio)
-├── repositories/     # Acceso a datos
-├── controllers/      # Controladores HTTP
-├── services/         # Servicios externos
-├── middlewares/      # Middlewares
-└── config/           # Configuración
-```
-
-## 🚀 Inicio Rápido
-
-1. **Instalar dependencias**:
-```bash
-npm install
-```
-
-2. **Configurar variables de entorno**:
-```bash
-# Para desarrollo local (Docker)
-cp env.example .env
-
-# Para producción, editar .env con tus valores reales:
-# - MYSQL_HOST=tu_host_produccion
-# - MYSQL_USER=tu_usuario_produccion  
-# - MYSQL_PASSWORD=tu_password_produccion
-# - JWT_SECRET=tu_secret_real
-# - PLAYER_API_KEY=tu_api_key_real
-```
-
-3. **Ejecutar migraciones**:
+### 3) Ejecutar migraciones
+- Con script de npm:
 ```bash
 npm run migrate
 ```
 
-4. **Ejecutar seeds**:
+- Para limpiar toda la base, volver a aplicar todas las migraciones y cargar seeds:
+```bash
+npm run clean:migrate:seed
+```
+
+- O directamente con Knex (equivalente):
+```bash
+npx knex migrate:latest
+```
+
+Esto creará las tablas definidas en `migrations/`.
+
+- Crear migracion
+```bash
+npx knex migrate:make add_timestamps_to_player_rewards
+```
+
+### 4) Ejecutar seeds
+- Con script de npm:
 ```bash
 npm run seed
 ```
 
-5. **Iniciar servidor**:
+- O directamente con Knex (opcionalmente especificando el entorno):
 ```bash
-npm start
-# o para desarrollo
-npm run dev
+npx knex seed:run
 ```
 
-## 📚 Documentación
+Esto llenará la base con los datos iniciales definidos en `seeds/` (por ejemplo `seeds/seed_levels.js`).
 
-- **[CURL_EXAMPLES.md](./CURL_EXAMPLES.md)** - Ejemplos de cURL para todos los endpoints
-- **[AUTHENTICATION_GUIDE.md](./AUTHENTICATION_GUIDE.md)** - Guía completa de autenticación (JWT, API Key, públicos)
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitectura del proyecto
-- **[API_VERSIONING_GUIDE.md](./API_VERSIONING_GUIDE.md)** - Guía de versionado de API
-
-## 🔄 **Versionado de API**
-
-### **API Version 1 (Recomendado)**
+### Notas
+- La configuración de Knex está en `knexfile.js`. Los entornos `development` y `development_mysql` apuntan a MySQL y comparten la misma configuración por defecto.
+- Variables de entorno usadas por la app/Knex (con defaults): `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_PORT`.
+- Para revertir la última migración:
+```bash
+npx knex migrate:rollback
 ```
-POST /api/v1/player/login          # Login con validación mejorada
-POST /api/v1/player                # Crear jugador
+
+- Para limpiar todo, recrear el esquema y cargar seeds:
+```bash
+npm run clean:migrate:seed
+```
+
+### Ejemplos rápidos
+- Limpiar, migrar y seed en un paso:
+```bash
+npm run clean:migrate:seed
+```
+
+- Migrar y seed en un paso sin limpiar:
+```bash
+npx knex migrate:latest && npx knex seed:run
+```
 GET  /api/v1/player/validate/:nick # Validar nickname
 GET  /api/v1/player/:nick          # Obtener por nickname
 GET  /api/v1/player/id/:id         # Obtener por ID
@@ -135,18 +131,32 @@ Esto levanta `mysql:8` y la app apuntando a `db_mysql` (ver `docker-compose.yml`
 npm run migrate
 ```
 
-- O directamente con Knex (equivalente):
+- Para limpiar toda la base y volver a aplicar todas las migraciones:
 ```bash
-npx knex migrate:latest
+npm run clean:migrate
+```
+
+- O directamente con Knex (equivalente):
+npm run clean:migrate:seed
+```bash
+```bash
+npm run clean:migrate:seed
 ```
 
 Esto creará las tablas definidas en `migrations/`.
-
-- Crear migracion
+npm run clean:migrate:seed
+```bash
+```bash
+npm run clean:migrate:seed
 ```bash
 npx knex migrate:make add_timestamps_to_player_rewards
 ```
+- Limpiar, migrar y seed en un paso:
+```bash
+npm run clean:migrate:seed
+```
 
+- Migrar y seed en un paso sin limpiar:
 ### 4) Ejecutar seeds
 - Con script de npm:
 ```bash
@@ -166,6 +176,11 @@ Esto llenará la base con los datos iniciales definidos en `seeds/` (por ejemplo
 - Para revertir la última migración:
 ```bash
 npx knex migrate:rollback
+```
+
+- Para limpiar todo y recrear el esquema:
+```bash
+npm run clean:migrate
 ```
 
 ### Ejemplos rápidos

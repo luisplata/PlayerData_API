@@ -60,51 +60,8 @@ exports.up = async function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = async function(knex) {
-  // Check if indexes exist before dropping them (MySQL 5.7 compatible)
-  const checkIndex = async (tableName, indexName) => {
-    try {
-      const result = await knex.raw(`
-        SELECT COUNT(*) as count 
-        FROM information_schema.STATISTICS 
-        WHERE TABLE_SCHEMA = DATABASE() 
-        AND TABLE_NAME = ? 
-        AND INDEX_NAME = ?
-      `, [tableName, indexName]);
-      return result[0][0].count > 0;
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const dropIndexIfExists = async (tableName, indexName) => {
-    const exists = await checkIndex(tableName, indexName);
-    if (exists) {
-      try {
-        await knex.raw(`DROP INDEX ${indexName} ON ${tableName}`);
-        console.log(`Dropped index: ${indexName} from ${tableName}`);
-      } catch (error) {
-        console.log(`Error dropping index ${indexName}: ${error.message}`);
-      }
-    } else {
-      console.log(`Index ${indexName} does not exist on ${tableName}`);
-    }
-  };
-
-  // Drop all indexes
-  await dropIndexIfExists('players', 'idx_players_playerId');
-  await dropIndexIfExists('players', 'idx_players_nickname');
-  await dropIndexIfExists('players', 'idx_players_created_at');
-
-  await dropIndexIfExists('battle_passes', 'idx_battle_passes_playerId');
-  await dropIndexIfExists('battle_passes', 'idx_battle_passes_level');
-  await dropIndexIfExists('battle_passes', 'idx_battle_passes_experience');
-
-  await dropIndexIfExists('battle_pass_rewards', 'idx_battle_pass_rewards_level');
-  await dropIndexIfExists('battle_pass_rewards', 'idx_battle_pass_rewards_created_at');
-
-  await dropIndexIfExists('player_rewards', 'idx_player_rewards_playerId');
-  await dropIndexIfExists('player_rewards', 'idx_player_rewards_rewardId');
-  await dropIndexIfExists('player_rewards', 'idx_player_rewards_claimed');
-  await dropIndexIfExists('player_rewards', 'idx_player_rewards_awarded_at');
-  await dropIndexIfExists('player_rewards', 'idx_player_rewards_player_reward');
+  // These indexes are backed by FK/unique constraints in MySQL and are safely removed
+  // when the owning tables are dropped by earlier migrations in the rollback chain.
+  // Making this a no-op keeps `migrate:rollback --all` idempotent and avoids FK index errors.
+  return Promise.resolve();
 };

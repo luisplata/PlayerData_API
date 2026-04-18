@@ -8,6 +8,8 @@
         "dev": "nodemon index.js",
         "migrate": "knex migrate:latest",
         "migrate:rollback": "knex migrate:rollback",
+        "clean:migrate": "npm run clean:migrate:seed",
+        "clean:migrate:seed": "knex migrate:rollback --all && knex migrate:latest && knex seed:run",
         "seed": "knex seed:run",
         "test": "mocha",
         "test:watch": "mocha --watch",
