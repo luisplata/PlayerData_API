@@ -11,10 +11,10 @@
 
 ## Phase 2: Domain and Data Access
 
-- [ ] 2.1 Create `src/entities/Hero.js`, `src/entities/Passive.js`, `src/entities/Dialog.js` with validation invariants.
-- [ ] 2.2 Create `src/repositories/HeroRepository.js` and `src/repositories/PassiveRepository.js` for create/list/find methods.
-- [ ] 2.3 Create `src/repositories/DialogRepository.js` with `startDialog` data retrieval and server-side answer validation.
-- [ ] 2.4 Create `src/repositories/PlayerPassiveRepository.js` with idempotent assignment and player passive queries.
+- [x] 2.1 Create `src/entities/Hero.js`, `src/entities/Passive.js`, `src/entities/Dialog.js` with validation invariants.
+- [x] 2.2 Create `src/repositories/HeroRepository.js` and `src/repositories/PassiveRepository.js` for create/list/find methods.
+- [x] 2.3 Create `src/repositories/DialogRepository.js` with `startDialog` data retrieval and server-side answer validation.
+- [x] 2.4 Create `src/repositories/PlayerPassiveRepository.js` with idempotent assignment and player passive queries.
 
 ## Phase 3: TDD Core Use Cases (RED -> GREEN -> REFACTOR)
 
