@@ -1,6 +1,10 @@
 /**
  * BattlePassController - Interface Adapter Layer
  * Handles HTTP requests for BattlePass operations
+ * @swagger
+ * tags:
+ *   name: Battle Pass
+ *   description: Battle pass progression and rewards endpoints
  */
 const AddExperienceUseCase = require('../useCases/battlePass/AddExperienceUseCase');
 const ErrorHandlerMiddleware = require('../middlewares/ErrorHandlerMiddleware');
@@ -16,6 +20,30 @@ class BattlePassController {
     this.playerRewardRepository = playerRewardRepository;
   }
 
+  /**
+   * @swagger
+   * /api/v1/battle-pass/{playerId}:
+   *   get:
+   *     summary: Get battle pass data and rewards by playerId
+   *     tags: [Battle Pass]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: playerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Battle pass and rewards payload
+   *       401:
+   *         description: Missing or invalid token
+   *       404:
+   *         description: Battle pass not found
+   *       500:
+   *         description: Server error
+   */
   getBattlePassByPlayerId = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.params;
     
@@ -52,6 +80,39 @@ class BattlePassController {
     }
   });
 
+  /**
+   * @swagger
+   * /api/v1/battle-pass/experience:
+   *   post:
+   *     summary: Add experience to a player's battle pass
+   *     tags: [Battle Pass]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - playerId
+   *               - experience
+   *             properties:
+   *               playerId:
+   *                 type: string
+   *               experience:
+   *                 type: integer
+   *                 minimum: 1
+   *     responses:
+   *       200:
+   *         description: Experience added and battle pass updated
+   *       400:
+   *         description: Validation error
+   *       401:
+   *         description: Missing or invalid token
+   *       500:
+   *         description: Server error
+   */
   addExperience = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, experience } = req.body;
     

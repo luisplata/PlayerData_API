@@ -31,7 +31,9 @@ class ApiVersionMiddleware {
    * Middleware to handle version-specific logic
    */
   static handleVersion(req, res, next) {
-    const version = req.path.split('/')[2]; // Extract version from path
+    // Only treat '/api/<version>/...' as versioned routes.
+    const versionMatch = req.path.match(/^\/api\/([^/]+)/);
+    const version = versionMatch ? versionMatch[1] : undefined;
     
     switch (version) {
       case 'v1':

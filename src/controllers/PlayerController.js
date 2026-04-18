@@ -96,6 +96,39 @@ class PlayerController {
     });
   });
 
+  /**
+   * @swagger
+   * /api/v1/player:
+   *   post:
+   *     summary: Create or update a player profile
+   *     tags: [Players]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - playerId
+   *               - nickname
+   *               - key
+   *             properties:
+   *               playerId:
+   *                 type: string
+   *               nickname:
+   *                 type: string
+   *               key:
+   *                 type: string
+   *     responses:
+   *       201:
+   *         description: Player created successfully
+   *       200:
+   *         description: Player updated successfully
+   *       400:
+   *         description: Validation error
+   *       401:
+   *         description: Invalid API key
+   */
   createPlayer = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, nickname, key } = req.body;
     
@@ -120,6 +153,24 @@ class PlayerController {
     });
   });
 
+  /**
+   * @swagger
+   * /api/v1/player/validate/{nickname}:
+   *   get:
+   *     summary: Validate nickname availability
+   *     tags: [Players]
+   *     parameters:
+   *       - in: path
+   *         name: nickname
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Nickname validation result
+   *       500:
+   *         description: Server error
+   */
   validateNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { nickname } = req.params;
     
@@ -142,6 +193,30 @@ class PlayerController {
     }
   });
 
+  /**
+   * @swagger
+   * /api/v1/player/{nickname}:
+   *   get:
+   *     summary: Get playerId by nickname
+   *     tags: [Players]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: nickname
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Player found
+   *       401:
+   *         description: Missing or invalid token
+   *       404:
+   *         description: Player not found
+   *       500:
+   *         description: Server error
+   */
   getPlayerIdByNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { nickname } = req.params;
     
@@ -174,6 +249,30 @@ class PlayerController {
     }
   });
 
+  /**
+   * @swagger
+   * /api/v1/player/id/{playerId}:
+   *   get:
+   *     summary: Get player by playerId
+   *     tags: [Players]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: playerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Player details
+   *       401:
+   *         description: Missing or invalid token
+   *       404:
+   *         description: Player not found
+   *       500:
+   *         description: Server error
+   */
   getPlayerById = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.params;
     
@@ -204,6 +303,43 @@ class PlayerController {
     }
   });
 
+  /**
+   * @swagger
+   * /api/v1/player/nickname/{playerId}:
+   *   put:
+   *     summary: Update player nickname
+   *     tags: [Players]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: playerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - nickname
+   *             properties:
+   *               nickname:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: Nickname updated
+   *       400:
+   *         description: Nickname invalid or already in use
+   *       401:
+   *         description: Missing or invalid token
+   *       404:
+   *         description: Player not found
+   *       500:
+   *         description: Server error
+   */
   updatePlayerNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.params;
     const { nickname } = req.body;
