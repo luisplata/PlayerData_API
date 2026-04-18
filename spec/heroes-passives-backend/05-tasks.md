@@ -2,12 +2,12 @@
 
 ## Phase 1: Foundation / Database
 
-- [ ] 1.1 Create `migrations/20260417000100_create_heroes_table.js` with `heroId` unique, metadata JSON, timestamps.
-- [ ] 1.2 Create `migrations/20260417000101_create_passives_table.js` with FK to `heroes(heroId)` and passive metadata.
-- [ ] 1.3 Create `migrations/20260417000102_create_dialogs_table.js` with FK to `heroes(heroId)`.
-- [ ] 1.4 Create `migrations/20260417000103_create_dialog_questions_table.js` with FK to dialogs and stored `correct_answer`.
-- [ ] 1.5 Create `migrations/20260417000104_create_player_passives_table.js` with FK to player/passive/hero and unique `(playerId, heroId, passiveId)`.
-- [ ] 1.6 Create `migrations/20260417000105_add_heroes_indexes_safe.js` for `heroId`, `playerId`, and dialog lookup indexes.
+- [x] 1.1 Create `migrations/20260417000100_create_heroes_table.js` with `heroId` unique, metadata JSON, timestamps.
+- [x] 1.2 Create `migrations/20260417000101_create_passives_table.js` with FK to `heroes(heroId)` and passive metadata.
+- [x] 1.3 Create `migrations/20260417000102_create_dialogs_table.js` with FK to `heroes(heroId)`.
+- [x] 1.4 Create `migrations/20260417000103_create_dialog_questions_table.js` with FK to dialogs and stored `correct_answer`.
+- [x] 1.5 Create `migrations/20260417000104_create_player_passives_table.js` with FK to player/passive/hero and unique `(playerId, heroId, passiveId)`.
+- [x] 1.6 Create `migrations/20260417000105_add_heroes_indexes_safe.js` for `heroId`, `playerId`, and dialog lookup indexes.
 
 ## Phase 2: Domain and Data Access
 
