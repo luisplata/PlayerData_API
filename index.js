@@ -7,6 +7,7 @@ const { expressjwt: expressJwt } = require('express-jwt');
 const ErrorHandlerMiddleware = require('./src/middlewares/ErrorHandlerMiddleware');
 const ValidationMiddleware = require('./src/middlewares/ValidationMiddleware');
 const ApiVersionMiddleware = require('./src/middlewares/ApiVersionMiddleware');
+const SecurityMiddleware = require('./src/middlewares/SecurityMiddleware');
 const DependencyContainer = require('./src/config/DependencyContainer');
 const { swaggerUi, specs } = require('./src/config/swagger');
 const { validateSecurityConfig } = require('./src/config/SecurityConfig');
@@ -18,9 +19,11 @@ const port = process.env.PORT || 8080;
 
 // Initialize dependency container
 const container = new DependencyContainer();
+const { loginLimiter, validateLimiter } = SecurityMiddleware.createSensitiveRateLimiters(process.env);
 
 // Middleware setup
-app.use(cors());
+app.use(SecurityMiddleware.securityHeaders());
+app.use(cors(SecurityMiddleware.getCorsOptions(process.env)));
 app.use(express.json());
 
 // API Versioning middleware
@@ -39,6 +42,7 @@ const v1Router = express.Router();
 
 // Player routes v1
 v1Router.post('/player/login', 
+  loginLimiter,
   ValidationMiddleware.validatePlayerLogin,
   container.getController('playerController').login
 );
@@ -49,6 +53,7 @@ v1Router.post('/player',
 );
 
 v1Router.get('/player/validate/:nickname',
+  validateLimiter,
   authenticate,
   ValidationMiddleware.validateNickname,
   container.getController('playerController').validateNickname

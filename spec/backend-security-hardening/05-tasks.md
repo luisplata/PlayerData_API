@@ -10,12 +10,12 @@
 
 ## Phase 2: HTTP Hardening
 
-- [ ] 2.1 RED: crear tests para CORS con origin permitido, origin bloqueado y request sin origin (Unity nativo).
-- [ ] 2.2 GREEN: crear `src/middlewares/SecurityMiddleware.js` con configuracion CORS basada en `CORS_ALLOWED_ORIGINS`.
-- [ ] 2.3 GREEN: permitir requests sin `Origin` y exigir controles de auth normales.
-- [ ] 2.4 RED: crear test de rate-limit para `/api/v1/player/login` y `/api/v1/player/validate/:nickname`.
-- [ ] 2.5 GREEN: agregar `express-rate-limit` en middleware de endpoints sensibles.
-- [ ] 2.6 GREEN: agregar `helmet` y verificar headers de seguridad en respuestas.
+- [x] 2.1 RED: crear tests para CORS con origin permitido, origin bloqueado y request sin origin (Unity nativo).
+- [x] 2.2 GREEN: crear `src/middlewares/SecurityMiddleware.js` con configuracion CORS basada en `CORS_ALLOWED_ORIGINS`.
+- [x] 2.3 GREEN: permitir requests sin `Origin` y exigir controles de auth normales.
+- [x] 2.4 RED: crear test de rate-limit para `/api/v1/player/login` y `/api/v1/player/validate/:nickname`.
+- [x] 2.5 GREEN: agregar `express-rate-limit` en middleware de endpoints sensibles.
+- [x] 2.6 GREEN: agregar `helmet` y verificar headers de seguridad en respuestas.
 
 ## Phase 3: Docs and Deployment Safety
 
