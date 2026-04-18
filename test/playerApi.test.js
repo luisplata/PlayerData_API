@@ -125,3 +125,14 @@ it('should return 404 if player is not found', (done) => {
     });
 });
 });
+
+describe('Player API Security', () => {
+  it('should require auth for v1 nickname validation endpoint', (done) => {
+    chai.request(app)
+      .get('/api/v1/player/validate/security_check_nickname')
+      .end((err, res) => {
+        expect(res).to.have.status(401);
+        done();
+      });
+  });
+});

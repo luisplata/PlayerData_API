@@ -9,6 +9,9 @@ const ValidationMiddleware = require('./src/middlewares/ValidationMiddleware');
 const ApiVersionMiddleware = require('./src/middlewares/ApiVersionMiddleware');
 const DependencyContainer = require('./src/config/DependencyContainer');
 const { swaggerUi, specs } = require('./src/config/swagger');
+const { validateSecurityConfig } = require('./src/config/SecurityConfig');
+
+validateSecurityConfig(process.env);
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -27,7 +30,7 @@ app.use(ApiVersionMiddleware.deprecationWarning);
 
 // JWT Authentication middleware
 const authenticate = expressJwt({ 
-  secret: process.env.JWT_SECRET || 'your_secret_key', 
+  secret: process.env.JWT_SECRET,
   algorithms: ['HS256'] 
 });
 
@@ -46,6 +49,7 @@ v1Router.post('/player',
 );
 
 v1Router.get('/player/validate/:nickname',
+  authenticate,
   ValidationMiddleware.validateNickname,
   container.getController('playerController').validateNickname
 );
