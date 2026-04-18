@@ -18,16 +18,16 @@
 
 ## Phase 3: TDD Core Use Cases (RED -> GREEN -> REFACTOR)
 
-- [ ] 3.1 RED: create failing tests in `test/useCases/heroes/CreateHeroUseCase.test.js` for success and invalid metadata.
-- [ ] 3.2 GREEN: implement `src/useCases/heroes/CreateHeroUseCase.js` to satisfy 3.1; REFACTOR shared validation.
-- [ ] 3.3 RED: create failing tests in `test/useCases/heroes/GetHeroListUseCase.test.js` including empty list edge case.
-- [ ] 3.4 GREEN: implement `src/useCases/heroes/GetHeroListUseCase.js`; REFACTOR repository mapping.
-- [ ] 3.5 RED: create failing tests in `test/useCases/heroes/StartDialogUseCase.test.js` asserting no answers in response.
-- [ ] 3.6 GREEN: implement `src/useCases/heroes/StartDialogUseCase.js`; REFACTOR DTO filter to remove `correctAnswer`.
-- [ ] 3.7 RED: create failing tests in `test/useCases/heroes/SendAnswerUseCase.test.js` for correct, incorrect, duplicate assignment.
-- [ ] 3.8 GREEN: implement `src/useCases/heroes/SendAnswerUseCase.js` using `TransactionService`; REFACTOR idempotency checks.
-- [ ] 3.9 RED: create failing tests in `test/useCases/heroes/GetPassiveUseCase.test.js` for player with/without passive.
-- [ ] 3.10 GREEN: implement `src/useCases/heroes/GetPassiveUseCase.js`; REFACTOR response shape consistency.
+- [x] 3.1 RED: create failing tests in `test/useCases/heroes/CreateHeroUseCase.test.js` for success and invalid metadata.
+- [x] 3.2 GREEN: implement `src/useCases/heroes/CreateHeroUseCase.js` to satisfy 3.1; REFACTOR shared validation.
+- [x] 3.3 RED: create failing tests in `test/useCases/heroes/GetHeroListUseCase.test.js` including empty list edge case.
+- [x] 3.4 GREEN: implement `src/useCases/heroes/GetHeroListUseCase.js`; REFACTOR repository mapping.
+- [x] 3.5 RED: create failing tests in `test/useCases/heroes/StartDialogUseCase.test.js` asserting no answers in response.
+- [x] 3.6 GREEN: implement `src/useCases/heroes/StartDialogUseCase.js`; REFACTOR DTO filter to remove `correctAnswer`.
+- [x] 3.7 RED: create failing tests in `test/useCases/heroes/SendAnswerUseCase.test.js` for correct, incorrect, duplicate assignment.
+- [x] 3.8 GREEN: implement `src/useCases/heroes/SendAnswerUseCase.js` using `TransactionService`; REFACTOR idempotency checks.
+- [x] 3.9 RED: create failing tests in `test/useCases/heroes/GetPassiveUseCase.test.js` for player with/without passive.
+- [x] 3.10 GREEN: implement `src/useCases/heroes/GetPassiveUseCase.js`; REFACTOR response shape consistency.
 
 ## Phase 4: Integration / Wiring
 
@@ -36,10 +36,18 @@
 - [ ] 4.3 Modify `src/config/DependencyContainer.js` to register new repositories/use-case dependencies/controllers.
 - [ ] 4.4 Modify `index.js` to add `/api/v1/heroes`, `/api/v1/heroes/dialog/start`, `/api/v1/heroes/dialog/answer`, `/api/v1/heroes/passive/:playerId`.
 
-## Phase 5: Integration Tests, Coverage and Docs
+## Phase 5: Integration Tests and Coverage
 
 - [ ] 5.1 Create `test/heroesPassivesApi.test.js` covering spec scenarios: CreateHero, GetHeroList, StartDialog, SendAnswer, GetPassive.
 - [ ] 5.2 Add migration integrity tests for FK, unique constraints, and rollback paths (up/down).
 - [ ] 5.3 Enforce and verify >=90% coverage for new heroes/passives modules; block completion if below threshold.
 - [ ] 5.4 Update `spec/heroes-passives-backend/06-apply.md` with implementation evidence per batch.
 - [ ] 5.5 Update `spec/heroes-passives-backend/07-verify.md` with scenario pass/fail matrix and risk notes.
+
+## Phase 6: API Documentation (Swagger / OpenAPI)
+
+- [ ] 6.1 Extend `src/config/swagger.js` schemas for Hero/Passive/Dialog and dialog-answer payloads/responses.
+- [ ] 6.2 Add OpenAPI annotations for new endpoints: `POST /api/v1/heroes`, `GET /api/v1/heroes`, `POST /api/v1/heroes/dialog/start`, `POST /api/v1/heroes/dialog/answer`, `GET /api/v1/heroes/passive/{playerId}`.
+- [ ] 6.3 Document security requirements (Bearer token where applicable) and request validation/error responses for each endpoint.
+- [ ] 6.4 Update `README.md` with a short section describing where to access Swagger UI and how to verify the heroes/passives endpoints are documented.
+- [ ] 6.5 Add a documentation verification checklist entry in `spec/heroes-passives-backend/07-verify.md` to confirm no `correct_answer` field is exposed in public API docs.
