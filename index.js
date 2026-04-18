@@ -4,11 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const { expressjwt: expressJwt } = require('express-jwt');
 
-const { generalLogger, customLogger } = require('./utils/logger.js');
 const ErrorHandlerMiddleware = require('./src/middlewares/ErrorHandlerMiddleware');
 const ValidationMiddleware = require('./src/middlewares/ValidationMiddleware');
 const ApiVersionMiddleware = require('./src/middlewares/ApiVersionMiddleware');
-const AuthV2Middleware = require('./src/middlewares/v2/AuthV2Middleware');
 const DependencyContainer = require('./src/config/DependencyContainer');
 const { swaggerUi, specs } = require('./src/config/swagger');
 
@@ -17,7 +15,6 @@ const port = process.env.PORT || 8080;
 
 // Initialize dependency container
 const container = new DependencyContainer();
-const authV2Middleware = new AuthV2Middleware();
 
 // Middleware setup
 app.use(cors());
@@ -118,35 +115,6 @@ v1Router.get('/heroes/passive/:playerId',
 // Mount versioned routes
 app.use('/api/v1', v1Router);
 
-// API Version 2 Routes
-const v2Router = express.Router();
-
-// Player routes v2
-v2Router.post('/player/login', 
-  ValidationMiddleware.validatePlayerData,
-  container.getController('playerV2Controller').login
-);
-
-v2Router.post('/player', 
-  ValidationMiddleware.validatePlayerData,
-  container.getController('playerV2Controller').createPlayer
-);
-
-v2Router.post('/player/refresh',
-  authV2Middleware.validateRefreshToken,
-  container.getController('playerV2Controller').refreshToken
-);
-
-v2Router.get('/player/profile',
-  authV2Middleware.handleTokenRefresh,
-  authV2Middleware.checkTokenExpiration,
-  authV2Middleware.addAuthInfo,
-  container.getController('playerV2Controller').getProfile
-);
-
-// Mount v2 routes
-app.use('/api/v2', v2Router);
-
 // Swagger Documentation
 /**
  * @swagger
@@ -207,274 +175,11 @@ app.get('/api/versions', (req, res) => {
     data: {
       supportedVersions: ApiVersionMiddleware.getSupportedVersions(),
       versionInfo: ApiVersionMiddleware.getVersionInfo(),
-      currentVersion: 'v2',
-      recommendation: 'Use /api/v2/ for new integrations, /api/v1/ for stable features'
+      currentVersion: 'v1',
+      recommendation: 'Use /api/v1/ for all active integrations'
     }
   });
 });
-
-// Legacy routes (backward compatibility)
-/**
- * @swagger
- * /api/player/login:
- *   post:
- *     summary: Legacy player login
- *     deprecated: true
- *     tags: [Legacy]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - playerId
- *             properties:
- *               playerId:
- *                 type: string
- *     responses:
- *       200:
- *         description: Login successful
- *       400:
- *         description: Validation error
- *       401:
- *         description: Invalid credentials
- */
-app.post('/api/player/login', 
-  ValidationMiddleware.validatePlayerLogin,
-  container.getController('playerController').login
-);
-
-/**
- * @swagger
- * /api/player:
- *   post:
- *     summary: Legacy create/update player
- *     deprecated: true
- *     tags: [Legacy]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - playerId
- *               - nickname
- *               - key
- *             properties:
- *               playerId:
- *                 type: string
- *               nickname:
- *                 type: string
- *               key:
- *                 type: string
- *     responses:
- *       201:
- *         description: Player created
- *       200:
- *         description: Player updated
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized API key
- */
-app.post('/api/player', 
-  ValidationMiddleware.validatePlayerData,
-  container.getController('playerController').createPlayer
-);
-
-/**
- * @swagger
- * /api/player/validate/{nickname}:
- *   get:
- *     summary: Legacy nickname validation
- *     deprecated: true
- *     tags: [Legacy]
- *     parameters:
- *       - in: path
- *         name: nickname
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Nickname availability result
- *       500:
- *         description: Server error
- */
-app.get('/api/player/validate/:nickname',
-  ValidationMiddleware.validateNickname,
-  container.getController('playerController').validateNickname
-);
-
-/**
- * @swagger
- * /api/player/{nickname}:
- *   get:
- *     summary: Legacy get playerId by nickname
- *     deprecated: true
- *     tags: [Legacy]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: nickname
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Player found
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Player not found
- */
-app.get('/api/player/:nickname',
-  authenticate,
-  ValidationMiddleware.validateNickname,
-  container.getController('playerController').getPlayerIdByNickname
-);
-
-/**
- * @swagger
- * /api/player/id/{playerId}:
- *   get:
- *     summary: Legacy get player by ID
- *     deprecated: true
- *     tags: [Legacy]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: playerId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Player details
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Player not found
- */
-app.get('/api/player/id/:playerId',
-  authenticate,
-  ValidationMiddleware.validatePlayerId,
-  container.getController('playerController').getPlayerById
-);
-
-/**
- * @swagger
- * /api/player/nickname/{playerId}:
- *   put:
- *     summary: Legacy update player nickname
- *     deprecated: true
- *     tags: [Legacy]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: playerId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - nickname
- *             properties:
- *               nickname:
- *                 type: string
- *     responses:
- *       200:
- *         description: Nickname updated
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Player not found
- */
-app.put('/api/player/nickname/:playerId',
-  authenticate,
-  ValidationMiddleware.validatePlayerId,
-  ValidationMiddleware.validateNickname,
-  container.getController('playerController').updatePlayerNickname
-);
-
-/**
- * @swagger
- * /api/battle-pass/{playerId}:
- *   get:
- *     summary: Legacy get battle pass by playerId
- *     deprecated: true
- *     tags: [Legacy]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: playerId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Battle pass payload
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Battle pass not found
- */
-app.get('/api/battle-pass/:playerId',
-  authenticate,
-  ValidationMiddleware.validatePlayerId,
-  container.getController('battlePassController').getBattlePassByPlayerId
-);
-
-/**
- * @swagger
- * /api/battle-pass/experience:
- *   post:
- *     summary: Legacy add battle pass experience
- *     deprecated: true
- *     tags: [Legacy]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - playerId
- *               - experience
- *             properties:
- *               playerId:
- *                 type: string
- *               experience:
- *                 type: integer
- *                 minimum: 1
- *     responses:
- *       200:
- *         description: Experience updated
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- */
-app.post('/api/battle-pass/experience',
-  authenticate,
-  ValidationMiddleware.validateExperience,
-  container.getController('battlePassController').addExperience
-);
 
 const BattlePassReward = require('./Router/BattlePassRewardRoutes.js');
 const PlayerReward = require('./Router/PlayerRewardRoutes.js');

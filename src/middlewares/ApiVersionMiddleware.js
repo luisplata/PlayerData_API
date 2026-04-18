@@ -31,18 +31,14 @@ class ApiVersionMiddleware {
    * Middleware to handle version-specific logic
    */
   static handleVersion(req, res, next) {
-    // Only treat '/api/<version>/...' as versioned routes.
-    const versionMatch = req.path.match(/^\/api\/([^/]+)/);
+    // Only treat '/api/vN/...' as versioned routes.
+    const versionMatch = req.path.match(/^\/api\/(v\d+)(?:\/|$)/);
     const version = versionMatch ? versionMatch[1] : undefined;
     
     switch (version) {
       case 'v1':
         req.apiVersion = 'v1';
         req.apiVersionNumber = 1;
-        break;
-      case 'v2':
-        req.apiVersion = 'v2';
-        req.apiVersionNumber = 2;
         break;
       case undefined:
         // Legacy routes without version
@@ -55,7 +51,7 @@ class ApiVersionMiddleware {
           error: {
             message: `Unsupported API version: ${version}`,
             statusCode: 400,
-            supportedVersions: ['v1', 'v2']
+            supportedVersions: ['v1']
           }
         });
     }
@@ -79,10 +75,10 @@ class ApiVersionMiddleware {
    */
   static getSupportedVersions() {
     return {
-      current: 'v2',
-      supported: ['v1', 'v2'],
-      deprecated: [],
-      legacy: true
+      current: 'v1',
+      supported: ['v1'],
+      deprecated: ['legacy', 'v2'],
+      legacy: false
     };
   }
 
@@ -99,26 +95,11 @@ class ApiVersionMiddleware {
    */
   static getVersionInfo() {
     return {
-      v2: {
-        version: '2.0.0',
-        status: 'current',
-        releaseDate: '2024-12-15',
-        description: 'Latest version with enhanced features',
-        features: [
-          'Enhanced player profiles with email and avatar',
-          'Refresh token authentication',
-          'Player statistics and achievements',
-          'Advanced preferences system',
-          'Session management',
-          'Token expiration warnings',
-          'All v1 features'
-        ]
-      },
       v1: {
         version: '1.0.0',
-        status: 'stable',
+        status: 'current',
         releaseDate: '2024-12-01',
-        description: 'Stable version with Clean Architecture',
+        description: 'Current active version with Clean Architecture',
         features: [
           'Clean Architecture implementation',
           'Comprehensive validation',
@@ -128,13 +109,17 @@ class ApiVersionMiddleware {
           'Health checks'
         ]
       },
+      v2: {
+        version: '2.0.0',
+        status: 'inactive',
+        description: 'Available in codebase but currently not exposed in runtime routes'
+      },
       legacy: {
         version: '0.9.0',
-        status: 'deprecated',
+        status: 'inactive',
         releaseDate: '2024-11-01',
         deprecationDate: '2025-12-31',
-        description: 'Legacy version for backward compatibility',
-        warning: 'This version will be removed on 2025-12-31'
+        description: 'Legacy routes are disabled in runtime but kept in code for future reference'
       }
     };
   }

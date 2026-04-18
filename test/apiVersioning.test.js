@@ -60,13 +60,15 @@ describe('API Versioning Tests', () => {
         });
     });
 
-    it('should include legacy version info', (done) => {
+    it('should include inactive version info for legacy and v2', (done) => {
       chai.request(app)
         .get('/api/versions')
         .end((err, res) => {
           expect(res).to.have.status(200);
+          expect(res.body.data.versionInfo).to.have.property('v2');
+          expect(res.body.data.versionInfo.v2).to.have.property('status', 'inactive');
           expect(res.body.data.versionInfo).to.have.property('legacy');
-          expect(res.body.data.versionInfo.legacy).to.have.property('status', 'deprecated');
+          expect(res.body.data.versionInfo.legacy).to.have.property('status', 'inactive');
           expect(res.body.data.versionInfo.legacy).to.have.property('deprecationDate');
           done();
         });
@@ -126,22 +128,20 @@ describe('API Versioning Tests', () => {
   });
 
   describe('Legacy API Endpoints', () => {
-    it('should work with legacy player login but show deprecation warning', (done) => {
+    it('should reject legacy player login route', (done) => {
       chai.request(app)
         .post('/api/player/login')
         .send({ playerId: testPlayerId })
         .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res).to.have.header('API-Version', 'v1');
-          expect(res).to.have.header('Warning');
-          expect(res.body).to.have.property('success', true);
-          expect(res.body).to.have.property('apiVersion', 'legacy');
-          expect(res.body).to.have.property('deprecationWarning');
+          expect(res).to.have.status(404);
+          expect(res.body).to.have.property('success', false);
+          expect(res.body.error).to.have.property('message');
+          expect(res.body.error.message).to.include('not found');
           done();
         });
     });
 
-    it('should work with legacy player creation but show deprecation warning', (done) => {
+    it('should reject legacy player creation route', (done) => {
       const newPlayerId = 'legacy_test_' + Date.now();
       const newNickname = 'legacyuser_' + Date.now();
       
@@ -153,12 +153,10 @@ describe('API Versioning Tests', () => {
           key: process.env.PLAYER_API_KEY || 'your_player_key'
         })
         .end((err, res) => {
-          expect(res).to.have.status(201);
-          expect(res).to.have.header('API-Version', 'v1');
-          expect(res).to.have.header('Warning');
-          expect(res.body).to.have.property('success', true);
-          expect(res.body).to.have.property('apiVersion', 'legacy');
-          expect(res.body).to.have.property('deprecationWarning');
+          expect(res).to.have.status(404);
+          expect(res.body).to.have.property('success', false);
+          expect(res.body.error).to.have.property('message');
+          expect(res.body.error.message).to.include('not found');
           done();
         });
     });
@@ -186,6 +184,7 @@ describe('API Versioning Tests', () => {
           expect(res).to.have.status(400);
           expect(res.body.error).to.have.property('supportedVersions');
           expect(res.body.error.supportedVersions).to.include('v1');
+          expect(res.body.error.supportedVersions).to.not.include('v2');
           done();
         });
     });
@@ -203,14 +202,13 @@ describe('API Versioning Tests', () => {
         });
     });
 
-    it('should include deprecation warning headers in legacy responses', (done) => {
+    it('should return unsupported version error on legacy routes', (done) => {
       chai.request(app)
         .get('/api/player/validate/testnickname')
         .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res).to.have.header('API-Version', 'v1');
-          expect(res).to.have.header('Warning');
-          expect(res.headers.warning).to.include('deprecated');
+          expect(res).to.have.status(404);
+          expect(res.body).to.have.property('success', false);
+          expect(res.body.error.message).to.include('not found');
           done();
         });
     });
