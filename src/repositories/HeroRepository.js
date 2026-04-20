@@ -62,6 +62,7 @@ class HeroRepository {
           'h.metadata',
           'h.created_at',
           'h.updated_at',
+          'php.currentXp',
           'php.level'
         )
         .orderBy('h.name', 'asc');

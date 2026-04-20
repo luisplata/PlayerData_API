@@ -4,7 +4,7 @@ const SendAnswerUseCase = require('../../../src/useCases/heroes/SendAnswerUseCas
 describe('SendAnswerUseCase', () => {
   it('accepts correct answer and assigns passive once', async () => {
     let assignCalls = 0;
-    let incrementCalls = 0;
+    let addExperienceCalls = 0;
 
     const dialogRepository = {
       validateAnswer: async () => ({ valid: true }),
@@ -19,6 +19,7 @@ describe('SendAnswerUseCase', () => {
       findByHeroId: async () => ({
         heroId: 'hero-001',
         metadata: JSON.stringify({
+          xpPerLevel: 100,
           minPointsGainedPerConversation: 1,
           pointsGainedPerConversationComplete: 10
         })
@@ -37,9 +38,9 @@ describe('SendAnswerUseCase', () => {
     };
 
     const playerHeroProgressRepository = {
-      incrementLevel: async () => {
-        incrementCalls += 1;
-        return { playerId: 'player-001', heroId: 'hero-001', level: 1 };
+      addExperience: async (playerId, heroId, experienceGain, xpPerLevel) => {
+        addExperienceCalls += 1;
+        return { playerId, heroId, level: 1, currentXp: 1, experienceGain, xpPerLevel };
       }
     };
 
@@ -63,10 +64,10 @@ describe('SendAnswerUseCase', () => {
     expect(result.currentSequence).to.equal('question-1');
     expect(result.nextSequence).to.equal('seq-3');
     expect(result.completed).to.equal(false);
-    expect(result.pointsAwarded).to.equal(1);
+    expect(result.pointsAwarded).to.equal(10);
     expect(result.assignedPassive).to.include({ passiveId: 'passive-001' });
     expect(assignCalls).to.equal(1);
-    expect(incrementCalls).to.equal(1);
+    expect(addExperienceCalls).to.equal(1);
   });
 
   it('blocks duplicate assignment when passive relation already exists', async () => {
@@ -83,6 +84,7 @@ describe('SendAnswerUseCase', () => {
       findByHeroId: async () => ({
         heroId: 'hero-001',
         metadata: JSON.stringify({
+          xpPerLevel: 100,
           minPointsGainedPerConversation: 1,
           pointsGainedPerConversationComplete: 10
         })
@@ -99,6 +101,10 @@ describe('SendAnswerUseCase', () => {
       assignPassive: async () => existingRelation
     };
 
+    const playerHeroProgressRepository = {
+      addExperience: async () => ({ playerId: 'player-001', heroId: 'hero-001', level: 1, currentXp: 1 })
+    };
+
     const transactionService = {
       executeTransaction: async (callback) => callback({})
     };
@@ -108,7 +114,7 @@ describe('SendAnswerUseCase', () => {
       passiveRepository,
       playerPassiveRepository,
       transactionService,
-      null,
+      playerHeroProgressRepository,
       heroRepository
     );
 
@@ -120,12 +126,12 @@ describe('SendAnswerUseCase', () => {
     expect(first.currentSequence).to.equal('question-1');
     expect(first.nextSequence).to.equal('seq-3');
     expect(first.completed).to.equal(false);
-    expect(first.pointsAwarded).to.equal(1);
+    expect(first.pointsAwarded).to.equal(10);
     expect(first.assignedPassive).to.deep.equal(second.assignedPassive);
   });
 
   it('returns incorrect when answer is not valid', async () => {
-    let incrementCalls = 0;
+    let addExperienceCalls = 0;
 
     const dialogRepository = {
       validateAnswer: async () => ({ valid: false }),
@@ -140,6 +146,7 @@ describe('SendAnswerUseCase', () => {
       findByHeroId: async () => ({
         heroId: 'hero-001',
         metadata: JSON.stringify({
+          xpPerLevel: 100,
           minPointsGainedPerConversation: 2,
           pointsGainedPerConversationComplete: 10
         })
@@ -157,9 +164,9 @@ describe('SendAnswerUseCase', () => {
     };
 
     const playerHeroProgressRepository = {
-      incrementLevel: async () => {
-        incrementCalls += 1;
-        return { playerId: 'player-001', heroId: 'hero-001', level: 99 };
+      addExperience: async () => {
+        addExperienceCalls += 1;
+        return { playerId: 'player-001', heroId: 'hero-001', level: 99, currentXp: 3 };
       }
     };
 
@@ -183,9 +190,9 @@ describe('SendAnswerUseCase', () => {
     expect(result.currentSequence).to.equal('question-1');
     expect(result.nextSequence).to.equal('seq-4');
     expect(result.completed).to.equal(false);
-    expect(result.pointsAwarded).to.equal(2);
+    expect(result.pointsAwarded).to.equal(0);
     expect(result.assignedPassive).to.equal(null);
-    expect(incrementCalls).to.equal(0);
+    expect(addExperienceCalls).to.equal(0);
   });
 
   it('awards completion points when conversation is completed', async () => {
@@ -206,10 +213,13 @@ describe('SendAnswerUseCase', () => {
       assignPassive: async () => null
     };
 
+    let addExperienceCalls = 0;
+
     const heroRepository = {
       findByHeroId: async () => ({
         heroId: 'hero-001',
         metadata: JSON.stringify({
+          xpPerLevel: 100,
           minPointsGainedPerConversation: 2,
           pointsGainedPerConversationComplete: 15
         })
@@ -220,12 +230,19 @@ describe('SendAnswerUseCase', () => {
       executeTransaction: async (callback) => callback({})
     };
 
+    const playerHeroProgressRepository = {
+      addExperience: async (playerId, heroId, experienceGain, xpPerLevel) => {
+        addExperienceCalls += 1;
+        return { playerId, heroId, experienceGain, xpPerLevel, level: 2, currentXp: 0 };
+      }
+    };
+
     const useCase = new SendAnswerUseCase(
       dialogRepository,
       passiveRepository,
       playerPassiveRepository,
       transactionService,
-      null,
+      playerHeroProgressRepository,
       heroRepository
     );
 
@@ -237,5 +254,6 @@ describe('SendAnswerUseCase', () => {
     expect(result.nextSequence).to.equal(null);
     expect(result.completed).to.equal(true);
     expect(result.pointsAwarded).to.equal(15);
+    expect(addExperienceCalls).to.equal(1);
   });
 });

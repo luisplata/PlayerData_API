@@ -160,7 +160,7 @@ class HeroController {
    * /api/v1/heroes/player/{playerId}:
    *   get:
    *     summary: Get hero inventory for a player
-   *     description: Returns full hero catalog with stable shape and player progress level defaults.
+    *     description: Returns full hero catalog with stable shape, current XP progress, xp threshold and player progress level defaults.
    *     tags: [Heroes]
    *     security:
    *       - bearerAuth: []

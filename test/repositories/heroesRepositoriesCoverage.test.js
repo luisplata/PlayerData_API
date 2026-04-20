@@ -3,6 +3,7 @@ const HeroRepository = require('../../src/repositories/HeroRepository');
 const PassiveRepository = require('../../src/repositories/PassiveRepository');
 const DialogRepository = require('../../src/repositories/DialogRepository');
 const PlayerPassiveRepository = require('../../src/repositories/PlayerPassiveRepository');
+const PlayerHeroProgressRepository = require('../../src/repositories/PlayerHeroProgressRepository');
 
 describe('Heroes repositories coverage', () => {
   describe('HeroRepository', () => {
@@ -223,6 +224,80 @@ describe('Heroes repositories coverage', () => {
           throw new Error('expected by player/hero fail');
         }).catch((e) => expect(e.message).to.include('Failed to find player passive by hero: where failed'))
       ]);
+    });
+  });
+
+  describe('PlayerHeroProgressRepository', () => {
+    it('covers incrementLevel success path with currentXp reset', async () => {
+      const updates = [];
+      const db = (table) => {
+        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+
+        return {
+          where: () => ({
+            first: async () => ({ id: 1, playerId: 'p1', heroId: 'h1', level: 2, currentXp: 40 }),
+            update: async (payload) => {
+              updates.push(payload);
+              return 1;
+            }
+          }),
+          insert: async () => [3]
+        };
+      };
+
+      const repository = new PlayerHeroProgressRepository(db);
+      const updated = await repository.incrementLevel('p1', 'h1');
+
+      expect(updated).to.include({ playerId: 'p1', heroId: 'h1', level: 3, currentXp: 0 });
+      expect(updates[0]).to.deep.include({ level: 3, currentXp: 0 });
+    });
+
+    it('covers addExperience carry-over across level thresholds', async () => {
+      const updates = [];
+      const db = (table) => {
+        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+
+        return {
+          where: () => ({
+            first: async () => ({ id: 2, playerId: 'p1', heroId: 'h1', level: 1, currentXp: 97 }),
+            update: async (payload) => {
+              updates.push(payload);
+              return 1;
+            }
+          }),
+          insert: async () => [4]
+        };
+      };
+
+      const repository = new PlayerHeroProgressRepository(db);
+      const updated = await repository.addExperience('p1', 'h1', 7, 100);
+
+      expect(updated).to.include({ playerId: 'p1', heroId: 'h1', level: 2, currentXp: 4, levelsGained: 1 });
+      expect(updates[0]).to.deep.include({ level: 2, currentXp: 4 });
+    });
+
+    it('covers create path with currentXp default', async () => {
+      const inserts = [];
+      const db = (table) => {
+        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+
+        return {
+          where: () => ({
+            first: async () => null,
+            update: async () => 0
+          }),
+          insert: async (payload) => {
+            inserts.push(payload);
+            return [7];
+          }
+        };
+      };
+
+      const repository = new PlayerHeroProgressRepository(db);
+      const created = await repository.incrementLevel('p1', 'h1');
+
+      expect(created).to.include({ id: 7, playerId: 'p1', heroId: 'h1', level: 1, currentXp: 0 });
+      expect(inserts[0]).to.deep.include({ playerId: 'p1', heroId: 'h1', level: 1, currentXp: 0 });
     });
   });
 });

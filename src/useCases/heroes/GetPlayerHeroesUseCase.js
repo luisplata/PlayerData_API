@@ -35,7 +35,9 @@ class GetPlayerHeroesUseCase {
   }
 
   hasAnyProgressionMetadata(metadata) {
-    return this.progressionMetadataKeys.some((key) => Object.prototype.hasOwnProperty.call(metadata, key));
+    return this.progressionMetadataKeys.some(key =>
+      Object.prototype.hasOwnProperty.call(metadata, key)
+    );
   }
 
   normalizeMetadata(metadata) {
@@ -57,18 +59,55 @@ class GetPlayerHeroesUseCase {
     return Number.isInteger(level) && level >= 0 ? level : 0;
   }
 
+  normalizeCurrentXp(currentXp) {
+    return Number.isInteger(currentXp) && currentXp >= 0 ? currentXp : 0;
+  }
+
+  normalizeXpPerLevel(metadata) {
+    return Number.isInteger(metadata.xpPerLevel) && metadata.xpPerLevel > 0
+      ? metadata.xpPerLevel
+      : 0;
+  }
+
+  calculateProgress(currentXp, xpPerLevel) {
+    if (xpPerLevel <= 0) {
+      return {
+        xpToNextLevel: 0,
+        progressPct: 0
+      };
+    }
+
+    const clampedCurrentXp = Math.min(currentXp, xpPerLevel);
+    return {
+      xpToNextLevel: Math.max(xpPerLevel - clampedCurrentXp, 0),
+      progressPct: Math.round((clampedCurrentXp / xpPerLevel) * 100)
+    };
+  }
+
   async execute(playerId) {
     try {
-      const heroes = await this.heroRepository.getAllWithPlayerProgress(playerId);
-      const normalizedHeroes = heroes.map((hero) => ({
+      const heroes =
+        await this.heroRepository.getAllWithPlayerProgress(playerId);
+      const normalizedHeroes = heroes.map(hero => ({
         ...hero,
         metadata: this.normalizeMetadata(this.parseMetadata(hero.metadata)),
-        level: this.normalizeLevel(hero.level)
+        level: this.normalizeLevel(hero.level),
+        currentXp: this.normalizeCurrentXp(hero.currentXp)
       }));
+
+      const heroesWithProgress = normalizedHeroes.map(hero => {
+        const xpPerLevel = this.normalizeXpPerLevel(hero.metadata);
+        const progress = this.calculateProgress(hero.currentXp, xpPerLevel);
+
+        return {
+          ...hero,
+          ...progress
+        };
+      });
 
       return {
         success: true,
-        heroes: normalizedHeroes
+        heroes: heroesWithProgress
       };
     } catch (error) {
       return {

@@ -11,7 +11,8 @@ const options = {
     info: {
       title: 'PlayerData API',
       version: '1.0.0',
-      description: 'A RESTful API for managing players and battle pass system using Clean Architecture',
+      description:
+        'A RESTful API for managing players and battle pass system using Clean Architecture',
       contact: {
         name: 'API Support',
         email: 'support@example.com'
@@ -102,7 +103,13 @@ const options = {
           properties: {
             type: {
               type: 'string',
-              enum: ['gold', 'powerup', 'profilePicture', 'profileBackground', 'profileAvatar']
+              enum: [
+                'gold',
+                'powerup',
+                'profilePicture',
+                'profileBackground',
+                'profileAvatar'
+              ]
             },
             body: {
               type: 'object',
@@ -133,7 +140,8 @@ const options = {
             },
             metadata: {
               type: 'object',
-              description: 'Flexible hero metadata payload including progression tuning fields',
+              description:
+                'Flexible hero metadata payload including progression tuning fields',
               properties: {
                 role: {
                   type: 'string',
@@ -149,19 +157,22 @@ const options = {
                   type: 'integer',
                   minimum: 0,
                   example: 2,
-                  description: 'Points lost after a game outcome that applies a penalty'
+                  description:
+                    'Points lost after a game outcome that applies a penalty'
                 },
                 minPointsGainedPerConversation: {
                   type: 'integer',
                   minimum: 0,
                   example: 1,
-                  description: 'Minimum points granted when conversation is attempted but not fully completed'
+                  description:
+                    'Minimum points granted when conversation is attempted but not fully completed'
                 },
                 pointsGainedPerConversationComplete: {
                   type: 'integer',
                   minimum: 0,
                   example: 10,
-                  description: 'Points granted when conversation is fully completed successfully'
+                  description:
+                    'Points granted when conversation is fully completed successfully'
                 }
               },
               additionalProperties: true,
@@ -190,12 +201,31 @@ const options = {
             },
             {
               type: 'object',
-              required: ['level'],
+              required: ['level', 'currentXp'],
               properties: {
                 level: {
                   type: 'integer',
                   minimum: 0,
                   description: 'Player progress level for this hero'
+                },
+                currentXp: {
+                  type: 'integer',
+                  minimum: 0,
+                  description:
+                    'Current XP accumulated within the active hero level'
+                },
+                xpToNextLevel: {
+                  type: 'integer',
+                  minimum: 0,
+                  description:
+                    'Remaining XP needed to reach the next hero level'
+                },
+                progressPct: {
+                  type: 'integer',
+                  minimum: 0,
+                  maximum: 100,
+                  description:
+                    'Derived progress percentage for slider-style UI rendering'
                 }
               }
             }
@@ -263,13 +293,15 @@ const options = {
             question: {
               type: 'string',
               maxLength: 280,
-              description: 'Visible dialog question text. Limited to 280 characters for the UI.'
+              description:
+                'Visible dialog question text. Limited to 280 characters for the UI.'
             },
             order_index: {
               type: 'integer'
             }
           },
-          description: 'Public dialog question payload. Does not expose correct answer keys. The visible text is capped at 280 characters.'
+          description:
+            'Public dialog question payload. Does not expose correct answer keys. The visible text is capped at 280 characters.'
         },
         DialogStartRequest: {
           type: 'object',
@@ -349,21 +381,25 @@ const options = {
             currentSequence: {
               type: 'string',
               nullable: true,
-              description: 'Current dialog node sequence processed by the answer flow.'
+              description:
+                'Current dialog node sequence processed by the answer flow.'
             },
             nextSequence: {
               type: 'string',
               nullable: true,
-              description: 'Next dialog node sequence to render in UI, null when there is no next step.'
+              description:
+                'Next dialog node sequence to render in UI, null when there is no next step.'
             },
             completed: {
               type: 'boolean',
-              description: 'Indicates whether the conversation has reached its terminal step.'
+              description:
+                'Indicates whether the conversation has reached its terminal step.'
             },
             pointsAwarded: {
               type: 'integer',
               minimum: 0,
-              description: 'Points awarded deterministically from hero metadata according to completion state.'
+              description:
+                'Points awarded deterministically from hero metadata according to completion state.'
             }
           }
         },

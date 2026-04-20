@@ -93,8 +93,11 @@ class SendAnswerUseCase {
     return SendAnswerUseCase.normalizeProgress(progress, questionId);
   }
 
-  async resolvePointsAwarded(heroId, completed) {
-    if (!this.heroRepository || typeof this.heroRepository.findByHeroId !== 'function') {
+  async resolvePointsAwarded(heroId, isCorrect) {
+    if (
+      !this.heroRepository ||
+      typeof this.heroRepository.findByHeroId !== 'function'
+    ) {
       return 0;
     }
 
@@ -104,23 +107,27 @@ class SendAnswerUseCase {
     }
 
     const metadata = SendAnswerUseCase.parseMetadata(hero.metadata);
-    if (completed) {
+    if (isCorrect) {
       return SendAnswerUseCase.asNonNegativeInteger(
         metadata.pointsGainedPerConversationComplete
       );
     }
 
-    return SendAnswerUseCase.asNonNegativeInteger(
-      metadata.minPointsGainedPerConversation
-    );
+    return 0;
   }
 
   async execute(playerId, heroId, questionId, answer) {
     try {
       return await this.transactionService.executeTransaction(async () => {
-        const validation = await this.dialogRepository.validateAnswer(questionId, answer);
+        const validation = await this.dialogRepository.validateAnswer(
+          questionId,
+          answer
+        );
         const progress = await this.resolveProgress(heroId, questionId, answer);
-        const pointsAwarded = await this.resolvePointsAwarded(heroId, progress.completed);
+        const pointsAwarded = await this.resolvePointsAwarded(
+          heroId,
+          validation.valid
+        );
 
         if (!validation.valid) {
           return {
@@ -136,9 +143,36 @@ class SendAnswerUseCase {
 
         if (
           this.playerHeroProgressRepository &&
+          typeof this.playerHeroProgressRepository.addExperience === 'function'
+        ) {
+          const hero =
+            this.heroRepository &&
+            typeof this.heroRepository.findByHeroId === 'function'
+              ? await this.heroRepository.findByHeroId(heroId)
+              : null;
+          const heroMetadata = SendAnswerUseCase.parseMetadata(
+            hero ? hero.metadata : null
+          );
+          const xpPerLevel = SendAnswerUseCase.asNonNegativeInteger(
+            heroMetadata.xpPerLevel
+          );
+
+          if (xpPerLevel > 0) {
+            await this.playerHeroProgressRepository.addExperience(
+              playerId,
+              heroId,
+              pointsAwarded,
+              xpPerLevel
+            );
+          }
+        } else if (
+          this.playerHeroProgressRepository &&
           typeof this.playerHeroProgressRepository.incrementLevel === 'function'
         ) {
-          await this.playerHeroProgressRepository.incrementLevel(playerId, heroId);
+          await this.playerHeroProgressRepository.incrementLevel(
+            playerId,
+            heroId
+          );
         }
 
         const passives = await this.passiveRepository.findByHeroId(heroId);
