@@ -45,6 +45,30 @@ class HeroRepository {
       throw new Error(`Failed to find hero by ID: ${error.message}`);
     }
   }
+
+  async getAllWithPlayerProgress(playerId) {
+    try {
+      const db = this.db;
+
+      return await this.db('heroes as h')
+        .leftJoin('player_hero_progress as php', function() {
+          this.on('h.heroId', '=', 'php.heroId')
+            .andOn('php.playerId', '=', db.raw('?', [playerId]));
+        })
+        .select(
+          'h.id',
+          'h.heroId',
+          'h.name',
+          'h.metadata',
+          'h.created_at',
+          'h.updated_at',
+          'php.level'
+        )
+        .orderBy('h.name', 'asc');
+    } catch (error) {
+      throw new Error(`Failed to find heroes with player progress: ${error.message}`);
+    }
+  }
 }
 
 module.exports = HeroRepository;

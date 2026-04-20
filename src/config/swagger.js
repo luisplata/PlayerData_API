@@ -146,6 +146,36 @@ const options = {
             }
           }
         },
+        PlayerHeroInventoryItem: {
+          allOf: [
+            {
+              $ref: '#/components/schemas/Hero'
+            },
+            {
+              type: 'object',
+              required: ['level'],
+              properties: {
+                level: {
+                  type: 'integer',
+                  minimum: 0,
+                  description: 'Player progress level for this hero'
+                }
+              }
+            }
+          ]
+        },
+        PlayerHeroInventoryResponseData: {
+          type: 'object',
+          required: ['heroes'],
+          properties: {
+            heroes: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/PlayerHeroInventoryItem'
+              }
+            }
+          }
+        },
         Passive: {
           type: 'object',
           required: ['passiveId', 'heroId', 'name'],

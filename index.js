@@ -103,6 +103,12 @@ v1Router.get('/heroes',
   container.getController('heroController').getHeroList
 );
 
+v1Router.get('/heroes/player/:playerId',
+  authenticate,
+  ValidationMiddleware.validatePlayerId,
+  container.getController('heroController').getPlayerHeroes
+);
+
 v1Router.post('/heroes/dialog/start',
   authenticate,
   ValidationMiddleware.validateDialogStart,

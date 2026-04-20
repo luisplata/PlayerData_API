@@ -8,12 +8,14 @@
  */
 const CreateHeroUseCase = require('../useCases/heroes/CreateHeroUseCase');
 const GetHeroListUseCase = require('../useCases/heroes/GetHeroListUseCase');
+const GetPlayerHeroesUseCase = require('../useCases/heroes/GetPlayerHeroesUseCase');
 const ErrorHandlerMiddleware = require('../middlewares/ErrorHandlerMiddleware');
 
 class HeroController {
   constructor(heroRepository) {
     this.createHeroUseCase = new CreateHeroUseCase(heroRepository);
     this.getHeroListUseCase = new GetHeroListUseCase(heroRepository);
+    this.getPlayerHeroesUseCase = new GetPlayerHeroesUseCase(heroRepository);
   }
 
   /**
@@ -131,6 +133,75 @@ class HeroController {
    */
   getHeroList = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const result = await this.getHeroListUseCase.execute();
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        error: {
+          message: result.error,
+          statusCode: 500
+        }
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        heroes: result.heroes
+      }
+    });
+  });
+
+  /**
+   * @swagger
+   * /api/v1/heroes/player/{playerId}:
+   *   get:
+   *     summary: Get hero inventory for a player
+   *     description: Returns full hero catalog with stable shape and player progress level defaults.
+   *     tags: [Heroes]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: playerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           pattern: '^[a-zA-Z0-9_-]+$'
+   *         description: Player identifier
+   *     responses:
+   *       200:
+   *         description: Player hero inventory returned successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               allOf:
+   *                 - $ref: '#/components/schemas/Success'
+   *                 - type: object
+   *                   properties:
+   *                     data:
+   *                       type: object
+   *                       properties:
+   *                         heroes:
+   *                           type: array
+   *                           items:
+   *                             $ref: '#/components/schemas/PlayerHeroInventoryItem'
+   *       401:
+   *         description: Missing or invalid bearer token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Server error while loading player heroes
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
+  getPlayerHeroes = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
+    const { playerId } = req.params;
+
+    const result = await this.getPlayerHeroesUseCase.execute(playerId);
     if (!result.success) {
       return res.status(500).json({
         success: false,

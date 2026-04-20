@@ -4,6 +4,7 @@ const SendAnswerUseCase = require('../../../src/useCases/heroes/SendAnswerUseCas
 describe('SendAnswerUseCase', () => {
   it('accepts correct answer and assigns passive once', async () => {
     let assignCalls = 0;
+    let incrementCalls = 0;
 
     const dialogRepository = {
       validateAnswer: async () => ({ valid: true })
@@ -20,6 +21,13 @@ describe('SendAnswerUseCase', () => {
       }
     };
 
+    const playerHeroProgressRepository = {
+      incrementLevel: async () => {
+        incrementCalls += 1;
+        return { playerId: 'player-001', heroId: 'hero-001', level: 1 };
+      }
+    };
+
     const transactionService = {
       executeTransaction: async (callback) => callback({})
     };
@@ -28,7 +36,8 @@ describe('SendAnswerUseCase', () => {
       dialogRepository,
       passiveRepository,
       playerPassiveRepository,
-      transactionService
+      transactionService,
+      playerHeroProgressRepository
     );
 
     const result = await useCase.execute('player-001', 'hero-001', 'q1', 'yes');
@@ -37,6 +46,7 @@ describe('SendAnswerUseCase', () => {
     expect(result.correct).to.equal(true);
     expect(result.assignedPassive).to.include({ passiveId: 'passive-001' });
     expect(assignCalls).to.equal(1);
+    expect(incrementCalls).to.equal(1);
   });
 
   it('blocks duplicate assignment when passive relation already exists', async () => {
@@ -74,6 +84,8 @@ describe('SendAnswerUseCase', () => {
   });
 
   it('returns incorrect when answer is not valid', async () => {
+    let incrementCalls = 0;
+
     const dialogRepository = {
       validateAnswer: async () => ({ valid: false })
     };
@@ -88,6 +100,13 @@ describe('SendAnswerUseCase', () => {
       }
     };
 
+    const playerHeroProgressRepository = {
+      incrementLevel: async () => {
+        incrementCalls += 1;
+        return { playerId: 'player-001', heroId: 'hero-001', level: 99 };
+      }
+    };
+
     const transactionService = {
       executeTransaction: async (callback) => callback({})
     };
@@ -96,7 +115,8 @@ describe('SendAnswerUseCase', () => {
       dialogRepository,
       passiveRepository,
       playerPassiveRepository,
-      transactionService
+      transactionService,
+      playerHeroProgressRepository
     );
 
     const result = await useCase.execute('player-001', 'hero-001', 'q1', 'wrong');
@@ -104,5 +124,6 @@ describe('SendAnswerUseCase', () => {
     expect(result.success).to.equal(true);
     expect(result.correct).to.equal(false);
     expect(result.assignedPassive).to.equal(null);
+    expect(incrementCalls).to.equal(0);
   });
 });

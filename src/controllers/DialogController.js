@@ -15,14 +15,16 @@ class DialogController {
     dialogRepository,
     passiveRepository,
     playerPassiveRepository,
-    transactionService
+    transactionService,
+    playerHeroProgressRepository
   ) {
     this.startDialogUseCase = new StartDialogUseCase(dialogRepository);
     this.sendAnswerUseCase = new SendAnswerUseCase(
       dialogRepository,
       passiveRepository,
       playerPassiveRepository,
-      transactionService
+      transactionService,
+      playerHeroProgressRepository
     );
   }
 

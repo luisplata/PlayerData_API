@@ -8,19 +8,19 @@
 
 ## Phase 2: Repositories and Use Cases (TDD)
 
-- [ ] 2.1 RED: create `test/useCases/heroes/GetPlayerHeroesUseCase.test.js` covering full catalog + default `level=0` + mixed progress.
-- [ ] 2.2 GREEN: create `src/useCases/heroes/GetPlayerHeroesUseCase.js` and satisfy tests from 2.1.
-- [ ] 2.3 REFACTOR: modify `src/repositories/HeroRepository.js` with `getAllWithPlayerProgress(playerId)` using left join and deterministic mapping.
-- [ ] 2.4 Create `src/repositories/PlayerHeroProgressRepository.js` with `getByPlayerAndHero` and `incrementLevel` helpers.
-- [ ] 2.5 RED: extend `test/useCases/heroes/SendAnswerUseCase.test.js` asserting level increments only on correct answers.
-- [ ] 2.6 GREEN: modify `src/useCases/heroes/SendAnswerUseCase.js` to call progress increment inside existing transaction.
+- [x] 2.1 RED: create `test/useCases/heroes/GetPlayerHeroesUseCase.test.js` covering full catalog + default `level=0` + mixed progress.
+- [x] 2.2 GREEN: create `src/useCases/heroes/GetPlayerHeroesUseCase.js` and satisfy tests from 2.1.
+- [x] 2.3 REFACTOR: modify `src/repositories/HeroRepository.js` with `getAllWithPlayerProgress(playerId)` using left join and deterministic mapping.
+- [x] 2.4 Create `src/repositories/PlayerHeroProgressRepository.js` with `getByPlayerAndHero` and `incrementLevel` helpers.
+- [x] 2.5 RED: extend `test/useCases/heroes/SendAnswerUseCase.test.js` asserting level increments only on correct answers.
+- [x] 2.6 GREEN: modify `src/useCases/heroes/SendAnswerUseCase.js` to call progress increment inside existing transaction.
 
 ## Phase 3: HTTP Wiring
 
-- [ ] 3.1 Modify `src/controllers/HeroController.js` adding `getPlayerHeroes` action and response DTO `{ heroes: [...] }`.
-- [ ] 3.2 Modify `src/config/DependencyContainer.js` to wire `PlayerHeroProgressRepository` and `GetPlayerHeroesUseCase` dependencies.
-- [ ] 3.3 Modify `index.js` to register `GET /api/v1/heroes/player/:playerId` with `authenticate` and `ValidationMiddleware.validatePlayerId`.
-- [ ] 3.4 Update `src/config/swagger.js` and controller annotations for the new endpoint schema.
+- [x] 3.1 Modify `src/controllers/HeroController.js` adding `getPlayerHeroes` action and response DTO `{ heroes: [...] }`.
+- [x] 3.2 Modify `src/config/DependencyContainer.js` to wire `PlayerHeroProgressRepository` and `GetPlayerHeroesUseCase` dependencies.
+- [x] 3.3 Modify `index.js` to register `GET /api/v1/heroes/player/:playerId` with `authenticate` and `ValidationMiddleware.validatePlayerId`.
+- [x] 3.4 Update `src/config/swagger.js` and controller annotations for the new endpoint schema.
 
 ## Phase 4: Integration and Contract Verification
 

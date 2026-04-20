@@ -5,11 +5,18 @@ const TransactionService = require('../../services/TransactionService');
  * Validates answers and assigns a passive atomically when correct.
  */
 class SendAnswerUseCase {
-  constructor(dialogRepository, passiveRepository, playerPassiveRepository, transactionService = null) {
+  constructor(
+    dialogRepository,
+    passiveRepository,
+    playerPassiveRepository,
+    transactionService = null,
+    playerHeroProgressRepository = null
+  ) {
     this.dialogRepository = dialogRepository;
     this.passiveRepository = passiveRepository;
     this.playerPassiveRepository = playerPassiveRepository;
     this.transactionService = transactionService || new TransactionService();
+    this.playerHeroProgressRepository = playerHeroProgressRepository;
   }
 
   async execute(playerId, heroId, questionId, answer) {
@@ -23,6 +30,13 @@ class SendAnswerUseCase {
             correct: false,
             assignedPassive: null
           };
+        }
+
+        if (
+          this.playerHeroProgressRepository &&
+          typeof this.playerHeroProgressRepository.incrementLevel === 'function'
+        ) {
+          await this.playerHeroProgressRepository.incrementLevel(playerId, heroId);
         }
 
         const passives = await this.passiveRepository.findByHeroId(heroId);

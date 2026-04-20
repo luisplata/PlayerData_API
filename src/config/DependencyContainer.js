@@ -16,6 +16,7 @@ const HeroRepository = require('../repositories/HeroRepository');
 const PassiveRepository = require('../repositories/PassiveRepository');
 const DialogRepository = require('../repositories/DialogRepository');
 const PlayerPassiveRepository = require('../repositories/PlayerPassiveRepository');
+const PlayerHeroProgressRepository = require('../repositories/PlayerHeroProgressRepository');
 
 // Controllers
 const PlayerController = require('../controllers/PlayerController');
@@ -51,6 +52,7 @@ class DependencyContainer {
     this.repositories.passiveRepository = new PassiveRepository(db);
     this.repositories.dialogRepository = new DialogRepository(db);
     this.repositories.playerPassiveRepository = new PlayerPassiveRepository(db);
+    this.repositories.playerHeroProgressRepository = new PlayerHeroProgressRepository(db);
 
     // Initialize controllers
     this.controllers.playerController = new PlayerController(
@@ -77,7 +79,8 @@ class DependencyContainer {
       this.repositories.dialogRepository,
       this.repositories.passiveRepository,
       this.repositories.playerPassiveRepository,
-      this.services.transactionService
+      this.services.transactionService,
+      this.repositories.playerHeroProgressRepository
     );
 
     this.controllers.passiveController = new PassiveController(
