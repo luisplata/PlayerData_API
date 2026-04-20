@@ -133,8 +133,45 @@ const options = {
             },
             metadata: {
               type: 'object',
-              description: 'Flexible hero metadata payload',
-              additionalProperties: true
+              description: 'Flexible hero metadata payload including progression tuning fields',
+              properties: {
+                role: {
+                  type: 'string',
+                  example: 'support'
+                },
+                xpPerLevel: {
+                  type: 'integer',
+                  minimum: 1,
+                  example: 100,
+                  description: 'Experience points required to level up the hero'
+                },
+                pointsLostPerGame: {
+                  type: 'integer',
+                  minimum: 0,
+                  example: 2,
+                  description: 'Points lost after a game outcome that applies a penalty'
+                },
+                minPointsGainedPerConversation: {
+                  type: 'integer',
+                  minimum: 0,
+                  example: 1,
+                  description: 'Minimum points granted when conversation is attempted but not fully completed'
+                },
+                pointsGainedPerConversationComplete: {
+                  type: 'integer',
+                  minimum: 0,
+                  example: 10,
+                  description: 'Points granted when conversation is fully completed successfully'
+                }
+              },
+              additionalProperties: true,
+              example: {
+                role: 'support',
+                xpPerLevel: 100,
+                pointsLostPerGame: 2,
+                minPointsGainedPerConversation: 1,
+                pointsGainedPerConversationComplete: 10
+              }
             },
             created_at: {
               type: 'string',

@@ -47,6 +47,10 @@ class HeroController {
    *                 additionalProperties: true
    *                 example:
    *                   role: support
+  *                   xpPerLevel: 100
+  *                   pointsLostPerGame: 2
+  *                   minPointsGainedPerConversation: 1
+  *                   pointsGainedPerConversationComplete: 10
    *     responses:
    *       201:
    *         description: Hero created successfully

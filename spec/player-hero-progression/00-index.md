@@ -1,7 +1,7 @@
 # SDD Process - player-hero-progression
 
 ## Overview
-Documentacion del flujo SDD para definir parametros de progresion por heroe: EXP por nivel, puntos perdidos por game y puntos ganados por conversacion.
+Documentacion del flujo SDD para definir parametros de progresion por heroe: EXP por nivel, puntos perdidos por game, puntos minimos por conversacion y puntos por conversacion completa.
 
 ## Steps
 1. Explore: `01-explore.md`
@@ -21,7 +21,7 @@ Documentacion del flujo SDD para definir parametros de progresion por heroe: EXP
 - Tasks: completed
 - Apply: completed
 - Verify: completed
-- Archive: pending
+- Archive: completed
 
 ## Change Summary
 - Configurar progresion por heroe sin agregar columnas nuevas, usando `heroes.metadata`.
