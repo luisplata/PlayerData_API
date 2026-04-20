@@ -1,6 +1,10 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const { expect } = chai;
+
+process.env.RATE_LIMIT_MAX_LOGIN = process.env.RATE_LIMIT_MAX_LOGIN || '1000';
+process.env.RATE_LIMIT_MAX_VALIDATE = process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
+
 const app = require('../index');
 
 chai.use(chaiHttp);
@@ -193,7 +197,8 @@ describe('API Versioning Tests', () => {
   describe('Response Headers', () => {
     it('should include API version headers in v1 responses', (done) => {
       chai.request(app)
-        .get('/api/v1/player/validate/testnickname')
+        .post('/api/v1/player/login')
+        .send({ playerId: testPlayerId })
         .end((err, res) => {
           expect(res).to.have.status(200);
           expect(res).to.have.header('API-Version', 'v1');

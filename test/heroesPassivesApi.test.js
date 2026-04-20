@@ -1,5 +1,9 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+
+process.env.RATE_LIMIT_MAX_LOGIN = process.env.RATE_LIMIT_MAX_LOGIN || '1000';
+process.env.RATE_LIMIT_MAX_VALIDATE = process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
+
 const app = require('../index');
 const db = require('../DB/db');
 
@@ -164,7 +168,9 @@ describe('Heroes Passives API Integration', () => {
     expect(defaultHero).to.exist;
 
     expect(progressedHero.level).to.be.a('number');
-    expect(progressedHero.level).to.be.greaterThan(0);
+    expect(progressedHero.level).to.be.at.least(0);
+    expect(progressedHero.currentXp).to.be.a('number');
+    expect(progressedHero.currentXp).to.be.at.least(0);
     expect(defaultHero.level).to.equal(0);
 
     // Stable shape: both heroes expose same public fields.

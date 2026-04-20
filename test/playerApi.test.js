@@ -1,129 +1,123 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const { expect } = chai;
-const app = require('../index'); // Asegúrate de exportar `app` desde `index.js` para poder importarlo aquí
+
+process.env.RATE_LIMIT_MAX_LOGIN = process.env.RATE_LIMIT_MAX_LOGIN || '1000';
+process.env.RATE_LIMIT_MAX_VALIDATE = process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
+
+const app = require('../index');
 
 chai.use(chaiHttp);
 
 describe('Player API', () => {
-  let playerId1;
+  const suffix = Date.now();
+  const playerId = `player_api_${suffix}`;
+  const nickname = `playernick_${suffix}`;
+  const apiKey = process.env.PLAYER_API_KEY || 'your_player_key';
+  let authToken;
 
-  // Prueba para agregar un jugador
-  it('should add a new player', (done) => {
-    chai.request(app)
-      .post('/api/player')
-      .send({ playerId: 'player1_id', nickname: 'player1' })
-      .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('nickname', 'player1');
-        expect(res.body).to.have.property('playerId', 'player1_id');
-        expect(res.body).to.have.property('id');
-        playerId1 = res.body.id; // Guardar el id generado para otras pruebas
-        done();
-      });
+  it('should add a new player in v1', async () => {
+    const res = await chai.request(app)
+      .post('/api/v1/player')
+      .send({ playerId, nickname, key: apiKey });
+
+    expect(res).to.have.status(201);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('playerId', playerId);
+    expect(res.body.data).to.have.property('nickname', nickname);
   });
 
-  // Prueba para validar si un nickname está disponible
-  it('should return true if nickname is available', (done) => {
-    chai.request(app)
-      .get('/api/player/validate/player3')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.true;
-        done();
-      });
+  it('should login and return JWT token', async () => {
+    const res = await chai.request(app)
+      .post('/api/v1/player/login')
+      .send({ playerId });
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('token');
+    authToken = res.body.data.token;
   });
 
-  // Prueba para validar si un nickname no está disponible
-  it('should return false if nickname is taken', (done) => {
-    chai.request(app)
-      .get('/api/player/validate/player1')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.false;
-        done();
-      });
+  it('should return false availability when nickname is taken', async () => {
+    const res = await chai.request(app)
+      .get(`/api/v1/player/validate/${nickname}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('available', false);
   });
 
-  // Prueba para obtener un Player ID por nickname
-  it('should return player ID when nickname exists', (done) => {
-    chai.request(app)
-      .get('/api/player/player1')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('playerId', 'player1_id');
-        done();
-      });
+  it('should return true availability when nickname is free', async () => {
+    const res = await chai.request(app)
+      .get(`/api/v1/player/validate/free_${suffix}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('available', true);
   });
 
-  // Prueba para manejar cuando el nickname no existe
-  it('should return 404 when nickname does not exist', (done) => {
-    chai.request(app)
-      .get('/api/player/unknown_player')
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body).to.have.property('message', 'Player not found');
-        done();
-      });
+  it('should return player ID when nickname exists', async () => {
+    const res = await chai.request(app)
+      .get(`/api/v1/player/${nickname}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('playerId', playerId);
   });
 
-  // Prueba para obtener un jugador por ID
-  it('should return player details when player ID exists', (done) => {
-    chai.request(app)
-      .get(`/api/player/id/${playerId1}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('id', playerId1);
-        expect(res.body).to.have.property('nickname', 'player1');
-        expect(res.body).to.have.property('playerId', 'player1_id');
-        done();
-      });
+  it('should return 404 when nickname does not exist', async () => {
+    const res = await chai.request(app)
+      .get(`/api/v1/player/unknown_${suffix}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(res).to.have.status(404);
+    expect(res.body).to.have.property('success', false);
   });
 
-  // Prueba para manejar cuando el ID del jugador no existe
-  it('should return 404 when player ID does not exist', (done) => {
-    chai.request(app)
-      .get('/api/player/id/99999')
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body).to.have.property('message', 'Player not found');
-        done();
-      });
+  it('should return player details when player ID exists', async () => {
+    const res = await chai.request(app)
+      .get(`/api/v1/player/id/${playerId}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body.data).to.have.property('playerId', playerId);
+    expect(res.body.data).to.have.property('nickname', nickname);
   });
-  // Prueba para actualizar el nickname de un jugador por playerId
-it('should update the nickname of a player', (done) => {
-  // Simula la respuesta de la base de datos para la actualización
-  dbStub.yields(1); // 1 fila actualizada
 
-  chai.request(app)
-    .put('/api/player/nickname/player1_id')
-    .send({ nickname: 'new_nickname' })
-    .end((err, res) => {
-      expect(res).to.have.status(200);
-      expect(res.body).to.be.an('object');
-      expect(res.body).to.have.property('message', 'Nickname updated successfully');
-      done();
-    });
-});
+  it('should return 404 when player ID does not exist', async () => {
+    const res = await chai.request(app)
+      .get('/api/v1/player/id/not_existing_player')
+      .set('Authorization', `Bearer ${authToken}`);
 
-// Prueba para el caso en que el jugador no se encuentra
-it('should return 404 if player is not found', (done) => {
-  // Simula la respuesta de la base de datos para la actualización
-  dbStub.yields(0); // 0 filas actualizadas
+    expect(res).to.have.status(404);
+    expect(res.body).to.have.property('success', false);
+  });
 
-  chai.request(app)
-    .put('/api/player/nickname/nonexistent_player_id')
-    .send({ nickname: 'new_nickname' })
-    .end((err, res) => {
-      expect(res).to.have.status(404);
-      expect(res.body).to.be.an('object');
-      expect(res.body).to.have.property('message', 'Player not found');
-      done();
-    });
-});
+  it('should update the nickname of a player', async () => {
+    const newNickname = `updated_${suffix}`;
+    const res = await chai.request(app)
+      .put(`/api/v1/player/nickname/${playerId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ nickname: newNickname });
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('success', true);
+    expect(res.body).to.have.property('message', 'Nickname updated successfully');
+  });
+
+  it('should return 404 if player is not found when updating nickname', async () => {
+    const res = await chai.request(app)
+      .put('/api/v1/player/nickname/nonexistent_player_id')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ nickname: `new_${suffix}` });
+
+    expect(res).to.have.status(404);
+    expect(res.body).to.have.property('success', false);
+  });
 });
 
 describe('Player API Security', () => {
