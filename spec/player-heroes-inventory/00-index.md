@@ -21,7 +21,7 @@ Documentacion del inventario de heroes por player, incluyendo nivel de conversac
 - Tasks: completed
 - Apply: completed
 - Verify: completed
-- Archive: pending
+- Archive: completed
 
 ## Change Summary
 - Exponer todos los heroes para un player, incluso si no inicio conversacion.
