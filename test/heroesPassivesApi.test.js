@@ -11,6 +11,7 @@ describe('Heroes Passives API Integration', () => {
   const playerId = `hero_player_${suffix}`;
   const secondPlayerId = `hero_player_no_passive_${suffix}`;
   const heroId = `hero_${suffix}`;
+  const secondHeroId = `hero_second_${suffix}`;
   const passiveId = `passive_${suffix}`;
   const dialogIdRef = `dialog_${suffix}`;
   const questionId = `question_${suffix}`;
@@ -65,6 +66,19 @@ describe('Heroes Passives API Integration', () => {
 
     const heroRow = await db('heroes').where({ heroId }).first();
     expect(heroRow).to.exist;
+
+    const createSecondHeroResponse = await chai.request(app)
+      .post('/api/v1/heroes')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        heroId: secondHeroId,
+        name: 'Blaze',
+        metadata: { role: 'tank' }
+      });
+
+    expect(createSecondHeroResponse).to.have.status(201);
+    expect(createSecondHeroResponse.body.success).to.equal(true);
+    expect(createSecondHeroResponse.body.data).to.include({ heroId: secondHeroId, name: 'Blaze' });
 
     await db('passives').insert({
       passiveId,
@@ -127,6 +141,44 @@ describe('Heroes Passives API Integration', () => {
     expect(sendAnswerResponse.body.data.correct).to.equal(true);
     expect(sendAnswerResponse.body.data.assignedPassive).to.have.property('passiveId', passiveId);
 
+    // Phase 4 - inventory endpoint contract and behavior
+    const inventoryWithMixedProgressResponse = await chai.request(app)
+      .get(`/api/v1/heroes/player/${playerId}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(inventoryWithMixedProgressResponse).to.have.status(200);
+    expect(inventoryWithMixedProgressResponse.body.success).to.equal(true);
+    expect(inventoryWithMixedProgressResponse.body.data).to.have.property('heroes');
+    expect(inventoryWithMixedProgressResponse.body.data.heroes).to.be.an('array').that.has.length.at.least(2);
+
+    const mixedHeroes = inventoryWithMixedProgressResponse.body.data.heroes.filter(
+      (hero) => hero.heroId === heroId || hero.heroId === secondHeroId
+    );
+
+    expect(mixedHeroes).to.have.length(2);
+
+    const progressedHero = mixedHeroes.find((hero) => hero.heroId === heroId);
+    const defaultHero = mixedHeroes.find((hero) => hero.heroId === secondHeroId);
+
+    expect(progressedHero).to.exist;
+    expect(defaultHero).to.exist;
+
+    expect(progressedHero.level).to.be.a('number');
+    expect(progressedHero.level).to.be.greaterThan(0);
+    expect(defaultHero.level).to.equal(0);
+
+    // Stable shape: both heroes expose same public fields.
+    ['heroId', 'name', 'metadata', 'level'].forEach((field) => {
+      expect(progressedHero).to.have.property(field);
+      expect(defaultHero).to.have.property(field);
+    });
+
+    // Contract verification: do not expose internal dialog scoring/evaluation fields.
+    ['correct_answer', 'answer', 'points', 'scoring', 'evaluation', 'score'].forEach((field) => {
+      expect(progressedHero).to.not.have.property(field);
+      expect(defaultHero).to.not.have.property(field);
+    });
+
     const sendDuplicateAnswerResponse = await chai.request(app)
       .post('/api/v1/heroes/dialog/answer')
       .set('Authorization', `Bearer ${authToken}`)
@@ -159,5 +211,25 @@ describe('Heroes Passives API Integration', () => {
     expect(getPassiveNoAssignedResponse.body.success).to.equal(true);
     expect(getPassiveNoAssignedResponse.body.data.assignedPassive).to.equal(null);
     expect(getPassiveNoAssignedResponse.body.data.catalog).to.be.an('array');
+
+    const inventoryWithoutHistoryResponse = await chai.request(app)
+      .get(`/api/v1/heroes/player/${secondPlayerId}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(inventoryWithoutHistoryResponse).to.have.status(200);
+    expect(inventoryWithoutHistoryResponse.body.success).to.equal(true);
+    expect(inventoryWithoutHistoryResponse.body.data.heroes).to.be.an('array').that.has.length.at.least(2);
+
+    const secondPlayerHeroes = inventoryWithoutHistoryResponse.body.data.heroes.filter(
+      (hero) => hero.heroId === heroId || hero.heroId === secondHeroId
+    );
+
+    expect(secondPlayerHeroes).to.have.length(2);
+    secondPlayerHeroes.forEach((hero) => {
+      expect(hero.level).to.equal(0);
+      ['heroId', 'name', 'metadata', 'level'].forEach((field) => {
+        expect(hero).to.have.property(field);
+      });
+    });
   });
 });

@@ -24,10 +24,10 @@
 
 ## Phase 4: Integration and Contract Verification
 
-- [ ] 4.1 RED: extend `test/heroesPassivesApi.test.js` with inventory endpoint scenarios (no history, mixed history, all heroes returned).
-- [ ] 4.2 GREEN: implement minimal fixes until new integration tests pass.
-- [ ] 4.3 Add assertions that inventory response never exposes scoring/evaluation internals.
-- [ ] 4.4 Verify stable shape: every hero item includes same public fields even when no progress exists.
+- [x] 4.1 RED: extend `test/heroesPassivesApi.test.js` with inventory endpoint scenarios (no history, mixed history, all heroes returned).
+- [x] 4.2 GREEN: implement minimal fixes until new integration tests pass.
+- [x] 4.3 Add assertions that inventory response never exposes scoring/evaluation internals.
+- [x] 4.4 Verify stable shape: every hero item includes same public fields even when no progress exists.
 
 ## Phase 5: SDD Apply/Verify Docs
 
