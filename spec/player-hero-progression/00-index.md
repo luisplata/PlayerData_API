@@ -19,8 +19,8 @@ Documentacion del flujo SDD para definir parametros de progresion por heroe: EXP
 - Spec: completed
 - Design: completed
 - Tasks: completed
-- Apply: pending
-- Verify: pending
+- Apply: completed
+- Verify: completed
 - Archive: pending
 
 ## Change Summary

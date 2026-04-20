@@ -19,6 +19,39 @@ describe('Heroes domain entities', () => {
 
       expect(() => hero.validate()).to.throw('Hero ID is required and must be a string');
     });
+
+    it('validates hero progression metadata fields', () => {
+      const hero = new Hero('hero-010', 'Nova', {
+        xpPerLevel: 100,
+        pointsLostPerGame: 2,
+        minPointsGainedPerConversation: 1,
+        pointsGainedPerConversationComplete: 10
+      });
+
+      expect(() => hero.validate()).to.not.throw();
+    });
+
+    it('rejects invalid progression metadata when xpPerLevel is not positive integer', () => {
+      const hero = new Hero('hero-011', 'Nova', {
+        xpPerLevel: 0,
+        pointsLostPerGame: 2,
+        minPointsGainedPerConversation: 1,
+        pointsGainedPerConversationComplete: 10
+      });
+
+      expect(() => hero.validate()).to.throw('xpPerLevel must be a positive integer');
+    });
+
+    it('rejects invalid progression metadata when pointsGainedPerConversationComplete is lower than minimum points', () => {
+      const hero = new Hero('hero-012', 'Nova', {
+        xpPerLevel: 100,
+        pointsLostPerGame: 2,
+        minPointsGainedPerConversation: 5,
+        pointsGainedPerConversationComplete: 1
+      });
+
+      expect(() => hero.validate()).to.throw('pointsGainedPerConversationComplete must be greater than or equal to minPointsGainedPerConversation');
+    });
   });
 
   describe('Passive', () => {
