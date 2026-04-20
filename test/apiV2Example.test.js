@@ -4,6 +4,7 @@ const { expect } = chai;
 
 process.env.RATE_LIMIT_MAX_LOGIN = process.env.RATE_LIMIT_MAX_LOGIN || '1000';
 process.env.RATE_LIMIT_MAX_VALIDATE = process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
+process.env.PLAYER_API_KEY = process.env.PLAYER_API_KEY || 'your_player_key';
 
 const app = require('../index');
 

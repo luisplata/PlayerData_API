@@ -15,6 +15,7 @@
         "test": "npm run test:unit",
         "test:unit": "mocha \"test/{controllers,entities,middlewares,migrations,repositories,useCases}/**/*.test.js\"",
         "test:integration": "mocha \"test/*.test.js\"",
+        "test:all": "npm run test:unit && npm run test:integration",
         "test:watch": "mocha --watch",
         "test:coverage": "nyc mocha",
         "lint": "eslint .",
