@@ -10,25 +10,127 @@ class SendAnswerUseCase {
     passiveRepository,
     playerPassiveRepository,
     transactionService = null,
-    playerHeroProgressRepository = null
+    playerHeroProgressRepository = null,
+    heroRepository = null
   ) {
     this.dialogRepository = dialogRepository;
     this.passiveRepository = passiveRepository;
     this.playerPassiveRepository = playerPassiveRepository;
     this.transactionService = transactionService || new TransactionService();
     this.playerHeroProgressRepository = playerHeroProgressRepository;
+    this.heroRepository = heroRepository;
+  }
+
+  static parseMetadata(metadata) {
+    if (!metadata) {
+      return {};
+    }
+
+    if (typeof metadata === 'string') {
+      try {
+        return JSON.parse(metadata);
+      } catch (error) {
+        return {};
+      }
+    }
+
+    if (typeof metadata === 'object') {
+      return metadata;
+    }
+
+    return {};
+  }
+
+  static asNonNegativeInteger(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      return 0;
+    }
+
+    return parsed;
+  }
+
+  static normalizeProgress(progress, fallbackCurrentSequence = null) {
+    const currentSequence =
+      progress && typeof progress.currentSequence === 'string'
+        ? progress.currentSequence
+        : fallbackCurrentSequence;
+
+    const hasNextSequence =
+      progress && Object.prototype.hasOwnProperty.call(progress, 'nextSequence');
+    const nextSequence = hasNextSequence ? progress.nextSequence : null;
+
+    const completed =
+      progress && typeof progress.completed === 'boolean'
+        ? progress.completed
+        : currentSequence !== null && nextSequence === null;
+
+    return {
+      currentSequence,
+      nextSequence,
+      completed
+    };
+  }
+
+  async resolveProgress(heroId, questionId, answer) {
+    if (typeof this.dialogRepository.resolveAnswerProgress !== 'function') {
+      return SendAnswerUseCase.normalizeProgress(
+        {
+          currentSequence: questionId,
+          nextSequence: null,
+          completed: false
+        },
+        questionId
+      );
+    }
+
+    const progress = await this.dialogRepository.resolveAnswerProgress(
+      heroId,
+      questionId,
+      answer
+    );
+
+    return SendAnswerUseCase.normalizeProgress(progress, questionId);
+  }
+
+  async resolvePointsAwarded(heroId, completed) {
+    if (!this.heroRepository || typeof this.heroRepository.findByHeroId !== 'function') {
+      return 0;
+    }
+
+    const hero = await this.heroRepository.findByHeroId(heroId);
+    if (!hero) {
+      return 0;
+    }
+
+    const metadata = SendAnswerUseCase.parseMetadata(hero.metadata);
+    if (completed) {
+      return SendAnswerUseCase.asNonNegativeInteger(
+        metadata.pointsGainedPerConversationComplete
+      );
+    }
+
+    return SendAnswerUseCase.asNonNegativeInteger(
+      metadata.minPointsGainedPerConversation
+    );
   }
 
   async execute(playerId, heroId, questionId, answer) {
     try {
       return await this.transactionService.executeTransaction(async () => {
         const validation = await this.dialogRepository.validateAnswer(questionId, answer);
+        const progress = await this.resolveProgress(heroId, questionId, answer);
+        const pointsAwarded = await this.resolvePointsAwarded(heroId, progress.completed);
 
         if (!validation.valid) {
           return {
             success: true,
             correct: false,
-            assignedPassive: null
+            assignedPassive: null,
+            currentSequence: progress.currentSequence,
+            nextSequence: progress.nextSequence,
+            completed: progress.completed,
+            pointsAwarded
           };
         }
 
@@ -44,7 +146,11 @@ class SendAnswerUseCase {
           return {
             success: true,
             correct: true,
-            assignedPassive: null
+            assignedPassive: null,
+            currentSequence: progress.currentSequence,
+            nextSequence: progress.nextSequence,
+            completed: progress.completed,
+            pointsAwarded
           };
         }
 
@@ -58,7 +164,11 @@ class SendAnswerUseCase {
         return {
           success: true,
           correct: true,
-          assignedPassive
+          assignedPassive,
+          currentSequence: progress.currentSequence,
+          nextSequence: progress.nextSequence,
+          completed: progress.completed,
+          pointsAwarded
         };
       });
     } catch (error) {

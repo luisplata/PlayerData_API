@@ -80,7 +80,8 @@ class DependencyContainer {
       this.repositories.passiveRepository,
       this.repositories.playerPassiveRepository,
       this.services.transactionService,
-      this.repositories.playerHeroProgressRepository
+      this.repositories.playerHeroProgressRepository,
+      this.repositories.heroRepository
     );
 
     this.controllers.passiveController = new PassiveController(

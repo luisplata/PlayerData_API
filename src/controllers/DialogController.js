@@ -1,6 +1,7 @@
 /**
  * DialogController - Interface Adapter Layer
  * Handles HTTP requests for hero dialog operations.
+ * Visible dialog text is capped at 280 characters for the limited UI.
  * @swagger
  * tags:
  *   name: Hero Dialog
@@ -16,7 +17,8 @@ class DialogController {
     passiveRepository,
     playerPassiveRepository,
     transactionService,
-    playerHeroProgressRepository
+    playerHeroProgressRepository,
+    heroRepository
   ) {
     this.startDialogUseCase = new StartDialogUseCase(dialogRepository);
     this.sendAnswerUseCase = new SendAnswerUseCase(
@@ -24,7 +26,8 @@ class DialogController {
       passiveRepository,
       playerPassiveRepository,
       transactionService,
-      playerHeroProgressRepository
+      playerHeroProgressRepository,
+      heroRepository
     );
   }
 
@@ -33,7 +36,7 @@ class DialogController {
    * /api/v1/heroes/dialog/start:
    *   post:
    *     summary: Start hero dialog and return public questions
-   *     description: Returns dialog metadata and question list without exposing correct answers.
+  *     description: Returns dialog metadata and question list without exposing correct answers. Visible dialog text is capped at 280 characters.
    *     tags: [Hero Dialog]
    *     security:
    *       - bearerAuth: []
@@ -162,7 +165,11 @@ class DialogController {
       success: true,
       data: {
         correct: result.correct,
-        assignedPassive: result.assignedPassive
+        assignedPassive: result.assignedPassive,
+        currentSequence: result.currentSequence,
+        nextSequence: result.nextSequence,
+        completed: result.completed,
+        pointsAwarded: result.pointsAwarded
       }
     });
   });

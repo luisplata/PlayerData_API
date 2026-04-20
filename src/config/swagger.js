@@ -261,13 +261,15 @@ const options = {
               type: 'integer'
             },
             question: {
-              type: 'string'
+              type: 'string',
+              maxLength: 280,
+              description: 'Visible dialog question text. Limited to 280 characters for the UI.'
             },
             order_index: {
               type: 'integer'
             }
           },
-          description: 'Public dialog question payload. Does not expose correct answer keys.'
+          description: 'Public dialog question payload. Does not expose correct answer keys. The visible text is capped at 280 characters.'
         },
         DialogStartRequest: {
           type: 'object',
@@ -343,6 +345,25 @@ const options = {
                   type: 'null'
                 }
               ]
+            },
+            currentSequence: {
+              type: 'string',
+              nullable: true,
+              description: 'Current dialog node sequence processed by the answer flow.'
+            },
+            nextSequence: {
+              type: 'string',
+              nullable: true,
+              description: 'Next dialog node sequence to render in UI, null when there is no next step.'
+            },
+            completed: {
+              type: 'boolean',
+              description: 'Indicates whether the conversation has reached its terminal step.'
+            },
+            pointsAwarded: {
+              type: 'integer',
+              minimum: 0,
+              description: 'Points awarded deterministically from hero metadata according to completion state.'
             }
           }
         },

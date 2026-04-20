@@ -37,6 +37,13 @@ Checklist de revisión:
 1. Los endpoints protegidos muestran `bearerAuth`.
 2. Cada endpoint define `requestBody`/`parameters` y respuestas `400/401/500` según corresponda.
 3. `StartDialog` NO expone `correct_answer` en el schema público de preguntas.
+4. El texto visible de cada pregunta/dialogo está limitado a 280 caracteres para mantener compatibilidad con la UI.
+
+### Catalogo de emociones de dialogo
+
+Para mantener consistencia en nuevos dialogos, usar el set oficial documentado en:
+
+- `spec/dialog-emotions-catalog.md`
 
 ### 3) Ejecutar migraciones
 - Con script de npm:
