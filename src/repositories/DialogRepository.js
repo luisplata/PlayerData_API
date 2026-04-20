@@ -74,7 +74,10 @@ class DialogRepository {
 
   async startDialog(heroId) {
     try {
-      const dialog = await this.db('dialogs').where({ heroId }).first();
+      const dialog = await this.db('dialogs')
+        .where({ heroId })
+        .orderByRaw('RAND()')
+        .first();
       if (!dialog) {
         return null;
       }
