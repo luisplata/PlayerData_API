@@ -31,6 +31,6 @@
 
 ## Phase 5: SDD Apply/Verify Docs
 
-- [ ] 5.1 Create `spec/player-heroes-inventory/06-apply.md` with implementation batches and evidence.
-- [ ] 5.2 Create `spec/player-heroes-inventory/07-verify.md` with requirement-to-test matrix.
-- [ ] 5.3 Create `spec/player-heroes-inventory/08-archive.md` once apply+verify are complete.
+- [x] 5.1 Create `spec/player-heroes-inventory/06-apply.md` with implementation batches and evidence.
+- [x] 5.2 Create `spec/player-heroes-inventory/07-verify.md` with requirement-to-test matrix.
+- [x] 5.3 Create `spec/player-heroes-inventory/08-archive.md` once apply+verify are complete.

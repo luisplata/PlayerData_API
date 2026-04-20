@@ -19,8 +19,8 @@ Documentacion del inventario de heroes por player, incluyendo nivel de conversac
 - Spec: completed
 - Design: completed
 - Tasks: completed
-- Apply: pending
-- Verify: pending
+- Apply: completed
+- Verify: completed
 - Archive: pending
 
 ## Change Summary
