@@ -1,0 +1,11 @@
+{
+  "heroId": "hero-example-admin",
+  "name": "Admin Example Hero",
+  "metadata": {
+    "role": "support",
+    "xpPerLevel": 120,
+    "pointsLostPerGame": 1,
+    "minPointsGainedPerConversation": 2,
+    "pointsGainedPerConversationComplete": 12
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "heroId": "hero-nova",
+  "dialogId": "dialog-nova-lesson-positioning",
+  "title": "Nova Posicionamiento en Combate",
+  "metadata": {
+    "version": 1,
+    "startSequence": "seq-1",
+    "completedSequence": "seq-4",
+    "responseContract": [
+      "currentSequence",
+      "nextSequence",
+      "completed",
+      "pointsAwarded"
+    ]
+  },
+  "nodes": [
+    {
+      "sequence": "seq-1",
+      "emotion": "determinacion",
+      "text": "Nova te enseña sobre posicionamiento en combate: la distancia es tu mejor defensa.",
+      "nextSequence": "question-1",
+      "isQuestion": false,
+      "possibleAnswers": []
+    },
+    {
+      "sequence": "question-1",
+      "emotion": "expectativa",
+      "text": "En un enfrentamiento 2v2, donde deberias estar si eres support?",
+      "nextSequence": null,
+      "isQuestion": true,
+      "possibleAnswers": [
+        {
+          "optionKey": "a",
+          "optionText": "Detras de tu carry, protegiendo su retaguardia.",
+          "nextSequence": "seq-2",
+          "isCorrect": true
+        },
+        {
+          "optionKey": "b",
+          "optionText": "En la primera linea atacando directamente.",
+          "nextSequence": "seq-3",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "sequence": "seq-2",
+      "emotion": "confianza",
+      "text": "Exacto: tu rol es dar cobertura, no ser el tank. Nova aprueba tu estrategia.",
+      "nextSequence": "seq-4",
+      "isQuestion": false,
+      "possibleAnswers": []
+    },
+    {
+      "sequence": "seq-3",
+      "emotion": "enojo",
+      "text": "Nova no esta de acuerdo: un support adelante es un apoyo perdido y un objetivo facil.",
+      "nextSequence": "seq-4",
+      "isQuestion": false,
+      "possibleAnswers": []
+    },
+    {
+      "sequence": "seq-4",
+      "emotion": "neutral",
+      "text": "Leccion completada. Nova registra tu progreso en posicionamiento.",
+      "nextSequence": null,
+      "isQuestion": false,
+      "possibleAnswers": []
+    }
+  ],
+  "questions": [
+    {
+      "questionId": "question-nova-positioning-1",
+      "question": "En un enfrentamiento 2v2, donde deberias estar si eres support?",
+      "correct_answer": "a",
+      "order_index": 1
+    }
+  ]
+}
