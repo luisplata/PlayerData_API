@@ -68,8 +68,8 @@ class PlayerHeroProgressRepository {
       }
 
       const current = await this.getByPlayerAndHero(playerId, heroId);
-      const currentLevel = PlayerHeroProgressRepository.normalizePositiveInteger(current?.level, 0);
-      const currentXp = PlayerHeroProgressRepository.normalizePositiveInteger(current?.currentXp, 0);
+      const currentLevel = PlayerHeroProgressRepository.normalizePositiveInteger(current && current.level, 0);
+      const currentXp = PlayerHeroProgressRepository.normalizePositiveInteger(current && current.currentXp, 0);
       const totalXp = currentXp + experienceGain;
       const levelsGained = Math.floor(totalXp / xpPerLevel);
       const nextLevel = currentLevel + levelsGained;
