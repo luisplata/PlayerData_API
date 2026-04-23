@@ -1,4 +1,5 @@
-require('dotenv').config(); // Carga las variables de entorno desde el archivo .env
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') }); // Carga .env desde la raiz del proyecto
 
 const express = require('express');
 const cors = require('cors');
@@ -12,7 +13,12 @@ const DependencyContainer = require('./src/config/DependencyContainer');
 const { swaggerUi, specs } = require('./src/config/swagger');
 const { validateSecurityConfig } = require('./src/config/SecurityConfig');
 
-validateSecurityConfig(process.env);
+try {
+  validateSecurityConfig(process.env);
+} catch (error) {
+  console.error('[Startup] Invalid security configuration:', error.message);
+  throw error;
+}
 
 const app = express();
 const port = process.env.PORT || 8080;

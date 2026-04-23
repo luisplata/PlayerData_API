@@ -3,14 +3,15 @@ require("dotenv").config();
 
 const secretKey = process.env.JWT_SECRET;
 
-if (!secretKey) {
-  throw new Error("❌ SECRET_KEY no está definido en variables de entorno");
+if (!secretKey || secretKey === 'your_secret_key') {
+  throw new Error(
+    'JWT_SECRET must be configured before loading AuthMiddleware'
+  );
 }
 
-// 👇 esto sí devuelve una función middleware en v7
 const authenticate = expressjwt({
   secret: secretKey,
-  algorithms: ['HS256'],
+  algorithms: ['HS256']
 });
 
 module.exports = authenticate;
