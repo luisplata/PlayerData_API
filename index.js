@@ -229,7 +229,13 @@ app.use(ErrorHandlerMiddleware.notFound);
 app.use(ErrorHandlerMiddleware.handle);
 
 // Iniciar el servidor
-if (require.main === module) {
+const shouldStartServer =
+  process.env.NODE_ENV !== 'test' &&
+  (require.main === module ||
+    Boolean(process.env.PASSENGER_APP_ENV) ||
+    Boolean(process.env.PASSENGER_APP_TYPE));
+
+if (shouldStartServer) {
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
