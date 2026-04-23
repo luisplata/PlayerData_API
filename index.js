@@ -11,14 +11,6 @@ const ApiVersionMiddleware = require('./src/middlewares/ApiVersionMiddleware');
 const SecurityMiddleware = require('./src/middlewares/SecurityMiddleware');
 const DependencyContainer = require('./src/config/DependencyContainer');
 const { swaggerUi, specs } = require('./src/config/swagger');
-const { validateSecurityConfig } = require('./src/config/SecurityConfig');
-
-try {
-  validateSecurityConfig(process.env);
-} catch (error) {
-  console.error('[Startup] Invalid security configuration:', error.message);
-  throw error;
-}
 
 const app = express();
 const port = process.env.PORT || 8080;
