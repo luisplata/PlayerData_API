@@ -11,8 +11,17 @@ const CreatePlayerUseCase = require('../useCases/player/CreatePlayerUseCase');
 const ErrorHandlerMiddleware = require('../middlewares/ErrorHandlerMiddleware');
 
 class PlayerController {
-  constructor(playerRepository, jwtService, battlePassRepository, playerRewardRepository, battlePassRewardRepository) {
-    this.loginPlayerUseCase = new LoginPlayerUseCase(playerRepository, jwtService);
+  constructor(
+    playerRepository,
+    jwtService,
+    battlePassRepository,
+    playerRewardRepository,
+    battlePassRewardRepository
+  ) {
+    this.loginPlayerUseCase = new LoginPlayerUseCase(
+      playerRepository,
+      jwtService
+    );
     this.createPlayerUseCase = new CreatePlayerUseCase(
       playerRepository,
       battlePassRepository,
@@ -74,9 +83,9 @@ class PlayerController {
    */
   login = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.body;
-    
+
     const result = await this.loginPlayerUseCase.execute(playerId);
-    
+
     if (!result.success) {
       return res.status(401).json({
         success: false,
@@ -86,7 +95,7 @@ class PlayerController {
         }
       });
     }
-    
+
     res.json({
       success: true,
       data: {
@@ -131,9 +140,13 @@ class PlayerController {
    */
   createPlayer = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, nickname, key } = req.body;
-    
-    const result = await this.createPlayerUseCase.execute(playerId, nickname, key);
-    
+
+    const result = await this.createPlayerUseCase.execute(
+      playerId,
+      nickname,
+      key
+    );
+
     if (!result.success) {
       const statusCode = result.error.includes('Unauthorized') ? 401 : 400;
       return res.status(statusCode).json({
@@ -144,7 +157,7 @@ class PlayerController {
         }
       });
     }
-    
+
     const statusCode = result.message.includes('created') ? 201 : 200;
     res.status(statusCode).json({
       success: true,
@@ -173,9 +186,10 @@ class PlayerController {
    */
   validateNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { nickname } = req.params;
-    
+
     try {
-      const isAvailable = await this.playerRepository.isNicknameAvailable(nickname);
+      const isAvailable =
+        await this.playerRepository.isNicknameAvailable(nickname);
       res.json({
         success: true,
         data: {
@@ -217,37 +231,39 @@ class PlayerController {
    *       500:
    *         description: Server error
    */
-  getPlayerIdByNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
-    const { nickname } = req.params;
-    
-    try {
-      const player = await this.playerRepository.findByNickname(nickname);
-      if (!player) {
-        return res.status(404).json({
+  getPlayerIdByNickname = ErrorHandlerMiddleware.asyncHandler(
+    async (req, res) => {
+      const { nickname } = req.params;
+
+      try {
+        const player = await this.playerRepository.findByNickname(nickname);
+        if (!player) {
+          return res.status(404).json({
+            success: false,
+            error: {
+              message: `Player not found: ${nickname}`,
+              statusCode: 404
+            }
+          });
+        }
+
+        res.json({
+          success: true,
+          data: {
+            playerId: player.playerId
+          }
+        });
+      } catch (error) {
+        res.status(500).json({
           success: false,
           error: {
-            message: `Player not found: ${nickname}`,
-            statusCode: 404
+            message: `Error while getting player ID: ${nickname}`,
+            statusCode: 500
           }
         });
       }
-      
-      res.json({
-        success: true,
-        data: {
-          playerId: player.playerId
-        }
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: {
-          message: `Error while getting player ID: ${nickname}`,
-          statusCode: 500
-        }
-      });
     }
-  });
+  );
 
   /**
    * @swagger
@@ -275,7 +291,7 @@ class PlayerController {
    */
   getPlayerById = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.params;
-    
+
     try {
       const player = await this.playerRepository.findByPlayerId(playerId);
       if (!player) {
@@ -287,7 +303,7 @@ class PlayerController {
           }
         });
       }
-      
+
       res.json({
         success: true,
         data: player
@@ -340,49 +356,55 @@ class PlayerController {
    *       500:
    *         description: Server error
    */
-  updatePlayerNickname = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
-    const { playerId } = req.params;
-    const { nickname } = req.body;
-    
-    try {
-      // Check if nickname is available
-      const isAvailable = await this.playerRepository.isNicknameAvailable(nickname);
-      if (!isAvailable) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            message: `Nickname already in use: ${nickname}`,
-            statusCode: 400
-          }
-        });
-      }
-      
-      const updatedRows = await this.playerRepository.updateNickname(playerId, nickname);
-      
-      if (updatedRows === 0) {
-        return res.status(404).json({
-          success: false,
-          error: {
-            message: `Player not found: ${playerId}`,
-            statusCode: 404
-          }
-        });
-      }
-      
-      res.json({
-        success: true,
-        message: 'Nickname updated successfully'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: {
-          message: `Error while updating nickname: ${error.message}`,
-          statusCode: 500
+  updatePlayerNickname = ErrorHandlerMiddleware.asyncHandler(
+    async (req, res) => {
+      const { playerId } = req.params;
+      const { nickname } = req.body;
+
+      try {
+        // Check if nickname is available
+        const isAvailable =
+          await this.playerRepository.isNicknameAvailable(nickname);
+        if (!isAvailable) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              message: `Nickname already in use: ${nickname}`,
+              statusCode: 400
+            }
+          });
         }
-      });
+
+        const updatedRows = await this.playerRepository.updateNickname(
+          playerId,
+          nickname
+        );
+
+        if (updatedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            error: {
+              message: `Player not found: ${playerId}`,
+              statusCode: 404
+            }
+          });
+        }
+
+        res.json({
+          success: true,
+          message: 'Nickname updated successfully'
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          error: {
+            message: `Error while updating nickname: ${error.message}`,
+            statusCode: 500
+          }
+        });
+      }
     }
-  });
+  );
 }
 
 module.exports = PlayerController;

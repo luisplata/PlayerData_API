@@ -1,13 +1,19 @@
 // controllers/playerRewardController.js
 const playerRewardModel = require('../Model/PlayerReward');
 const customLogger = require('../utils/logger').customLogger;
-const { RewardNotFoundError, RewardAlreadyAwardedError } = require('../utils/errors.js');
+const {
+  RewardNotFoundError,
+  RewardAlreadyAwardedError
+} = require('../utils/errors.js');
 
 const awardReward = async (req, res) => {
   const { playerId, level } = req.body;
 
   try {
-    const newPlayerReward = await playerRewardModel.awardReward(playerId, level);
+    const newPlayerReward = await playerRewardModel.awardReward(
+      playerId,
+      level
+    );
     res.status(201).json(newPlayerReward);
   } catch (error) {
     console.error(error);

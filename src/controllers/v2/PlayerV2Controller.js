@@ -11,8 +11,17 @@ const CreatePlayerV2UseCase = require('../../useCases/v2/player/CreatePlayerV2Us
 const ErrorHandlerMiddleware = require('../../middlewares/ErrorHandlerMiddleware');
 
 class PlayerV2Controller {
-  constructor(playerRepository, authServiceV2, battlePassRepository, playerRewardRepository, battlePassRewardRepository) {
-    this.loginPlayerV2UseCase = new LoginPlayerV2UseCase(playerRepository, authServiceV2);
+  constructor(
+    playerRepository,
+    authServiceV2,
+    battlePassRepository,
+    playerRewardRepository,
+    battlePassRewardRepository
+  ) {
+    this.loginPlayerV2UseCase = new LoginPlayerV2UseCase(
+      playerRepository,
+      authServiceV2
+    );
     this.createPlayerV2UseCase = new CreatePlayerV2UseCase(
       playerRepository,
       battlePassRepository,
@@ -107,9 +116,9 @@ class PlayerV2Controller {
    */
   login = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, email } = req.body;
-    
+
     const result = await this.loginPlayerV2UseCase.execute(playerId, email);
-    
+
     if (!result.success) {
       return res.status(401).json({
         success: false,
@@ -119,7 +128,7 @@ class PlayerV2Controller {
         }
       });
     }
-    
+
     res.json({
       success: true,
       data: result.data
@@ -213,16 +222,16 @@ class PlayerV2Controller {
    */
   createPlayer = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, nickname, email, avatar, preferences, key } = req.body;
-    
+
     const result = await this.createPlayerV2UseCase.execute(
-      playerId, 
-      nickname, 
-      email, 
-      avatar, 
-      preferences, 
+      playerId,
+      nickname,
+      email,
+      avatar,
+      preferences,
       key
     );
-    
+
     if (!result.success) {
       const statusCode = result.error.includes('Unauthorized') ? 401 : 400;
       return res.status(statusCode).json({
@@ -233,7 +242,7 @@ class PlayerV2Controller {
         }
       });
     }
-    
+
     const statusCode = result.data.action === 'created' ? 201 : 200;
     res.status(statusCode).json({
       success: true,
@@ -289,10 +298,10 @@ class PlayerV2Controller {
    */
   refreshToken = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { refreshToken } = req.body;
-    
+
     try {
       const result = this.authServiceV2.refreshAccessToken(refreshToken);
-      
+
       res.json({
         success: true,
         data: result
@@ -340,7 +349,7 @@ class PlayerV2Controller {
    */
   getProfile = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId } = req.user;
-    
+
     try {
       const player = await this.playerRepository.findByPlayerId(playerId);
       if (!player) {
@@ -352,7 +361,7 @@ class PlayerV2Controller {
           }
         });
       }
-      
+
       res.json({
         success: true,
         data: {

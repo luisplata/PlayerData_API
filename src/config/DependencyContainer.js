@@ -46,13 +46,15 @@ class DependencyContainer {
     // Initialize repositories
     this.repositories.playerRepository = new PlayerRepository(db);
     this.repositories.battlePassRepository = new BattlePassRepository(db);
-    this.repositories.battlePassRewardRepository = new BattlePassRewardRepository(db);
+    this.repositories.battlePassRewardRepository =
+      new BattlePassRewardRepository(db);
     this.repositories.playerRewardRepository = new PlayerRewardRepository(db);
     this.repositories.heroRepository = new HeroRepository(db);
     this.repositories.passiveRepository = new PassiveRepository(db);
     this.repositories.dialogRepository = new DialogRepository(db);
     this.repositories.playerPassiveRepository = new PlayerPassiveRepository(db);
-    this.repositories.playerHeroProgressRepository = new PlayerHeroProgressRepository(db);
+    this.repositories.playerHeroProgressRepository =
+      new PlayerHeroProgressRepository(db);
 
     // Initialize controllers
     this.controllers.playerController = new PlayerController(

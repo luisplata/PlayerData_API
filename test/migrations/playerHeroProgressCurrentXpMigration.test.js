@@ -7,20 +7,58 @@ function createTableMock() {
   let currentColumn = null;
 
   const chain = {
-    primary() { constraints.push({ column: currentColumn, type: 'primary' }); return chain; },
-    notNullable() { constraints.push({ column: currentColumn, type: 'notNullable' }); return chain; },
-    unique() { constraints.push({ column: currentColumn, type: 'unique' }); return chain; },
-    unsigned() { constraints.push({ column: currentColumn, type: 'unsigned' }); return chain; },
-    references(reference) { constraints.push({ column: currentColumn, type: 'references', reference }); return chain; },
-    inTable(table) { constraints.push({ column: currentColumn, type: 'inTable', table }); return chain; },
-    onDelete(action) { constraints.push({ column: currentColumn, type: 'onDelete', action }); return chain; },
-    defaultTo(value) { constraints.push({ column: currentColumn, type: 'defaultTo', value }); return chain; },
-    dropColumn(name) { columns.push({ type: 'dropColumn', name }); return chain; }
+    primary() {
+      constraints.push({ column: currentColumn, type: 'primary' });
+      return chain;
+    },
+    notNullable() {
+      constraints.push({ column: currentColumn, type: 'notNullable' });
+      return chain;
+    },
+    unique() {
+      constraints.push({ column: currentColumn, type: 'unique' });
+      return chain;
+    },
+    unsigned() {
+      constraints.push({ column: currentColumn, type: 'unsigned' });
+      return chain;
+    },
+    references(reference) {
+      constraints.push({
+        column: currentColumn,
+        type: 'references',
+        reference
+      });
+      return chain;
+    },
+    inTable(table) {
+      constraints.push({ column: currentColumn, type: 'inTable', table });
+      return chain;
+    },
+    onDelete(action) {
+      constraints.push({ column: currentColumn, type: 'onDelete', action });
+      return chain;
+    },
+    defaultTo(value) {
+      constraints.push({ column: currentColumn, type: 'defaultTo', value });
+      return chain;
+    },
+    dropColumn(name) {
+      columns.push({ type: 'dropColumn', name });
+      return chain;
+    }
   };
 
   const table = {
-    integer(name) { currentColumn = name; columns.push({ type: 'integer', name }); return chain; },
-    dropColumn(name) { columns.push({ type: 'dropColumn', name }); return chain; }
+    integer(name) {
+      currentColumn = name;
+      columns.push({ type: 'integer', name });
+      return chain;
+    },
+    dropColumn(name) {
+      columns.push({ type: 'dropColumn', name });
+      return chain;
+    }
   };
 
   return { table, columns, constraints, indexes };
@@ -47,13 +85,34 @@ describe('player_hero_progress currentXp migration', () => {
 
     await migration.up(knex);
 
-    const alterCall = knex.calls.find((call) => call.type === 'alterTable');
+    const alterCall = knex.calls.find(call => call.type === 'alterTable');
     expect(alterCall).to.exist;
     expect(alterCall.name).to.equal('player_hero_progress');
-    expect(alterCall.columns.some((column) => column.type === 'integer' && column.name === 'currentXp')).to.equal(true);
-    expect(alterCall.constraints.some((constraint) => constraint.column === 'currentXp' && constraint.type === 'unsigned')).to.equal(true);
-    expect(alterCall.constraints.some((constraint) => constraint.column === 'currentXp' && constraint.type === 'notNullable')).to.equal(true);
-    expect(alterCall.constraints.some((constraint) => constraint.column === 'currentXp' && constraint.type === 'defaultTo' && constraint.value === 0)).to.equal(true);
+    expect(
+      alterCall.columns.some(
+        column => column.type === 'integer' && column.name === 'currentXp'
+      )
+    ).to.equal(true);
+    expect(
+      alterCall.constraints.some(
+        constraint =>
+          constraint.column === 'currentXp' && constraint.type === 'unsigned'
+      )
+    ).to.equal(true);
+    expect(
+      alterCall.constraints.some(
+        constraint =>
+          constraint.column === 'currentXp' && constraint.type === 'notNullable'
+      )
+    ).to.equal(true);
+    expect(
+      alterCall.constraints.some(
+        constraint =>
+          constraint.column === 'currentXp' &&
+          constraint.type === 'defaultTo' &&
+          constraint.value === 0
+      )
+    ).to.equal(true);
   });
 
   it('removes currentXp on rollback', async () => {
@@ -62,8 +121,12 @@ describe('player_hero_progress currentXp migration', () => {
 
     await migration.down(knex);
 
-    const alterCall = knex.calls.find((call) => call.type === 'alterTable');
+    const alterCall = knex.calls.find(call => call.type === 'alterTable');
     expect(alterCall).to.exist;
-    expect(alterCall.columns.some((column) => column.type === 'dropColumn' && column.name === 'currentXp')).to.equal(true);
+    expect(
+      alterCall.columns.some(
+        column => column.type === 'dropColumn' && column.name === 'currentXp'
+      )
+    ).to.equal(true);
   });
 });

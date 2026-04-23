@@ -3,10 +3,9 @@
  * Input validation middleware
  */
 class ValidationMiddleware {
-  
   static validatePlayerLogin(req, res, next) {
     const { playerId } = req.body;
-    
+
     if (!playerId || typeof playerId !== 'string') {
       return res.status(400).json({
         success: false,
@@ -16,7 +15,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (playerId.length < 3 || playerId.length > 50) {
       return res.status(400).json({
         success: false,
@@ -26,22 +25,23 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Player ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
     }
-    
+
     next();
   }
   static validatePlayerId(req, res, next) {
     const { playerId } = req.params;
-    
+
     if (!playerId || typeof playerId !== 'string') {
       return res.status(400).json({
         success: false,
@@ -51,7 +51,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (playerId.length < 3 || playerId.length > 50) {
       return res.status(400).json({
         success: false,
@@ -61,52 +61,18 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Player ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
     }
-    
-    next();
-  }
-  static validatePlayerLogin(req, res, next) {
-    const { playerId } = req.body;
-    
-    if (!playerId || typeof playerId !== 'string') {
-      return res.status(400).json({
-        success: false,
-        error: {
-          message: 'Player ID is required and must be a string',
-          statusCode: 400
-        }
-      });
-    }
-    
-    if (playerId.length < 3 || playerId.length > 50) {
-      return res.status(400).json({
-        success: false,
-        error: {
-          message: 'Player ID must be between 3 and 50 characters',
-          statusCode: 400
-        }
-      });
-    }
-    
-    if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
-      return res.status(400).json({
-        success: false,
-        error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
-          statusCode: 400
-        }
-      });
-    }
-    
+
     next();
   }
 
@@ -114,7 +80,7 @@ class ValidationMiddleware {
     const { nickname } = req.params;
 
     console.log('nickname', nickname);
-    
+
     if (!nickname || typeof nickname !== 'string') {
       return res.status(400).json({
         success: false,
@@ -124,7 +90,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
@@ -134,23 +100,24 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
+          message:
+            'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });
     }
-    
+
     next();
   }
 
   static validateBodyNickname(req, res, next) {
     const { nickname } = req.body;
-    
+
     if (!nickname || typeof nickname !== 'string') {
       return res.status(400).json({
         success: false,
@@ -160,7 +127,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
@@ -170,23 +137,24 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
+          message:
+            'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });
     }
-    
+
     next();
   }
 
   static validatePlayerData(req, res, next) {
     const { playerId, nickname } = req.body;
-    
+
     if (!playerId || typeof playerId !== 'string') {
       return res.status(400).json({
         success: false,
@@ -196,7 +164,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!nickname || typeof nickname !== 'string') {
       return res.status(400).json({
         success: false,
@@ -206,7 +174,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (playerId.length < 3 || playerId.length > 50) {
       return res.status(400).json({
         success: false,
@@ -216,7 +184,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (nickname.length < 2 || nickname.length > 50) {
       return res.status(400).json({
         success: false,
@@ -226,33 +194,35 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Player ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
     }
-    
+
     if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
+          message:
+            'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots',
           statusCode: 400
         }
       });
     }
-    
+
     next();
   }
 
   static validateExperience(req, res, next) {
     const { experience } = req.body;
-    
+
     if (typeof experience !== 'number') {
       return res.status(400).json({
         success: false,
@@ -262,7 +232,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (experience < 0) {
       return res.status(400).json({
         success: false,
@@ -272,7 +242,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (experience > 10000) {
       return res.status(400).json({
         success: false,
@@ -282,15 +252,21 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     next();
   }
 
   static validateRewardData(req, res, next) {
     const { type, body, level } = req.body;
-    
-    const validTypes = ['gold', 'powerup', 'profilePicture', 'profileBackground', 'profileAvatar'];
-    
+
+    const validTypes = [
+      'gold',
+      'powerup',
+      'profilePicture',
+      'profileBackground',
+      'profileAvatar'
+    ];
+
     if (!type || !validTypes.includes(type)) {
       return res.status(400).json({
         success: false,
@@ -300,7 +276,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (!body || typeof body !== 'object') {
       return res.status(400).json({
         success: false,
@@ -310,7 +286,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     if (level !== undefined && (typeof level !== 'number' || level < 1)) {
       return res.status(400).json({
         success: false,
@@ -320,7 +296,7 @@ class ValidationMiddleware {
         }
       });
     }
-    
+
     // Validate body based on type
     switch (type) {
       case 'gold':
@@ -368,7 +344,7 @@ class ValidationMiddleware {
         }
         break;
     }
-    
+
     next();
   }
 
@@ -419,13 +395,19 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Hero ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
     }
 
-    if (metadata !== undefined && (metadata === null || Array.isArray(metadata) || typeof metadata !== 'object')) {
+    if (
+      metadata !== undefined &&
+      (metadata === null ||
+        Array.isArray(metadata) ||
+        typeof metadata !== 'object')
+    ) {
       return res.status(400).json({
         success: false,
         error: {
@@ -465,7 +447,8 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Player ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
@@ -475,7 +458,8 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Hero ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
@@ -531,7 +515,8 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Player ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Player ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
@@ -541,7 +526,8 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Hero ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Hero ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });
@@ -551,7 +537,8 @@ class ValidationMiddleware {
       return res.status(400).json({
         success: false,
         error: {
-          message: 'Question ID can only contain letters, numbers, underscores, and hyphens',
+          message:
+            'Question ID can only contain letters, numbers, underscores, and hyphens',
           statusCode: 400
         }
       });

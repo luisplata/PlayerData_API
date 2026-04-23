@@ -37,7 +37,9 @@ class DialogRepository {
       return bySequence;
     }
 
-    const normalizedQuestionText = String(question.question || '').trim().toLowerCase();
+    const normalizedQuestionText = String(question.question || '')
+      .trim()
+      .toLowerCase();
     const byText = nodes.find(node => {
       if (!node || node.isQuestion !== true || typeof node.text !== 'string') {
         return false;
@@ -58,16 +60,24 @@ class DialogRepository {
       return null;
     }
 
-    const normalizedAnswer = String(answer || '').trim().toLowerCase();
+    const normalizedAnswer = String(answer || '')
+      .trim()
+      .toLowerCase();
     return (
       questionNode.possibleAnswers.find(option => {
         if (!option) {
           return false;
         }
 
-        const optionKey = String(option.optionKey || '').trim().toLowerCase();
-        const optionText = String(option.optionText || '').trim().toLowerCase();
-        return optionKey === normalizedAnswer || optionText === normalizedAnswer;
+        const optionKey = String(option.optionKey || '')
+          .trim()
+          .toLowerCase();
+        const optionText = String(option.optionText || '')
+          .trim()
+          .toLowerCase();
+        return (
+          optionKey === normalizedAnswer || optionText === normalizedAnswer
+        );
       }) || null
     );
   }
@@ -103,13 +113,17 @@ class DialogRepository {
 
   async validateAnswer(dialogQuestionId, answer) {
     try {
-      const question = await this.db('dialog_questions').where({ questionId: dialogQuestionId }).first();
+      const question = await this.db('dialog_questions')
+        .where({ questionId: dialogQuestionId })
+        .first();
       if (!question) {
         return { valid: false, question: null };
       }
 
       return {
-        valid: String(question.correct_answer).trim().toLowerCase() === String(answer).trim().toLowerCase(),
+        valid:
+          String(question.correct_answer).trim().toLowerCase() ===
+          String(answer).trim().toLowerCase(),
         question
       };
     } catch (error) {
@@ -119,7 +133,9 @@ class DialogRepository {
 
   async resolveAnswerProgress(heroId, questionId, answer) {
     try {
-      const question = await this.db('dialog_questions').where({ questionId }).first();
+      const question = await this.db('dialog_questions')
+        .where({ questionId })
+        .first();
       if (!question) {
         return {
           currentSequence: questionId,
@@ -132,8 +148,14 @@ class DialogRepository {
         .where({ id: question.dialogId, heroId })
         .first();
 
-      const metadata = DialogRepository.parseMetadata(dialog ? dialog.metadata : null);
-      const questionNode = DialogRepository.findQuestionNode(metadata.nodes, question, questionId);
+      const metadata = DialogRepository.parseMetadata(
+        dialog ? dialog.metadata : null
+      );
+      const questionNode = DialogRepository.findQuestionNode(
+        metadata.nodes,
+        question,
+        questionId
+      );
 
       if (!questionNode) {
         return {
@@ -143,13 +165,18 @@ class DialogRepository {
         };
       }
 
-      const selectedOption = DialogRepository.findSelectedOption(questionNode, answer);
+      const selectedOption = DialogRepository.findSelectedOption(
+        questionNode,
+        answer
+      );
       const nextSequence = selectedOption
         ? selectedOption.nextSequence || null
         : questionNode.nextSequence || null;
 
       const completedSequence =
-        typeof metadata.completedSequence === 'string' ? metadata.completedSequence : null;
+        typeof metadata.completedSequence === 'string'
+          ? metadata.completedSequence
+          : null;
 
       const completed =
         completedSequence !== null

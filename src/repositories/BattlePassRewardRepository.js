@@ -63,8 +63,10 @@ class BattlePassRewardRepository {
 
   async delete(id) {
     try {
-      const deletedRows = await this.db('battle_pass_rewards').where({ id }).del();
-      
+      const deletedRows = await this.db('battle_pass_rewards')
+        .where({ id })
+        .del();
+
       if (deletedRows === 0) {
         throw new Error('Reward not found');
       }

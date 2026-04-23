@@ -27,25 +27,39 @@ describe('SendAnswerUseCase', () => {
     };
 
     const passiveRepository = {
-      findByHeroId: async () => ([{ passiveId: 'passive-001', heroId: 'hero-001' }])
+      findByHeroId: async () => [
+        { passiveId: 'passive-001', heroId: 'hero-001' }
+      ]
     };
 
     const playerPassiveRepository = {
       assignPassive: async () => {
         assignCalls += 1;
-        return { id: 1, playerId: 'player-001', heroId: 'hero-001', passiveId: 'passive-001' };
+        return {
+          id: 1,
+          playerId: 'player-001',
+          heroId: 'hero-001',
+          passiveId: 'passive-001'
+        };
       }
     };
 
     const playerHeroProgressRepository = {
       addExperience: async (playerId, heroId, experienceGain, xpPerLevel) => {
         addExperienceCalls += 1;
-        return { playerId, heroId, level: 1, currentXp: 1, experienceGain, xpPerLevel };
+        return {
+          playerId,
+          heroId,
+          level: 1,
+          currentXp: 1,
+          experienceGain,
+          xpPerLevel
+        };
       }
     };
 
     const transactionService = {
-      executeTransaction: async (callback) => callback({})
+      executeTransaction: async callback => callback({})
     };
 
     const useCase = new SendAnswerUseCase(
@@ -92,21 +106,33 @@ describe('SendAnswerUseCase', () => {
     };
 
     const passiveRepository = {
-      findByHeroId: async () => ([{ passiveId: 'passive-001', heroId: 'hero-001' }])
+      findByHeroId: async () => [
+        { passiveId: 'passive-001', heroId: 'hero-001' }
+      ]
     };
 
-    const existingRelation = { id: 3, playerId: 'player-001', heroId: 'hero-001', passiveId: 'passive-001' };
+    const existingRelation = {
+      id: 3,
+      playerId: 'player-001',
+      heroId: 'hero-001',
+      passiveId: 'passive-001'
+    };
 
     const playerPassiveRepository = {
       assignPassive: async () => existingRelation
     };
 
     const playerHeroProgressRepository = {
-      addExperience: async () => ({ playerId: 'player-001', heroId: 'hero-001', level: 1, currentXp: 1 })
+      addExperience: async () => ({
+        playerId: 'player-001',
+        heroId: 'hero-001',
+        level: 1,
+        currentXp: 1
+      })
     };
 
     const transactionService = {
-      executeTransaction: async (callback) => callback({})
+      executeTransaction: async callback => callback({})
     };
 
     const useCase = new SendAnswerUseCase(
@@ -154,7 +180,9 @@ describe('SendAnswerUseCase', () => {
     };
 
     const passiveRepository = {
-      findByHeroId: async () => ([{ passiveId: 'passive-001', heroId: 'hero-001' }])
+      findByHeroId: async () => [
+        { passiveId: 'passive-001', heroId: 'hero-001' }
+      ]
     };
 
     const playerPassiveRepository = {
@@ -166,12 +194,17 @@ describe('SendAnswerUseCase', () => {
     const playerHeroProgressRepository = {
       addExperience: async () => {
         addExperienceCalls += 1;
-        return { playerId: 'player-001', heroId: 'hero-001', level: 99, currentXp: 3 };
+        return {
+          playerId: 'player-001',
+          heroId: 'hero-001',
+          level: 99,
+          currentXp: 3
+        };
       }
     };
 
     const transactionService = {
-      executeTransaction: async (callback) => callback({})
+      executeTransaction: async callback => callback({})
     };
 
     const useCase = new SendAnswerUseCase(
@@ -183,7 +216,12 @@ describe('SendAnswerUseCase', () => {
       heroRepository
     );
 
-    const result = await useCase.execute('player-001', 'hero-001', 'q1', 'wrong');
+    const result = await useCase.execute(
+      'player-001',
+      'hero-001',
+      'q1',
+      'wrong'
+    );
 
     expect(result.success).to.equal(true);
     expect(result.correct).to.equal(false);
@@ -206,7 +244,7 @@ describe('SendAnswerUseCase', () => {
     };
 
     const passiveRepository = {
-      findByHeroId: async () => ([])
+      findByHeroId: async () => []
     };
 
     const playerPassiveRepository = {
@@ -227,13 +265,20 @@ describe('SendAnswerUseCase', () => {
     };
 
     const transactionService = {
-      executeTransaction: async (callback) => callback({})
+      executeTransaction: async callback => callback({})
     };
 
     const playerHeroProgressRepository = {
       addExperience: async (playerId, heroId, experienceGain, xpPerLevel) => {
         addExperienceCalls += 1;
-        return { playerId, heroId, experienceGain, xpPerLevel, level: 2, currentXp: 0 };
+        return {
+          playerId,
+          heroId,
+          experienceGain,
+          xpPerLevel,
+          level: 2,
+          currentXp: 0
+        };
       }
     };
 

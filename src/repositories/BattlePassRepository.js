@@ -46,16 +46,16 @@ class BattlePassRepository {
     try {
       const updatedRows = await this.db('battle_passes')
         .where({ playerId })
-        .update({ 
+        .update({
           level,
           experience,
           updated_at: new Date()
         });
-      
+
       if (updatedRows === 0) {
         throw new Error('Battle pass not found');
       }
-      
+
       return updatedRows;
     } catch (error) {
       throw new Error(`Failed to update battle pass: ${error.message}`);

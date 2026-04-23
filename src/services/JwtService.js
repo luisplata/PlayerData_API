@@ -13,9 +13,11 @@ class JwtService {
   generateToken(payload) {
     try {
       if (!this.secret || this.secret === 'your_secret_key') {
-        throw new Error('JWT_SECRET environment variable is not properly configured');
+        throw new Error(
+          'JWT_SECRET environment variable is not properly configured'
+        );
       }
-      
+
       return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn });
     } catch (error) {
       throw new Error(`Failed to generate token: ${error.message}`);
@@ -25,9 +27,11 @@ class JwtService {
   verifyToken(token) {
     try {
       if (!this.secret || this.secret === 'your_secret_key') {
-        throw new Error('JWT_SECRET environment variable is not properly configured');
+        throw new Error(
+          'JWT_SECRET environment variable is not properly configured'
+        );
       }
-      
+
       return jwt.verify(token, this.secret);
     } catch (error) {
       if (error.name === 'TokenExpiredError') {

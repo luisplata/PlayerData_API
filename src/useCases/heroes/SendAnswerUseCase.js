@@ -57,7 +57,8 @@ class SendAnswerUseCase {
         : fallbackCurrentSequence;
 
     const hasNextSequence =
-      progress && Object.prototype.hasOwnProperty.call(progress, 'nextSequence');
+      progress &&
+      Object.prototype.hasOwnProperty.call(progress, 'nextSequence');
     const nextSequence = hasNextSequence ? progress.nextSequence : null;
 
     const completed =
@@ -189,11 +190,12 @@ class SendAnswerUseCase {
         }
 
         const selectedPassive = passives[0];
-        const assignedPassive = await this.playerPassiveRepository.assignPassive(
-          playerId,
-          heroId,
-          selectedPassive.passiveId
-        );
+        const assignedPassive =
+          await this.playerPassiveRepository.assignPassive(
+            playerId,
+            heroId,
+            selectedPassive.passiveId
+          );
 
         return {
           success: true,

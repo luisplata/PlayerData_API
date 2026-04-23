@@ -21,12 +21,10 @@ class StartDialogUseCase {
         };
       }
 
-      const safeQuestions = (dialog.questions || []).map((question) => {
-        const {
-          correct_answer,
-          correctAnswer,
-          ...safeQuestion
-        } = question;
+      const safeQuestions = (dialog.questions || []).map(question => {
+        const safeQuestion = { ...question };
+        delete safeQuestion.correct_answer;
+        delete safeQuestion.correctAnswer;
 
         return safeQuestion;
       });

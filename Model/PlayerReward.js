@@ -1,14 +1,16 @@
 // models/playerRewardModel.js
 const db = require('../DB/db.js');
 const battlePassRewardModel = require('./BattlePassReward.js');
-const { RewardNotFoundError, RewardAlreadyAwardedError } = require('../utils/errors.js');
+const {
+  RewardNotFoundError,
+  RewardAlreadyAwardedError
+} = require('../utils/errors.js');
 
-
-const getPlayerRewards = async (playerId) => {
+const getPlayerRewards = async playerId => {
   return await db('player_rewards').where({ playerId });
 };
 
-const getUnclaimedRewards = async (playerId) => {
+const getUnclaimedRewards = async playerId => {
   return await db('player_rewards').where({ playerId, claimed: false });
 };
 
@@ -38,13 +40,11 @@ const claimReward = async (playerId, level) => {
 };
 
 const createReward = async (level, reward) => {
-  return await db('battle_pass_rewards')
-    .insert({ level, reward });
+  return await db('battle_pass_rewards').insert({ level, reward });
 };
 
 const createPlayerReward = async (playerId, reward) => {
-  await db('player_rewards')
-    .insert({ playerId, rewardId: reward.id });
+  await db('player_rewards').insert({ playerId, rewardId: reward.id });
 };
 
 const awardReward = async (playerId, level) => {
@@ -59,16 +59,14 @@ const awardReward = async (playerId, level) => {
     .where({ playerId, rewardId: reward.id })
     .first();
   if (existingReward) {
-    throw new RewardAlreadyAwardedError('Player has already received this reward');
+    throw new RewardAlreadyAwardedError(
+      'Player has already received this reward'
+    );
   }
 
   // Otorgar el premio al jugador
-  return await db('player_rewards')
-    .insert({ playerId, rewardId: reward.id });
+  return await db('player_rewards').insert({ playerId, rewardId: reward.id });
 };
-
-
-
 
 module.exports = {
   getPlayerRewards,

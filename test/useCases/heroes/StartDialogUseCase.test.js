@@ -10,8 +10,18 @@ describe('StartDialogUseCase', () => {
         title: 'Welcome',
         metadata: { stage: 1 },
         questions: [
-          { questionId: 'q1', question: 'Who are you?', correct_answer: 'hero', order_index: 1 },
-          { questionId: 'q2', question: 'Ready?', correct_answer: 'yes', order_index: 2 }
+          {
+            questionId: 'q1',
+            question: 'Who are you?',
+            correct_answer: 'hero',
+            order_index: 1
+          },
+          {
+            questionId: 'q2',
+            question: 'Ready?',
+            correct_answer: 'yes',
+            order_index: 2
+          }
         ]
       })
     };

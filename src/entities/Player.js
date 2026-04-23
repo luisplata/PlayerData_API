@@ -19,7 +19,9 @@ class Player {
       throw new Error('Player ID must be between 3 and 50 characters');
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
-      throw new Error('Player ID can only contain letters, numbers, underscores, and hyphens');
+      throw new Error(
+        'Player ID can only contain letters, numbers, underscores, and hyphens'
+      );
     }
     return true;
   }
@@ -32,7 +34,9 @@ class Player {
       throw new Error('Nickname must be between 2 and 50 characters');
     }
     if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
-      throw new Error('Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots');
+      throw new Error(
+        'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots'
+      );
     }
     return true;
   }

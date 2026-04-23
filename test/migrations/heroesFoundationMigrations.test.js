@@ -23,7 +23,11 @@ function createTableMock() {
       return chain;
     },
     references(reference) {
-      constraints.push({ column: currentColumn, type: 'references', reference });
+      constraints.push({
+        column: currentColumn,
+        type: 'references',
+        reference
+      });
       return chain;
     },
     inTable(table) {
@@ -72,7 +76,13 @@ function createTableMock() {
       return chain;
     },
     unique(columnsList, name) {
-      constraints.push({ column: Array.isArray(columnsList) ? columnsList.join(',') : columnsList, type: 'unique', name });
+      constraints.push({
+        column: Array.isArray(columnsList)
+          ? columnsList.join(',')
+          : columnsList,
+        type: 'unique',
+        name
+      });
       return chain;
     },
     timestamps() {
@@ -132,14 +142,22 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('heroes');
 
-    expect(createCall.columns.some((c) => c.name === 'heroId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.name === 'metadata' && c.type === 'json')).to.equal(true);
-    expect(createCall.columns.some((c) => c.type === 'timestamps')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'unique')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'heroId')).to.equal(true);
+    expect(
+      createCall.columns.some(c => c.name === 'metadata' && c.type === 'json')
+    ).to.equal(true);
+    expect(createCall.columns.some(c => c.type === 'timestamps')).to.equal(
+      true
+    );
+    expect(
+      createCall.constraints.some(
+        c => c.column === 'heroId' && c.type === 'unique'
+      )
+    ).to.equal(true);
   });
 
   it('1.2 should create passives table with FK to heroes(heroId) and metadata', async () => {
@@ -148,14 +166,28 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('passives');
 
-    expect(createCall.columns.some((c) => c.name === 'heroId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.name === 'metadata' && c.type === 'json')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'references' && c.reference === 'heroId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'heroId')).to.equal(true);
+    expect(
+      createCall.columns.some(c => c.name === 'metadata' && c.type === 'json')
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' &&
+          c.type === 'references' &&
+          c.reference === 'heroId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes'
+      )
+    ).to.equal(true);
   });
 
   it('1.3 should create dialogs table with FK to heroes(heroId)', async () => {
@@ -164,14 +196,28 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('dialogs');
 
-    expect(createCall.columns.some((c) => c.name === 'heroId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'references' && c.reference === 'heroId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes')).to.equal(true);
-    expect(createCall.columns.some((c) => c.type === 'timestamps')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'heroId')).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' &&
+          c.type === 'references' &&
+          c.reference === 'heroId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes'
+      )
+    ).to.equal(true);
+    expect(createCall.columns.some(c => c.type === 'timestamps')).to.equal(
+      true
+    );
   });
 
   it('1.4 should create dialog_questions table with FK to dialogs(id) and correct_answer', async () => {
@@ -180,14 +226,32 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('dialog_questions');
 
-    expect(createCall.columns.some((c) => c.name === 'dialogId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.name === 'correct_answer' && c.type === 'string')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'dialogId' && c.type === 'references' && c.reference === 'id')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'dialogId' && c.type === 'inTable' && c.table === 'dialogs')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'dialogId')).to.equal(true);
+    expect(
+      createCall.columns.some(
+        c => c.name === 'correct_answer' && c.type === 'string'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'dialogId' &&
+          c.type === 'references' &&
+          c.reference === 'id'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'dialogId' &&
+          c.type === 'inTable' &&
+          c.table === 'dialogs'
+      )
+    ).to.equal(true);
   });
 
   it('1.5 should create player_passives table with unique player/hero/passive relation', async () => {
@@ -196,17 +260,40 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('player_passives');
 
-    expect(createCall.columns.some((c) => c.name === 'playerId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.name === 'heroId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.name === 'passiveId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'playerId' && c.type === 'references' && c.reference === 'playerId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'references' && c.reference === 'heroId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'passiveId' && c.type === 'references' && c.reference === 'passiveId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.type === 'unique')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'playerId')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'heroId')).to.equal(true);
+    expect(createCall.columns.some(c => c.name === 'passiveId')).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'playerId' &&
+          c.type === 'references' &&
+          c.reference === 'playerId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' &&
+          c.type === 'references' &&
+          c.reference === 'heroId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'passiveId' &&
+          c.type === 'references' &&
+          c.reference === 'passiveId'
+      )
+    ).to.equal(true);
+    expect(createCall.constraints.some(c => c.type === 'unique')).to.equal(
+      true
+    );
   });
 
   it('1.6 should create heroes indexes migration with safe index definitions', async () => {
@@ -215,11 +302,25 @@ describe('Heroes foundation migrations (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    expect(knex.calls.some((c) => c.type === 'alterTable' && c.name === 'heroes')).to.equal(true);
-    expect(knex.calls.some((c) => c.type === 'alterTable' && c.name === 'passives')).to.equal(true);
-    expect(knex.calls.some((c) => c.type === 'alterTable' && c.name === 'dialogs')).to.equal(true);
-    expect(knex.calls.some((c) => c.type === 'alterTable' && c.name === 'dialog_questions')).to.equal(true);
-    expect(knex.calls.some((c) => c.type === 'alterTable' && c.name === 'player_passives')).to.equal(true);
-    expect(knex.calls.some((c) => c.type === 'index')).to.equal(true);
+    expect(
+      knex.calls.some(c => c.type === 'alterTable' && c.name === 'heroes')
+    ).to.equal(true);
+    expect(
+      knex.calls.some(c => c.type === 'alterTable' && c.name === 'passives')
+    ).to.equal(true);
+    expect(
+      knex.calls.some(c => c.type === 'alterTable' && c.name === 'dialogs')
+    ).to.equal(true);
+    expect(
+      knex.calls.some(
+        c => c.type === 'alterTable' && c.name === 'dialog_questions'
+      )
+    ).to.equal(true);
+    expect(
+      knex.calls.some(
+        c => c.type === 'alterTable' && c.name === 'player_passives'
+      )
+    ).to.equal(true);
+    expect(knex.calls.some(c => c.type === 'index')).to.equal(true);
   });
 });

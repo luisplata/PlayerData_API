@@ -11,7 +11,10 @@ const ErrorHandlerMiddleware = require('../middlewares/ErrorHandlerMiddleware');
 
 class PassiveController {
   constructor(playerPassiveRepository, passiveRepository) {
-    this.getPassiveUseCase = new GetPassiveUseCase(playerPassiveRepository, passiveRepository);
+    this.getPassiveUseCase = new GetPassiveUseCase(
+      playerPassiveRepository,
+      passiveRepository
+    );
   }
 
   /**

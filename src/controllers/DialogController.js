@@ -36,7 +36,7 @@ class DialogController {
    * /api/v1/heroes/dialog/start:
    *   post:
    *     summary: Start hero dialog and return public questions
-  *     description: Returns dialog metadata and question list without exposing correct answers. Visible dialog text is capped at 280 characters.
+   *     description: Returns dialog metadata and question list without exposing correct answers. Visible dialog text is capped at 280 characters.
    *     tags: [Hero Dialog]
    *     security:
    *       - bearerAuth: []

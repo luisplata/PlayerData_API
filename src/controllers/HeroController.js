@@ -47,10 +47,10 @@ class HeroController {
    *                 additionalProperties: true
    *                 example:
    *                   role: support
-  *                   xpPerLevel: 100
-  *                   pointsLostPerGame: 2
-  *                   minPointsGainedPerConversation: 1
-  *                   pointsGainedPerConversationComplete: 10
+   *                   xpPerLevel: 100
+   *                   pointsLostPerGame: 2
+   *                   minPointsGainedPerConversation: 1
+   *                   pointsGainedPerConversationComplete: 10
    *     responses:
    *       201:
    *         description: Hero created successfully
@@ -160,7 +160,7 @@ class HeroController {
    * /api/v1/heroes/player/{playerId}:
    *   get:
    *     summary: Get hero inventory for a player
-    *     description: Returns full hero catalog with stable shape, current XP progress, xp threshold and player progress level defaults.
+   *     description: Returns full hero catalog with stable shape, current XP progress, xp threshold and player progress level defaults.
    *     tags: [Heroes]
    *     security:
    *       - bearerAuth: []

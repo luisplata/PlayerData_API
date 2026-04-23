@@ -3,7 +3,14 @@
  * Enhanced Player entity for API v2 with new features
  */
 class PlayerV2 {
-  constructor(playerId, nickname, email = null, avatar = null, preferences = {}, id = null) {
+  constructor(
+    playerId,
+    nickname,
+    email = null,
+    avatar = null,
+    preferences = {},
+    id = null
+  ) {
     this.id = id;
     this.playerId = playerId;
     this.nickname = nickname;
@@ -27,7 +34,9 @@ class PlayerV2 {
       throw new Error('Player ID must be between 3 and 50 characters');
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(playerId)) {
-      throw new Error('Player ID can only contain letters, numbers, underscores, and hyphens');
+      throw new Error(
+        'Player ID can only contain letters, numbers, underscores, and hyphens'
+      );
     }
     return true;
   }
@@ -40,7 +49,9 @@ class PlayerV2 {
       throw new Error('Nickname must be between 2 and 50 characters');
     }
     if (!/^[a-zA-Z0-9._-]+(?: [a-zA-Z0-9._-]+)*$/.test(nickname)) {
-      throw new Error('Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots');
+      throw new Error(
+        'Nickname can only contain letters, numbers, spaces, underscores, hyphens, and dots'
+      );
     }
     return true;
   }
@@ -71,7 +82,9 @@ class PlayerV2 {
     }
     if (preferences) {
       const validKeys = ['theme', 'language', 'notifications', 'privacy'];
-      const invalidKeys = Object.keys(preferences).filter(key => !validKeys.includes(key));
+      const invalidKeys = Object.keys(preferences).filter(
+        key => !validKeys.includes(key)
+      );
       if (invalidKeys.length > 0) {
         throw new Error(`Invalid preference keys: ${invalidKeys.join(', ')}`);
       }

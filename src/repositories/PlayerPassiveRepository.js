@@ -37,7 +37,9 @@ class PlayerPassiveRepository {
 
   async getByPlayerId(playerId) {
     try {
-      return await this.db('player_passives').where({ playerId }).orderBy('assigned_at', 'desc');
+      return await this.db('player_passives')
+        .where({ playerId })
+        .orderBy('assigned_at', 'desc');
     } catch (error) {
       throw new Error(`Failed to find player passives: ${error.message}`);
     }
@@ -45,9 +47,13 @@ class PlayerPassiveRepository {
 
   async getByPlayerAndHero(playerId, heroId) {
     try {
-      return await this.db('player_passives').where({ playerId, heroId }).first();
+      return await this.db('player_passives')
+        .where({ playerId, heroId })
+        .first();
     } catch (error) {
-      throw new Error(`Failed to find player passive by hero: ${error.message}`);
+      throw new Error(
+        `Failed to find player passive by hero: ${error.message}`
+      );
     }
   }
 }

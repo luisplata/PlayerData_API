@@ -15,7 +15,7 @@ class PlayerRepository {
         created_at: player.created_at,
         updated_at: player.updated_at
       });
-      
+
       return {
         id,
         playerId: player.playerId,
@@ -57,13 +57,11 @@ class PlayerRepository {
 
   async updateNickname(playerId, nickname) {
     try {
-      const updatedRows = await this.db('players')
-        .where({ playerId })
-        .update({ 
-          nickname,
-          updated_at: new Date()
-        });
-      
+      const updatedRows = await this.db('players').where({ playerId }).update({
+        nickname,
+        updated_at: new Date()
+      });
+
       return updatedRows;
     } catch (error) {
       throw new Error(`Failed to update player nickname: ${error.message}`);
@@ -83,18 +81,18 @@ class PlayerRepository {
       const player = await this.findByNickname(nickname);
       return !player;
     } catch (error) {
-      throw new Error(`Failed to check nickname availability: ${error.message}`);
+      throw new Error(
+        `Failed to check nickname availability: ${error.message}`
+      );
     }
   }
 
   async updateLastLogin(playerId) {
     try {
-      const updatedRows = await this.db('players')
-        .where({ playerId })
-        .update({ 
-          updated_at: new Date()
-        });
-      
+      const updatedRows = await this.db('players').where({ playerId }).update({
+        updated_at: new Date()
+      });
+
       return updatedRows;
     } catch (error) {
       throw new Error(`Failed to update last login: ${error.message}`);

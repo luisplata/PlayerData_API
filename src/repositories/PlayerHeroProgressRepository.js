@@ -13,7 +13,9 @@ class PlayerHeroProgressRepository {
 
   async getByPlayerAndHero(playerId, heroId) {
     try {
-      return await this.db('player_hero_progress').where({ playerId, heroId }).first();
+      return await this.db('player_hero_progress')
+        .where({ playerId, heroId })
+        .first();
     } catch (error) {
       throw new Error(`Failed to find player hero progress: ${error.message}`);
     }
@@ -53,7 +55,9 @@ class PlayerHeroProgressRepository {
         currentXp: 0
       };
     } catch (error) {
-      throw new Error(`Failed to increment player hero level: ${error.message}`);
+      throw new Error(
+        `Failed to increment player hero level: ${error.message}`
+      );
     }
   }
 
@@ -68,8 +72,15 @@ class PlayerHeroProgressRepository {
       }
 
       const current = await this.getByPlayerAndHero(playerId, heroId);
-      const currentLevel = PlayerHeroProgressRepository.normalizePositiveInteger(current && current.level, 0);
-      const currentXp = PlayerHeroProgressRepository.normalizePositiveInteger(current && current.currentXp, 0);
+      const currentLevel =
+        PlayerHeroProgressRepository.normalizePositiveInteger(
+          current && current.level,
+          0
+        );
+      const currentXp = PlayerHeroProgressRepository.normalizePositiveInteger(
+        current && current.currentXp,
+        0
+      );
       const totalXp = currentXp + experienceGain;
       const levelsGained = Math.floor(totalXp / xpPerLevel);
       const nextLevel = currentLevel + levelsGained;
@@ -95,9 +106,11 @@ class PlayerHeroProgressRepository {
         };
       }
 
-      await this.db('player_hero_progress')
-        .where({ playerId, heroId })
-        .update({ level: nextLevel, currentXp: nextCurrentXp, updated_at: new Date() });
+      await this.db('player_hero_progress').where({ playerId, heroId }).update({
+        level: nextLevel,
+        currentXp: nextCurrentXp,
+        updated_at: new Date()
+      });
 
       return {
         ...current,

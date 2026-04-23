@@ -10,7 +10,9 @@ class PlayerRewardRepository {
   async awardReward(playerId, level) {
     try {
       // Get the reward for the level
-      const reward = await this.db('battle_pass_rewards').where({ level }).first();
+      const reward = await this.db('battle_pass_rewards')
+        .where({ level })
+        .first();
       if (!reward) {
         throw new Error(`No reward found for level ${level}`);
       }
@@ -83,7 +85,9 @@ class PlayerRewardRepository {
         .andWhere('bpr.level', level)
         .first();
     } catch (error) {
-      throw new Error(`Failed to find player reward by level: ${error.message}`);
+      throw new Error(
+        `Failed to find player reward by level: ${error.message}`
+      );
     }
   }
 

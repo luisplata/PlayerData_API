@@ -6,7 +6,12 @@ const Player = require('../../entities/Player');
 const TransactionService = require('../../services/TransactionService');
 
 class CreatePlayerUseCase {
-  constructor(playerRepository, battlePassRepository, playerRewardRepository, battlePassRewardRepository) {
+  constructor(
+    playerRepository,
+    battlePassRepository,
+    playerRewardRepository,
+    battlePassRewardRepository
+  ) {
     this.playerRepository = playerRepository;
     this.battlePassRepository = battlePassRepository;
     this.playerRewardRepository = playerRewardRepository;
@@ -26,8 +31,12 @@ class CreatePlayerUseCase {
       player.validate();
 
       // Check if player already exists
-      const existingPlayer = await this.playerRepository.findByPlayerIdOrNickname(playerId, nickname);
-      
+      const existingPlayer =
+        await this.playerRepository.findByPlayerIdOrNickname(
+          playerId,
+          nickname
+        );
+
       if (existingPlayer) {
         // Update existing player's nickname
         if (existingPlayer.nickname !== nickname) {
@@ -46,21 +55,24 @@ class CreatePlayerUseCase {
       }
 
       // Execute player creation and initialization in a transaction
-      const result = await this.transactionService.executeTransaction(async (trx) => {
-        // Create new player
-        const newPlayer = await this.playerRepository.create(player);
-        
-        // Initialize battle pass for new player
-        await this.battlePassRepository.create(playerId);
-        
-        // Award level 1 reward if it exists
-        const level1Reward = await this.battlePassRewardRepository.findByLevel(1);
-        if (level1Reward) {
-          await this.playerRewardRepository.awardReward(playerId, 1);
+      const result = await this.transactionService.executeTransaction(
+        async trx => {
+          // Create new player
+          const newPlayer = await this.playerRepository.create(player);
+
+          // Initialize battle pass for new player
+          await this.battlePassRepository.create(playerId);
+
+          // Award level 1 reward if it exists
+          const level1Reward =
+            await this.battlePassRewardRepository.findByLevel(1);
+          if (level1Reward) {
+            await this.playerRewardRepository.awardReward(playerId, 1);
+          }
+
+          return newPlayer;
         }
-        
-        return newPlayer;
-      });
+      );
 
       return {
         success: true,

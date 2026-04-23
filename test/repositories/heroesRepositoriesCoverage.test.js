@@ -8,14 +8,14 @@ const PlayerHeroProgressRepository = require('../../src/repositories/PlayerHeroP
 describe('Heroes repositories coverage', () => {
   describe('HeroRepository', () => {
     it('covers list/find success and wrapped create error', async () => {
-      const db = (table) => {
+      const db = table => {
         if (table !== 'heroes') throw new Error('unexpected table');
 
         return {
           insert: async () => {
             throw new Error('insert failed');
           },
-          orderBy: async () => ([{ heroId: 'h1' }]),
+          orderBy: async () => [{ heroId: 'h1' }],
           where: () => ({ first: async () => ({ heroId: 'h1' }) })
         };
       };
@@ -29,10 +29,18 @@ describe('Heroes repositories coverage', () => {
       expect(found).to.deep.equal({ heroId: 'h1' });
 
       try {
-        await repository.create({ heroId: 'h1', name: 'Hero', metadata: {}, created_at: new Date(), updated_at: new Date() });
+        await repository.create({
+          heroId: 'h1',
+          name: 'Hero',
+          metadata: {},
+          created_at: new Date(),
+          updated_at: new Date()
+        });
         throw new Error('expected create to fail');
       } catch (error) {
-        expect(error.message).to.include('Failed to create hero: insert failed');
+        expect(error.message).to.include(
+          'Failed to create hero: insert failed'
+        );
       }
     });
 
@@ -61,7 +69,9 @@ describe('Heroes repositories coverage', () => {
         await repository.findByHeroId('h1');
         throw new Error('expected findByHeroId to fail');
       } catch (error) {
-        expect(error.message).to.include('Failed to find hero by ID: find failed');
+        expect(error.message).to.include(
+          'Failed to find hero by ID: find failed'
+        );
       }
     });
   });
@@ -70,10 +80,10 @@ describe('Heroes repositories coverage', () => {
     it('covers create/find methods and wrapped errors', async () => {
       const db = () => ({
         insert: async () => [2],
-        orderBy: async () => ([{ passiveId: 'p1' }]),
+        orderBy: async () => [{ passiveId: 'p1' }],
         where: () => ({
           first: async () => ({ passiveId: 'p1' }),
-          orderBy: async () => ([{ passiveId: 'p1', heroId: 'h1' }])
+          orderBy: async () => [{ passiveId: 'p1', heroId: 'h1' }]
         })
       });
 
@@ -116,29 +126,64 @@ describe('Heroes repositories coverage', () => {
       const errorRepository = new PassiveRepository(errorDb);
 
       await Promise.all([
-        errorRepository.create({ passiveId: 'x', heroId: 'h', name: 'n', metadata: {}, created_at: new Date(), updated_at: new Date() }).then(() => {
-          throw new Error('expected create fail');
-        }).catch((e) => expect(e.message).to.include('Failed to create passive: create failed')),
-        errorRepository.findAll().then(() => {
-          throw new Error('expected list fail');
-        }).catch((e) => expect(e.message).to.include('Failed to find passives: all failed')),
-        errorRepository.findByPassiveId('x').then(() => {
-          throw new Error('expected by id fail');
-        }).catch((e) => expect(e.message).to.include('Failed to find passive by ID: id failed')),
-        errorRepository.findByHeroId('h').then(() => {
-          throw new Error('expected by hero fail');
-        }).catch((e) => expect(e.message).to.include('Failed to find passives by hero: hero failed'))
+        errorRepository
+          .create({
+            passiveId: 'x',
+            heroId: 'h',
+            name: 'n',
+            metadata: {},
+            created_at: new Date(),
+            updated_at: new Date()
+          })
+          .then(() => {
+            throw new Error('expected create fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to create passive: create failed'
+            )
+          ),
+        errorRepository
+          .findAll()
+          .then(() => {
+            throw new Error('expected list fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include('Failed to find passives: all failed')
+          ),
+        errorRepository
+          .findByPassiveId('x')
+          .then(() => {
+            throw new Error('expected by id fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to find passive by ID: id failed'
+            )
+          ),
+        errorRepository
+          .findByHeroId('h')
+          .then(() => {
+            throw new Error('expected by hero fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to find passives by hero: hero failed'
+            )
+          )
       ]);
     });
   });
 
   describe('DialogRepository', () => {
     it('covers no dialog and validateAnswer false branch', async () => {
-      const db = (table) => {
+      const db = table => {
         if (table === 'dialogs') {
           return { where: () => ({ first: async () => null }) };
         }
-        return { where: () => ({ first: async () => null, orderBy: async () => [] }) };
+        return {
+          where: () => ({ first: async () => null, orderBy: async () => [] })
+        };
       };
 
       const repository = new DialogRepository(db);
@@ -150,11 +195,23 @@ describe('Heroes repositories coverage', () => {
     });
 
     it('covers wrapped dialog repository errors', async () => {
-      const db = (table) => {
+      const db = table => {
         if (table === 'dialogs') {
-          return { where: () => ({ first: async () => { throw new Error('dialog failed'); } }) };
+          return {
+            where: () => ({
+              first: async () => {
+                throw new Error('dialog failed');
+              }
+            })
+          };
         }
-        return { where: () => ({ first: async () => { throw new Error('answer failed'); } }) };
+        return {
+          where: () => ({
+            first: async () => {
+              throw new Error('answer failed');
+            }
+          })
+        };
       };
 
       const repository = new DialogRepository(db);
@@ -163,21 +220,30 @@ describe('Heroes repositories coverage', () => {
         await repository.startDialog('h1');
         throw new Error('expected startDialog fail');
       } catch (error) {
-        expect(error.message).to.include('Failed to start dialog: dialog failed');
+        expect(error.message).to.include(
+          'Failed to start dialog: dialog failed'
+        );
       }
 
       try {
         await repository.validateAnswer('q1', 'yes');
         throw new Error('expected validateAnswer fail');
       } catch (error) {
-        expect(error.message).to.include('Failed to validate answer: answer failed');
+        expect(error.message).to.include(
+          'Failed to validate answer: answer failed'
+        );
       }
     });
   });
 
   describe('PlayerPassiveRepository', () => {
     it('covers assign existing branch and getByPlayerAndHero', async () => {
-      const existing = { id: 9, playerId: 'p1', heroId: 'h1', passiveId: 'pa1' };
+      const existing = {
+        id: 9,
+        playerId: 'p1',
+        heroId: 'h1',
+        passiveId: 'pa1'
+      };
       const db = () => ({
         where: () => ({
           first: async () => existing,
@@ -214,15 +280,36 @@ describe('Heroes repositories coverage', () => {
       const repository = new PlayerPassiveRepository(db);
 
       await Promise.all([
-        repository.assignPassive('p1', 'h1', 'pa1').then(() => {
-          throw new Error('expected assign fail');
-        }).catch((e) => expect(e.message).to.include('Failed to assign passive: where failed')),
-        repository.getByPlayerId('p1').then(() => {
-          throw new Error('expected by player fail');
-        }).catch((e) => expect(e.message).to.include('Failed to find player passives: order failed')),
-        repository.getByPlayerAndHero('p1', 'h1').then(() => {
-          throw new Error('expected by player/hero fail');
-        }).catch((e) => expect(e.message).to.include('Failed to find player passive by hero: where failed'))
+        repository
+          .assignPassive('p1', 'h1', 'pa1')
+          .then(() => {
+            throw new Error('expected assign fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to assign passive: where failed'
+            )
+          ),
+        repository
+          .getByPlayerId('p1')
+          .then(() => {
+            throw new Error('expected by player fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to find player passives: order failed'
+            )
+          ),
+        repository
+          .getByPlayerAndHero('p1', 'h1')
+          .then(() => {
+            throw new Error('expected by player/hero fail');
+          })
+          .catch(e =>
+            expect(e.message).to.include(
+              'Failed to find player passive by hero: where failed'
+            )
+          )
       ]);
     });
   });
@@ -230,13 +317,20 @@ describe('Heroes repositories coverage', () => {
   describe('PlayerHeroProgressRepository', () => {
     it('covers incrementLevel success path with currentXp reset', async () => {
       const updates = [];
-      const db = (table) => {
-        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+      const db = table => {
+        if (table !== 'player_hero_progress')
+          throw new Error('unexpected table');
 
         return {
           where: () => ({
-            first: async () => ({ id: 1, playerId: 'p1', heroId: 'h1', level: 2, currentXp: 40 }),
-            update: async (payload) => {
+            first: async () => ({
+              id: 1,
+              playerId: 'p1',
+              heroId: 'h1',
+              level: 2,
+              currentXp: 40
+            }),
+            update: async payload => {
               updates.push(payload);
               return 1;
             }
@@ -248,19 +342,31 @@ describe('Heroes repositories coverage', () => {
       const repository = new PlayerHeroProgressRepository(db);
       const updated = await repository.incrementLevel('p1', 'h1');
 
-      expect(updated).to.include({ playerId: 'p1', heroId: 'h1', level: 3, currentXp: 0 });
+      expect(updated).to.include({
+        playerId: 'p1',
+        heroId: 'h1',
+        level: 3,
+        currentXp: 0
+      });
       expect(updates[0]).to.deep.include({ level: 3, currentXp: 0 });
     });
 
     it('covers addExperience carry-over across level thresholds', async () => {
       const updates = [];
-      const db = (table) => {
-        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+      const db = table => {
+        if (table !== 'player_hero_progress')
+          throw new Error('unexpected table');
 
         return {
           where: () => ({
-            first: async () => ({ id: 2, playerId: 'p1', heroId: 'h1', level: 1, currentXp: 97 }),
-            update: async (payload) => {
+            first: async () => ({
+              id: 2,
+              playerId: 'p1',
+              heroId: 'h1',
+              level: 1,
+              currentXp: 97
+            }),
+            update: async payload => {
               updates.push(payload);
               return 1;
             }
@@ -272,21 +378,28 @@ describe('Heroes repositories coverage', () => {
       const repository = new PlayerHeroProgressRepository(db);
       const updated = await repository.addExperience('p1', 'h1', 7, 100);
 
-      expect(updated).to.include({ playerId: 'p1', heroId: 'h1', level: 2, currentXp: 4, levelsGained: 1 });
+      expect(updated).to.include({
+        playerId: 'p1',
+        heroId: 'h1',
+        level: 2,
+        currentXp: 4,
+        levelsGained: 1
+      });
       expect(updates[0]).to.deep.include({ level: 2, currentXp: 4 });
     });
 
     it('covers create path with currentXp default', async () => {
       const inserts = [];
-      const db = (table) => {
-        if (table !== 'player_hero_progress') throw new Error('unexpected table');
+      const db = table => {
+        if (table !== 'player_hero_progress')
+          throw new Error('unexpected table');
 
         return {
           where: () => ({
             first: async () => null,
             update: async () => 0
           }),
-          insert: async (payload) => {
+          insert: async payload => {
             inserts.push(payload);
             return [7];
           }
@@ -296,8 +409,19 @@ describe('Heroes repositories coverage', () => {
       const repository = new PlayerHeroProgressRepository(db);
       const created = await repository.incrementLevel('p1', 'h1');
 
-      expect(created).to.include({ id: 7, playerId: 'p1', heroId: 'h1', level: 1, currentXp: 0 });
-      expect(inserts[0]).to.deep.include({ playerId: 'p1', heroId: 'h1', level: 1, currentXp: 0 });
+      expect(created).to.include({
+        id: 7,
+        playerId: 'p1',
+        heroId: 'h1',
+        level: 1,
+        currentXp: 0
+      });
+      expect(inserts[0]).to.deep.include({
+        playerId: 'p1',
+        heroId: 'h1',
+        level: 1,
+        currentXp: 0
+      });
     });
   });
 });

@@ -4,12 +4,18 @@ function isWeakJwtSecret(secret) {
   }
 
   const normalized = secret.trim().toLowerCase();
-  return normalized.length < 16 || normalized === 'your_secret_key' || normalized === 'changeme';
+  return (
+    normalized.length < 16 ||
+    normalized === 'your_secret_key' ||
+    normalized === 'changeme'
+  );
 }
 
 function validateSecurityConfig(env = process.env) {
   if (isWeakJwtSecret(env.JWT_SECRET)) {
-    throw new Error('JWT_SECRET must be configured with a strong non-default value');
+    throw new Error(
+      'JWT_SECRET must be configured with a strong non-default value'
+    );
   }
 }
 

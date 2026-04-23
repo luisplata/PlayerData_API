@@ -20,7 +20,9 @@ class Hero {
       throw new Error('Hero ID must be between 3 and 50 characters');
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(heroId)) {
-      throw new Error('Hero ID can only contain letters, numbers, underscores, and hyphens');
+      throw new Error(
+        'Hero ID can only contain letters, numbers, underscores, and hyphens'
+      );
     }
     return true;
   }
@@ -36,7 +38,11 @@ class Hero {
   }
 
   static validateMetadata(metadata) {
-    if (metadata === null || Array.isArray(metadata) || typeof metadata !== 'object') {
+    if (
+      metadata === null ||
+      Array.isArray(metadata) ||
+      typeof metadata !== 'object'
+    ) {
       throw new Error('Hero metadata must be an object');
     }
 
@@ -68,15 +74,24 @@ class Hero {
     }
 
     Hero.validateNonNegativeIntegerField(metadata, 'pointsLostPerGame');
-    Hero.validateNonNegativeIntegerField(metadata, 'minPointsGainedPerConversation');
-    Hero.validateNonNegativeIntegerField(metadata, 'pointsGainedPerConversationComplete');
+    Hero.validateNonNegativeIntegerField(
+      metadata,
+      'minPointsGainedPerConversation'
+    );
+    Hero.validateNonNegativeIntegerField(
+      metadata,
+      'pointsGainedPerConversationComplete'
+    );
 
     if (
-      Hero.hasOwn(metadata, 'minPointsGainedPerConversation')
-      && Hero.hasOwn(metadata, 'pointsGainedPerConversationComplete')
-      && metadata.pointsGainedPerConversationComplete < metadata.minPointsGainedPerConversation
+      Hero.hasOwn(metadata, 'minPointsGainedPerConversation') &&
+      Hero.hasOwn(metadata, 'pointsGainedPerConversationComplete') &&
+      metadata.pointsGainedPerConversationComplete <
+        metadata.minPointsGainedPerConversation
     ) {
-      throw new Error('pointsGainedPerConversationComplete must be greater than or equal to minPointsGainedPerConversation');
+      throw new Error(
+        'pointsGainedPerConversationComplete must be greater than or equal to minPointsGainedPerConversation'
+      );
     }
   }
 

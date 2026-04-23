@@ -41,7 +41,11 @@ class Dialog {
   }
 
   static validateMetadata(metadata) {
-    if (metadata === null || Array.isArray(metadata) || typeof metadata !== 'object') {
+    if (
+      metadata === null ||
+      Array.isArray(metadata) ||
+      typeof metadata !== 'object'
+    ) {
       throw new Error('Dialog metadata must be an object');
     }
     return true;

@@ -13,7 +13,7 @@ class TransactionService {
    */
   async executeTransaction(callback) {
     const trx = await db.transaction();
-    
+
     try {
       const result = await callback(trx);
       await trx.commit();
@@ -31,14 +31,14 @@ class TransactionService {
    * @returns {Promise<Array>} Results of all operations
    */
   async executeAtomicOperations(operations) {
-    return this.executeTransaction(async (trx) => {
+    return this.executeTransaction(async trx => {
       const results = [];
-      
+
       for (const operation of operations) {
         const result = await operation(trx);
         results.push(result);
       }
-      
+
       return results;
     });
   }
@@ -52,26 +52,29 @@ class TransactionService {
    */
   async executeWithRetry(callback, maxRetries = 3, delay = 1000) {
     let lastError;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await this.executeTransaction(callback);
       } catch (error) {
         lastError = error;
-        
+
         // Don't retry on validation errors or business logic errors
         if (this.isNonRetryableError(error)) {
           throw error;
         }
-        
+
         if (attempt < maxRetries) {
-          customLogger.warn(`Transaction attempt ${attempt} failed, retrying in ${delay}ms:`, error.message);
+          customLogger.warn(
+            `Transaction attempt ${attempt} failed, retrying in ${delay}ms:`,
+            error.message
+          );
           await this.delay(delay);
           delay *= 2; // Exponential backoff
         }
       }
     }
-    
+
     throw lastError;
   }
 
@@ -87,9 +90,9 @@ class TransactionService {
       'NotFoundError',
       'ConflictError'
     ];
-    
-    return nonRetryableErrors.some(errorType => 
-      error.name === errorType || error.message.includes(errorType)
+
+    return nonRetryableErrors.some(
+      errorType => error.name === errorType || error.message.includes(errorType)
     );
   }
 
@@ -109,7 +112,7 @@ class TransactionService {
    */
   async executeReadOnlyTransaction(callback) {
     const trx = await db.transaction();
-    
+
     try {
       // Set transaction to read-only mode
       await trx.raw('SET TRANSACTION READ ONLY');

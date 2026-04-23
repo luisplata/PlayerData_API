@@ -10,20 +10,21 @@ class ApiVersionMiddleware {
     // Add version info to response headers
     res.setHeader('API-Version', 'v1');
     res.setHeader('API-Deprecation-Date', '2025-12-31');
-    
+
     // Add version info to response body for legacy routes
     if (req.path.startsWith('/api/') && !req.path.startsWith('/api/v1/')) {
       const originalJson = res.json;
-      res.json = function(data) {
+      res.json = function (data) {
         if (data && typeof data === 'object') {
           data.apiVersion = 'legacy';
-          data.deprecationWarning = 'This endpoint is deprecated. Please use /api/v1/ instead.';
+          data.deprecationWarning =
+            'This endpoint is deprecated. Please use /api/v1/ instead.';
           data.deprecationDate = '2025-12-31';
         }
         return originalJson.call(this, data);
       };
     }
-    
+
     next();
   }
 
@@ -34,7 +35,7 @@ class ApiVersionMiddleware {
     // Only treat '/api/vN/...' as versioned routes.
     const versionMatch = req.path.match(/^\/api\/(v\d+)(?:\/|$)/);
     const version = versionMatch ? versionMatch[1] : undefined;
-    
+
     switch (version) {
       case 'v1':
         req.apiVersion = 'v1';
@@ -55,7 +56,7 @@ class ApiVersionMiddleware {
           }
         });
     }
-    
+
     next();
   }
 
@@ -64,9 +65,12 @@ class ApiVersionMiddleware {
    */
   static deprecationWarning(req, res, next) {
     if (req.apiVersion === 'legacy') {
-      res.setHeader('Warning', '299 - "This API version is deprecated. Please use /api/v1/ instead."');
+      res.setHeader(
+        'Warning',
+        '299 - "This API version is deprecated. Please use /api/v1/ instead."'
+      );
     }
-    
+
     next();
   }
 
@@ -112,14 +116,16 @@ class ApiVersionMiddleware {
       v2: {
         version: '2.0.0',
         status: 'inactive',
-        description: 'Available in codebase but currently not exposed in runtime routes'
+        description:
+          'Available in codebase but currently not exposed in runtime routes'
       },
       legacy: {
         version: '0.9.0',
         status: 'inactive',
         releaseDate: '2024-11-01',
         deprecationDate: '2025-12-31',
-        description: 'Legacy routes are disabled in runtime but kept in code for future reference'
+        description:
+          'Legacy routes are disabled in runtime but kept in code for future reference'
       }
     };
   }

@@ -12,7 +12,7 @@ describe('CreateHeroUseCase', () => {
     };
 
     const heroRepository = {
-      create: async (hero) => ({
+      create: async hero => ({
         id: createdHero.id,
         heroId: hero.heroId,
         name: hero.name,
@@ -23,7 +23,9 @@ describe('CreateHeroUseCase', () => {
     };
 
     const useCase = new CreateHeroUseCase(heroRepository);
-    const result = await useCase.execute('hero-001', 'Astra', { element: 'light' });
+    const result = await useCase.execute('hero-001', 'Astra', {
+      element: 'light'
+    });
 
     expect(result.success).to.equal(true);
     expect(result.hero).to.include({

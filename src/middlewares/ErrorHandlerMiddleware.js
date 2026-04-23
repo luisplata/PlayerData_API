@@ -39,13 +39,19 @@ class ErrorHandlerMiddleware {
     } else if (error.message.includes('not found')) {
       statusCode = 404;
       message = error.message;
-    } else if (error.message.includes('already exists') || error.message.includes('already awarded')) {
+    } else if (
+      error.message.includes('already exists') ||
+      error.message.includes('already awarded')
+    ) {
       statusCode = 409;
       message = error.message;
     } else if (error.message.includes('Unauthorized')) {
       statusCode = 401;
       message = error.message;
-    } else if (error.message.includes('required') || error.message.includes('must be')) {
+    } else if (
+      error.message.includes('required') ||
+      error.message.includes('must be')
+    ) {
       statusCode = 400;
       message = error.message;
     } else if (error.message) {

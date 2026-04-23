@@ -8,7 +8,7 @@ function parseAllowedOrigins(rawOrigins) {
 
   return rawOrigins
     .split(',')
-    .map((origin) => origin.trim())
+    .map(origin => origin.trim())
     .filter(Boolean);
 }
 
@@ -22,7 +22,12 @@ function isLocalhostOrigin(origin) {
     const parsedUrl = new URL(origin);
     const hostname = parsedUrl.hostname;
 
-    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]';
+    return (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '::1' ||
+      hostname === '[::1]'
+    );
   } catch (error) {
     return false;
   }

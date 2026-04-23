@@ -7,7 +7,7 @@ const Hero = require('../../src/entities/Hero');
 function parseArgs(argv) {
   const args = {};
 
-  argv.forEach((entry) => {
+  argv.forEach(entry => {
     if (!entry.startsWith('--')) {
       return;
     }
@@ -40,7 +40,11 @@ function parseMetadata(metadata) {
 }
 
 function requireHeroId(payload) {
-  if (!payload || typeof payload.heroId !== 'string' || payload.heroId.trim() === '') {
+  if (
+    !payload ||
+    typeof payload.heroId !== 'string' ||
+    payload.heroId.trim() === ''
+  ) {
     throw new Error('heroId is required in input file');
   }
 
@@ -150,10 +154,13 @@ function serializeHero(hero) {
 
 async function run() {
   const args = parseArgs(process.argv.slice(2));
-  const action = typeof args.action === 'string' ? args.action.trim().toLowerCase() : '';
+  const action =
+    typeof args.action === 'string' ? args.action.trim().toLowerCase() : '';
 
   if (!action) {
-    throw new Error('action is required. Use --action=create|list|get|update|delete');
+    throw new Error(
+      'action is required. Use --action=create|list|get|update|delete'
+    );
   }
 
   let inputInfo = null;
@@ -184,7 +191,9 @@ async function run() {
   const response = {
     success: true,
     action,
-    input: inputInfo ? path.relative(process.cwd(), inputInfo.absolutePath) : null,
+    input: inputInfo
+      ? path.relative(process.cwd(), inputInfo.absolutePath)
+      : null,
     result
   };
 
@@ -192,7 +201,7 @@ async function run() {
 }
 
 run()
-  .catch((error) => {
+  .catch(error => {
     const response = {
       success: false,
       error: error.message

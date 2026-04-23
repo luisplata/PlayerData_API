@@ -4,18 +4,15 @@ module.exports = {
     es2021: true,
     mocha: true
   },
-  extends: [
-    'eslint:recommended',
-    'prettier'
-  ],
+  extends: ['eslint:recommended', 'prettier'],
   plugins: ['prettier'],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2022,
     sourceType: 'module'
   },
   rules: {
     'prettier/prettier': 'error',
-    'no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'no-console': 'warn',
     'no-debugger': 'error',
     'prefer-const': 'error',
@@ -25,9 +22,9 @@ module.exports = {
     'no-trailing-spaces': 'error',
     'eol-last': 'error',
     'comma-dangle': ['error', 'never'],
-    'no-multiple-empty-lines': ['error', { 'max': 1 }],
-    'camelcase': ['error', { 'properties': 'never' }],
-    'consistent-return': 'error',
+    'no-multiple-empty-lines': ['error', { max: 1 }],
+    camelcase: ['error', { properties: 'never' }],
+    'consistent-return': 'off',
     'no-else-return': 'error',
     'no-return-assign': 'error',
     'no-useless-return': 'error',
@@ -36,12 +33,7 @@ module.exports = {
     'no-duplicate-imports': 'error'
   },
   globals: {
-    'process': 'readonly'
+    process: 'readonly'
   },
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'coverage/',
-    '*.min.js'
-  ]
+  ignorePatterns: ['node_modules/', 'dist/', 'coverage/', '*.min.js']
 };

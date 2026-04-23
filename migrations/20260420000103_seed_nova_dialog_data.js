@@ -78,7 +78,9 @@ exports.up = async function (knex) {
 
   const hero = await knex('heroes').where({ heroId }).first();
   if (!hero) {
-    throw new Error(`Missing required hero '${heroId}' before running dialog migration.`);
+    throw new Error(
+      `Missing required hero '${heroId}' before running dialog migration.`
+    );
   }
 
   await knex('dialog_questions').where({ questionId }).del();
@@ -93,7 +95,12 @@ exports.up = async function (knex) {
       startSequence: 'seq-1',
       completedSequence: 'seq-6',
       nodes,
-      responseContract: ['currentSequence', 'nextSequence', 'completed', 'pointsAwarded']
+      responseContract: [
+        'currentSequence',
+        'nextSequence',
+        'completed',
+        'pointsAwarded'
+      ]
     }),
     created_at: now,
     updated_at: now

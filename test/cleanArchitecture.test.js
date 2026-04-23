@@ -3,7 +3,8 @@ const chaiHttp = require('chai-http');
 const { expect } = chai;
 
 process.env.RATE_LIMIT_MAX_LOGIN = process.env.RATE_LIMIT_MAX_LOGIN || '1000';
-process.env.RATE_LIMIT_MAX_VALIDATE = process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
+process.env.RATE_LIMIT_MAX_VALIDATE =
+  process.env.RATE_LIMIT_MAX_VALIDATE || '1000';
 process.env.PLAYER_API_KEY = process.env.PLAYER_API_KEY || 'your_player_key';
 
 const app = require('../index');
@@ -12,12 +13,13 @@ chai.use(chaiHttp);
 
 describe('Clean Architecture API Tests', () => {
   let authToken;
-  let testPlayerId = 'test_player_' + Date.now();
-  let testNickname = 'testuser_' + Date.now();
+  const testPlayerId = `test_player_${Date.now()}`;
+  const testNickname = `testuser_${Date.now()}`;
 
   describe('Health Check', () => {
-    it('should return health status', (done) => {
-      chai.request(app)
+    it('should return health status', done => {
+      chai
+        .request(app)
         .get('/health')
         .end((err, res) => {
           expect(res).to.have.status(200);
@@ -30,8 +32,9 @@ describe('Clean Architecture API Tests', () => {
   });
 
   describe('Player Management', () => {
-    it('should create a new player with valid data', (done) => {
-      chai.request(app)
+    it('should create a new player with valid data', done => {
+      chai
+        .request(app)
         .post('/api/v1/player')
         .send({
           playerId: testPlayerId,
@@ -41,15 +44,19 @@ describe('Clean Architecture API Tests', () => {
         .end((err, res) => {
           expect(res).to.have.status(201);
           expect(res.body).to.have.property('success', true);
-          expect(res.body).to.have.property('message', 'Player created successfully');
+          expect(res.body).to.have.property(
+            'message',
+            'Player created successfully'
+          );
           expect(res.body.data).to.have.property('playerId', testPlayerId);
           expect(res.body.data).to.have.property('nickname', testNickname);
           done();
         });
     });
 
-    it('should reject player creation with invalid data', (done) => {
-      chai.request(app)
+    it('should reject player creation with invalid data', done => {
+      chai
+        .request(app)
         .post('/api/v1/player')
         .send({
           playerId: 'ab', // Too short
@@ -64,8 +71,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should login with valid player ID', (done) => {
-      chai.request(app)
+    it('should login with valid player ID', done => {
+      chai
+        .request(app)
         .post('/api/v1/player/login')
         .send({ playerId: testPlayerId })
         .end((err, res) => {
@@ -78,8 +86,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should reject login with invalid player ID', (done) => {
-      chai.request(app)
+    it('should reject login with invalid player ID', done => {
+      chai
+        .request(app)
         .post('/api/v1/player/login')
         .send({ playerId: 'nonexistent_player' })
         .end((err, res) => {
@@ -90,8 +99,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should validate nickname availability', (done) => {
-      chai.request(app)
+    it('should validate nickname availability', done => {
+      chai
+        .request(app)
         .get(`/api/v1/player/validate/${testNickname}`)
         .set('Authorization', `Bearer ${authToken}`)
         .end((err, res) => {
@@ -102,8 +112,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should get player by ID with valid token', (done) => {
-      chai.request(app)
+    it('should get player by ID with valid token', done => {
+      chai
+        .request(app)
         .get(`/api/v1/player/id/${testPlayerId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .end((err, res) => {
@@ -114,8 +125,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should reject request without valid token', (done) => {
-      chai.request(app)
+    it('should reject request without valid token', done => {
+      chai
+        .request(app)
         .get(`/api/v1/player/id/${testPlayerId}`)
         .end((err, res) => {
           expect(res).to.have.status(401);
@@ -126,8 +138,9 @@ describe('Clean Architecture API Tests', () => {
   });
 
   describe('Battle Pass Management', () => {
-    it('should get battle pass for player', (done) => {
-      chai.request(app)
+    it('should get battle pass for player', done => {
+      chai
+        .request(app)
         .get(`/api/v1/battle-pass/${testPlayerId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .end((err, res) => {
@@ -139,8 +152,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should add experience to battle pass', (done) => {
-      chai.request(app)
+    it('should add experience to battle pass', done => {
+      chai
+        .request(app)
         .post('/api/v1/battle-pass/experience')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
@@ -156,8 +170,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should reject invalid experience values', (done) => {
-      chai.request(app)
+    it('should reject invalid experience values', done => {
+      chai
+        .request(app)
         .post('/api/v1/battle-pass/experience')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
@@ -174,8 +189,9 @@ describe('Clean Architecture API Tests', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle 404 for non-existent routes', (done) => {
-      chai.request(app)
+    it('should handle 404 for non-existent routes', done => {
+      chai
+        .request(app)
         .get('/api/nonexistent')
         .end((err, res) => {
           expect(res).to.have.status(404);
@@ -185,8 +201,9 @@ describe('Clean Architecture API Tests', () => {
         });
     });
 
-    it('should handle validation errors consistently', (done) => {
-      chai.request(app)
+    it('should handle validation errors consistently', done => {
+      chai
+        .request(app)
         .post('/api/v1/player/login')
         .send({ playerId: '' })
         .end((err, res) => {

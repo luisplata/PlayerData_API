@@ -88,7 +88,7 @@ class HealthController {
    */
   detailed = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const healthStatus = await this.healthCheckService.performHealthCheck();
-    
+
     const statusCode = healthStatus.status === 'unhealthy' ? 503 : 200;
     res.status(statusCode).json(healthStatus);
   });
@@ -149,8 +149,9 @@ class HealthController {
    *         description: Application not ready
    */
   readiness = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
-    const readinessStatus = await this.healthCheckService.performReadinessCheck();
-    
+    const readinessStatus =
+      await this.healthCheckService.performReadinessCheck();
+
     const statusCode = readinessStatus.status === 'ready' ? 200 : 503;
     res.status(statusCode).json(readinessStatus);
   });

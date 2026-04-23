@@ -10,7 +10,8 @@ class GetPassiveUseCase {
 
   async execute(playerId) {
     try {
-      const assignedList = await this.playerPassiveRepository.getByPlayerId(playerId);
+      const assignedList =
+        await this.playerPassiveRepository.getByPlayerId(playerId);
       const catalog = await this.passiveRepository.findAll();
 
       return {

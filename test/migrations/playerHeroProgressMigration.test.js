@@ -24,7 +24,11 @@ function createTableMock() {
       return chain;
     },
     references(reference) {
-      constraints.push({ column: currentColumn, type: 'references', reference });
+      constraints.push({
+        column: currentColumn,
+        type: 'references',
+        reference
+      });
       return chain;
     },
     inTable(table) {
@@ -59,7 +63,9 @@ function createTableMock() {
     },
     unique(columnsList, name) {
       constraints.push({
-        column: Array.isArray(columnsList) ? columnsList.join(',') : columnsList,
+        column: Array.isArray(columnsList)
+          ? columnsList.join(',')
+          : columnsList,
         type: 'unique',
         name
       });
@@ -113,27 +119,88 @@ describe('Player hero progress migration (Phase 1: 1.1-1.3)', () => {
 
     await migration.up(knex);
 
-    const createCall = knex.calls.find((c) => c.type === 'createTable');
+    const createCall = knex.calls.find(c => c.type === 'createTable');
     expect(createCall).to.exist;
     expect(createCall.name).to.equal('player_hero_progress');
 
-    expect(createCall.columns.some((c) => c.type === 'string' && c.name === 'playerId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.type === 'string' && c.name === 'heroId')).to.equal(true);
-    expect(createCall.columns.some((c) => c.type === 'integer' && c.name === 'level')).to.equal(true);
-    expect(createCall.columns.some((c) => c.type === 'timestamps')).to.equal(true);
+    expect(
+      createCall.columns.some(c => c.type === 'string' && c.name === 'playerId')
+    ).to.equal(true);
+    expect(
+      createCall.columns.some(c => c.type === 'string' && c.name === 'heroId')
+    ).to.equal(true);
+    expect(
+      createCall.columns.some(c => c.type === 'integer' && c.name === 'level')
+    ).to.equal(true);
+    expect(createCall.columns.some(c => c.type === 'timestamps')).to.equal(
+      true
+    );
 
-    expect(createCall.constraints.some((c) => c.column === 'playerId' && c.type === 'references' && c.reference === 'playerId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'playerId' && c.type === 'inTable' && c.table === 'players')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'references' && c.reference === 'heroId')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes')).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'playerId' &&
+          c.type === 'references' &&
+          c.reference === 'playerId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'playerId' &&
+          c.type === 'inTable' &&
+          c.table === 'players'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' &&
+          c.type === 'references' &&
+          c.reference === 'heroId'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.column === 'heroId' && c.type === 'inTable' && c.table === 'heroes'
+      )
+    ).to.equal(true);
 
-    expect(createCall.constraints.some((c) => c.column === 'level' && c.type === 'unsigned')).to.equal(true);
-    expect(createCall.constraints.some((c) => c.column === 'level' && c.type === 'defaultTo' && c.value === 0)).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c => c.column === 'level' && c.type === 'unsigned'
+      )
+    ).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c => c.column === 'level' && c.type === 'defaultTo' && c.value === 0
+      )
+    ).to.equal(true);
 
-    expect(createCall.constraints.some((c) => c.type === 'unique' && c.column === 'playerId,heroId' && c.name === 'uq_player_hero_progress')).to.equal(true);
+    expect(
+      createCall.constraints.some(
+        c =>
+          c.type === 'unique' &&
+          c.column === 'playerId,heroId' &&
+          c.name === 'uq_player_hero_progress'
+      )
+    ).to.equal(true);
 
-    expect(createCall.indexes.some((i) => i.name === 'idx_player_hero_progress_playerId' && i.columns.includes('playerId'))).to.equal(true);
-    expect(createCall.indexes.some((i) => i.name === 'idx_player_hero_progress_heroId' && i.columns.includes('heroId'))).to.equal(true);
+    expect(
+      createCall.indexes.some(
+        i =>
+          i.name === 'idx_player_hero_progress_playerId' &&
+          i.columns.includes('playerId')
+      )
+    ).to.equal(true);
+    expect(
+      createCall.indexes.some(
+        i =>
+          i.name === 'idx_player_hero_progress_heroId' &&
+          i.columns.includes('heroId')
+      )
+    ).to.equal(true);
   });
 
   it('supports rollback by dropping player_hero_progress', async () => {
@@ -142,6 +209,10 @@ describe('Player hero progress migration (Phase 1: 1.1-1.3)', () => {
 
     await migration.down(knex);
 
-    expect(knex.calls.some((c) => c.type === 'dropTable' && c.name === 'player_hero_progress')).to.equal(true);
+    expect(
+      knex.calls.some(
+        c => c.type === 'dropTable' && c.name === 'player_hero_progress'
+      )
+    ).to.equal(true);
   });
 });

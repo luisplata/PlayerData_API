@@ -26,7 +26,7 @@ class GetHeroListUseCase {
   async execute() {
     try {
       const heroes = await this.heroRepository.findAll();
-      const normalizedHeroes = heroes.map((hero) => ({
+      const normalizedHeroes = heroes.map(hero => ({
         ...hero,
         metadata: this.parseMetadata(hero.metadata)
       }));

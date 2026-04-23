@@ -6,7 +6,7 @@ const db = require('../../DB/db');
 function parseArgs(argv) {
   const args = {};
 
-  argv.forEach((entry) => {
+  argv.forEach(entry => {
     if (!entry.startsWith('--')) {
       return;
     }
@@ -57,7 +57,9 @@ function requireField(payload, fieldName) {
   const value = payload[fieldName];
 
   if (!value || typeof value !== 'string' || value.trim() === '') {
-    throw new Error(`${fieldName} is required in input file and must be a non-empty string`);
+    throw new Error(
+      `${fieldName} is required in input file and must be a non-empty string`
+    );
   }
 
   return value.trim();
@@ -67,7 +69,9 @@ function requireArray(payload, fieldName) {
   const value = payload[fieldName];
 
   if (!Array.isArray(value)) {
-    throw new Error(`${fieldName} is required in input file and must be an array`);
+    throw new Error(
+      `${fieldName} is required in input file and must be an array`
+    );
   }
 
   if (value.length === 0) {
@@ -151,7 +155,10 @@ async function createOrUpdateDialog(payload) {
 }
 
 async function listDialogs(payload) {
-  const heroId = payload && typeof payload.heroId === 'string' ? payload.heroId.trim() : null;
+  const heroId =
+    payload && typeof payload.heroId === 'string'
+      ? payload.heroId.trim()
+      : null;
 
   let query = db('dialogs');
 
@@ -171,7 +178,10 @@ async function listDialogs(payload) {
 }
 
 async function getDialog(payload) {
-  const dialogId = payload && typeof payload.dialogId === 'string' ? payload.dialogId.trim() : '';
+  const dialogId =
+    payload && typeof payload.dialogId === 'string'
+      ? payload.dialogId.trim()
+      : '';
 
   if (!dialogId) {
     throw new Error('dialogId is required in input file');
@@ -196,7 +206,10 @@ async function getDialog(payload) {
 }
 
 async function deleteDialog(payload) {
-  const dialogId = payload && typeof payload.dialogId === 'string' ? payload.dialogId.trim() : '';
+  const dialogId =
+    payload && typeof payload.dialogId === 'string'
+      ? payload.dialogId.trim()
+      : '';
 
   if (!dialogId) {
     throw new Error('dialogId is required in input file');
@@ -217,7 +230,8 @@ async function deleteDialog(payload) {
 
 async function run() {
   const args = parseArgs(process.argv.slice(2));
-  const action = typeof args.action === 'string' ? args.action.trim().toLowerCase() : '';
+  const action =
+    typeof args.action === 'string' ? args.action.trim().toLowerCase() : '';
 
   if (!action) {
     throw new Error('action is required. Use --action=create|list|get|delete');
@@ -245,7 +259,9 @@ async function run() {
   const response = {
     success: true,
     action,
-    input: inputInfo ? path.relative(process.cwd(), inputInfo.absolutePath) : null,
+    input: inputInfo
+      ? path.relative(process.cwd(), inputInfo.absolutePath)
+      : null,
     result
   };
 
@@ -253,7 +269,7 @@ async function run() {
 }
 
 run()
-  .catch((error) => {
+  .catch(error => {
     const response = {
       success: false,
       error: error.message

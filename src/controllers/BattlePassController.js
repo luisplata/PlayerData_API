@@ -10,7 +10,11 @@ const AddExperienceUseCase = require('../useCases/battlePass/AddExperienceUseCas
 const ErrorHandlerMiddleware = require('../middlewares/ErrorHandlerMiddleware');
 
 class BattlePassController {
-  constructor(battlePassRepository, playerRewardRepository, battlePassRewardRepository) {
+  constructor(
+    battlePassRepository,
+    playerRewardRepository,
+    battlePassRewardRepository
+  ) {
     this.addExperienceUseCase = new AddExperienceUseCase(
       battlePassRepository,
       playerRewardRepository,
@@ -44,41 +48,45 @@ class BattlePassController {
    *       500:
    *         description: Server error
    */
-  getBattlePassByPlayerId = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
-    const { playerId } = req.params;
-    
-    try {
-      const battlePass = await this.battlePassRepository.findByPlayerId(playerId);
-      if (!battlePass) {
-        return res.status(404).json({
+  getBattlePassByPlayerId = ErrorHandlerMiddleware.asyncHandler(
+    async (req, res) => {
+      const { playerId } = req.params;
+
+      try {
+        const battlePass =
+          await this.battlePassRepository.findByPlayerId(playerId);
+        if (!battlePass) {
+          return res.status(404).json({
+            success: false,
+            error: {
+              message: 'Battle pass not found for player',
+              statusCode: 404
+            }
+          });
+        }
+
+        // Get player rewards
+        const rewards =
+          await this.playerRewardRepository.findByPlayerId(playerId);
+
+        res.json({
+          success: true,
+          data: {
+            battlePass,
+            rewards
+          }
+        });
+      } catch (error) {
+        res.status(500).json({
           success: false,
           error: {
-            message: 'Battle pass not found for player',
-            statusCode: 404
+            message: 'Error while getting battle pass',
+            statusCode: 500
           }
         });
       }
-      
-      // Get player rewards
-      const rewards = await this.playerRewardRepository.findByPlayerId(playerId);
-      
-      res.json({
-        success: true,
-        data: {
-          battlePass,
-          rewards
-        }
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: {
-          message: 'Error while getting battle pass',
-          statusCode: 500
-        }
-      });
     }
-  });
+  );
 
   /**
    * @swagger
@@ -115,11 +123,17 @@ class BattlePassController {
    */
   addExperience = ErrorHandlerMiddleware.asyncHandler(async (req, res) => {
     const { playerId, experience } = req.body;
-    
-    const result = await this.addExperienceUseCase.execute(playerId, experience);
-    
+
+    const result = await this.addExperienceUseCase.execute(
+      playerId,
+      experience
+    );
+
     if (!result.success) {
-      const statusCode = result.error.includes('required') || result.error.includes('must be') ? 400 : 500;
+      const statusCode =
+        result.error.includes('required') || result.error.includes('must be')
+          ? 400
+          : 500;
       return res.status(statusCode).json({
         success: false,
         error: {
@@ -128,7 +142,7 @@ class BattlePassController {
         }
       });
     }
-    
+
     res.json({
       success: true,
       data: result.data

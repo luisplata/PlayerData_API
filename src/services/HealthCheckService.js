@@ -20,7 +20,7 @@ class HealthCheckService {
       const start = Date.now();
       await db.raw('SELECT 1');
       const responseTime = Date.now() - start;
-      
+
       return {
         status: 'healthy',
         responseTime: `${responseTime}ms`,
@@ -51,7 +51,8 @@ class HealthCheckService {
         free: `${freeMB}MB`,
         usagePercent: `${usagePercent}%`
       },
-      message: usagePercent > 90 ? 'High memory usage detected' : 'Memory usage normal'
+      message:
+        usagePercent > 90 ? 'High memory usage detected' : 'Memory usage normal'
     };
   }
 
@@ -80,11 +81,14 @@ class HealthCheckService {
     for (const [name, check] of Object.entries(this.checks)) {
       try {
         results[name] = await check();
-        
+
         // Update overall status based on individual checks
         if (results[name].status === 'unhealthy') {
           overallStatus = 'unhealthy';
-        } else if (results[name].status === 'warning' && overallStatus === 'healthy') {
+        } else if (
+          results[name].status === 'warning' &&
+          overallStatus === 'healthy'
+        ) {
           overallStatus = 'warning';
         }
       } catch (error) {
@@ -118,7 +122,7 @@ class HealthCheckService {
   async performReadinessCheck() {
     // Readiness check - verify app is ready to serve requests
     const dbCheck = await this.checkDatabase();
-    
+
     return {
       status: dbCheck.status === 'healthy' ? 'ready' : 'not_ready',
       timestamp: new Date().toISOString(),

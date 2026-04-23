@@ -51,9 +51,12 @@ class HeroRepository {
       const db = this.db;
 
       return await this.db('heroes as h')
-        .leftJoin('player_hero_progress as php', function() {
-          this.on('h.heroId', '=', 'php.heroId')
-            .andOn('php.playerId', '=', db.raw('?', [playerId]));
+        .leftJoin('player_hero_progress as php', function () {
+          this.on('h.heroId', '=', 'php.heroId').andOn(
+            'php.playerId',
+            '=',
+            db.raw('?', [playerId])
+          );
         })
         .select(
           'h.id',
@@ -67,7 +70,9 @@ class HeroRepository {
         )
         .orderBy('h.name', 'asc');
     } catch (error) {
-      throw new Error(`Failed to find heroes with player progress: ${error.message}`);
+      throw new Error(
+        `Failed to find heroes with player progress: ${error.message}`
+      );
     }
   }
 }

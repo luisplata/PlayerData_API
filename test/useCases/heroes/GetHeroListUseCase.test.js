@@ -4,10 +4,14 @@ const GetHeroListUseCase = require('../../../src/useCases/heroes/GetHeroListUseC
 describe('GetHeroListUseCase', () => {
   it('returns hero list successfully', async () => {
     const heroRepository = {
-      findAll: async () => ([
-        { heroId: 'hero-001', name: 'Astra', metadata: JSON.stringify({ element: 'light' }) },
+      findAll: async () => [
+        {
+          heroId: 'hero-001',
+          name: 'Astra',
+          metadata: JSON.stringify({ element: 'light' })
+        },
         { heroId: 'hero-002', name: 'Brann', metadata: { element: 'fire' } }
-      ])
+      ]
     };
 
     const useCase = new GetHeroListUseCase(heroRepository);
@@ -24,7 +28,7 @@ describe('GetHeroListUseCase', () => {
 
   it('returns empty list when there are no heroes', async () => {
     const heroRepository = {
-      findAll: async () => ([])
+      findAll: async () => []
     };
 
     const useCase = new GetHeroListUseCase(heroRepository);

@@ -21,7 +21,9 @@ class Passive {
       throw new Error('Passive ID must be between 3 and 50 characters');
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(passiveId)) {
-      throw new Error('Passive ID can only contain letters, numbers, underscores, and hyphens');
+      throw new Error(
+        'Passive ID can only contain letters, numbers, underscores, and hyphens'
+      );
     }
     return true;
   }
@@ -44,7 +46,11 @@ class Passive {
   }
 
   static validateMetadata(metadata) {
-    if (metadata === null || Array.isArray(metadata) || typeof metadata !== 'object') {
+    if (
+      metadata === null ||
+      Array.isArray(metadata) ||
+      typeof metadata !== 'object'
+    ) {
       throw new Error('Passive metadata must be an object');
     }
     return true;

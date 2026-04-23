@@ -55,7 +55,11 @@ router.get('/:playerId', authenticate, playerRewardController.getPlayerRewards);
  *       500:
  *         description: Server error
  */
-router.get('/:playerId/unclaimed', authenticate, playerRewardController.getUnclaimedRewards);
+router.get(
+  '/:playerId/unclaimed',
+  authenticate,
+  playerRewardController.getUnclaimedRewards
+);
 
 // Endpoint para reclamar un premio
 /**

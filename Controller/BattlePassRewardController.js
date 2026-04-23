@@ -8,7 +8,9 @@ const createReward = async (req, res) => {
   try {
     const existingReward = await battlePassRewardModel.getRewardByLevel(level);
     if (existingReward) {
-      return res.status(409).json({ message: 'Reward for this level already exists' });
+      return res
+        .status(409)
+        .json({ message: 'Reward for this level already exists' });
     }
 
     const newReward = await battlePassRewardModel.createReward(level, reward);

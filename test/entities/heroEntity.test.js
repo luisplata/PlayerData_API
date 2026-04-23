@@ -17,7 +17,9 @@ describe('Heroes domain entities', () => {
     it('rejects invalid hero metadata', () => {
       const hero = new Hero('', '', null);
 
-      expect(() => hero.validate()).to.throw('Hero ID is required and must be a string');
+      expect(() => hero.validate()).to.throw(
+        'Hero ID is required and must be a string'
+      );
     });
 
     it('validates hero progression metadata fields', () => {
@@ -39,7 +41,9 @@ describe('Heroes domain entities', () => {
         pointsGainedPerConversationComplete: 10
       });
 
-      expect(() => hero.validate()).to.throw('xpPerLevel must be a positive integer');
+      expect(() => hero.validate()).to.throw(
+        'xpPerLevel must be a positive integer'
+      );
     });
 
     it('rejects invalid progression metadata when pointsGainedPerConversationComplete is lower than minimum points', () => {
@@ -50,13 +54,17 @@ describe('Heroes domain entities', () => {
         pointsGainedPerConversationComplete: 1
       });
 
-      expect(() => hero.validate()).to.throw('pointsGainedPerConversationComplete must be greater than or equal to minPointsGainedPerConversation');
+      expect(() => hero.validate()).to.throw(
+        'pointsGainedPerConversationComplete must be greater than or equal to minPointsGainedPerConversation'
+      );
     });
   });
 
   describe('Passive', () => {
     it('validates a passive with metadata', () => {
-      const passive = new Passive('passive-001', 'Solar Shield', 'hero-001', { type: 'defense' });
+      const passive = new Passive('passive-001', 'Solar Shield', 'hero-001', {
+        type: 'defense'
+      });
 
       expect(() => passive.validate()).to.not.throw();
       expect(passive.passiveId).to.equal('passive-001');
@@ -68,7 +76,9 @@ describe('Heroes domain entities', () => {
 
   describe('Dialog', () => {
     it('validates a dialog with metadata', () => {
-      const dialog = new Dialog('dialog-001', 'hero-001', 'Intro', { stage: 1 });
+      const dialog = new Dialog('dialog-001', 'hero-001', 'Intro', {
+        stage: 1
+      });
 
       expect(() => dialog.validate()).to.not.throw();
       expect(dialog.dialogId).to.equal('dialog-001');

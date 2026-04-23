@@ -17,7 +17,8 @@ const port = process.env.PORT || 8080;
 
 // Initialize dependency container
 const container = new DependencyContainer();
-const { loginLimiter, validateLimiter } = SecurityMiddleware.createSensitiveRateLimiters(process.env);
+const { loginLimiter, validateLimiter } =
+  SecurityMiddleware.createSensitiveRateLimiters(process.env);
 
 // Middleware setup
 app.use(SecurityMiddleware.securityHeaders());
@@ -30,46 +31,52 @@ app.use(ApiVersionMiddleware.addVersionInfo);
 app.use(ApiVersionMiddleware.deprecationWarning);
 
 // JWT Authentication middleware
-const authenticate = expressJwt({ 
+const authenticate = expressJwt({
   secret: process.env.JWT_SECRET,
-  algorithms: ['HS256'] 
+  algorithms: ['HS256']
 });
 
 // API Version 1 Routes
 const v1Router = express.Router();
 
 // Player routes v1
-v1Router.post('/player/login', 
+v1Router.post(
+  '/player/login',
   loginLimiter,
   ValidationMiddleware.validatePlayerLogin,
   container.getController('playerController').login
 );
 
-v1Router.post('/player', 
+v1Router.post(
+  '/player',
   ValidationMiddleware.validatePlayerData,
   container.getController('playerController').createPlayer
 );
 
-v1Router.get('/player/validate/:nickname',
+v1Router.get(
+  '/player/validate/:nickname',
   validateLimiter,
   authenticate,
   ValidationMiddleware.validateNickname,
   container.getController('playerController').validateNickname
 );
 
-v1Router.get('/player/:nickname',
+v1Router.get(
+  '/player/:nickname',
   authenticate,
   ValidationMiddleware.validateNickname,
   container.getController('playerController').getPlayerIdByNickname
 );
 
-v1Router.get('/player/id/:playerId',
+v1Router.get(
+  '/player/id/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
   container.getController('playerController').getPlayerById
 );
 
-v1Router.put('/player/nickname/:playerId',
+v1Router.put(
+  '/player/nickname/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
   ValidationMiddleware.validateBodyNickname,
@@ -77,49 +84,57 @@ v1Router.put('/player/nickname/:playerId',
 );
 
 // Battle Pass routes v1
-v1Router.get('/battle-pass/:playerId',
+v1Router.get(
+  '/battle-pass/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
   container.getController('battlePassController').getBattlePassByPlayerId
 );
 
-v1Router.post('/battle-pass/experience',
+v1Router.post(
+  '/battle-pass/experience',
   authenticate,
   ValidationMiddleware.validateExperience,
   container.getController('battlePassController').addExperience
 );
 
 // Heroes routes v1
-v1Router.post('/heroes',
+v1Router.post(
+  '/heroes',
   authenticate,
   ValidationMiddleware.validateHeroData,
   container.getController('heroController').createHero
 );
 
-v1Router.get('/heroes',
+v1Router.get(
+  '/heroes',
   authenticate,
   container.getController('heroController').getHeroList
 );
 
-v1Router.get('/heroes/player/:playerId',
+v1Router.get(
+  '/heroes/player/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
   container.getController('heroController').getPlayerHeroes
 );
 
-v1Router.post('/heroes/dialog/start',
+v1Router.post(
+  '/heroes/dialog/start',
   authenticate,
   ValidationMiddleware.validateDialogStart,
   container.getController('dialogController').startDialog
 );
 
-v1Router.post('/heroes/dialog/answer',
+v1Router.post(
+  '/heroes/dialog/answer',
   authenticate,
   ValidationMiddleware.validateDialogAnswer,
   container.getController('dialogController').sendAnswer
 );
 
-v1Router.get('/heroes/passive/:playerId',
+v1Router.get(
+  '/heroes/passive/:playerId',
   authenticate,
   ValidationMiddleware.validatePlayerId,
   container.getController('passiveController').getPassive
@@ -139,15 +154,22 @@ app.use('/api/v1', v1Router);
  *       200:
  *         description: Swagger UI HTML page
  */
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
-  explorer: true,
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'PlayerData API Documentation'
-}));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'PlayerData API Documentation'
+  })
+);
 
 // Health check endpoints
 app.get('/health', container.getController('healthController').basic);
-app.get('/health/detailed', container.getController('healthController').detailed);
+app.get(
+  '/health/detailed',
+  container.getController('healthController').detailed
+);
 app.get('/health/live', container.getController('healthController').liveness);
 app.get('/health/ready', container.getController('healthController').readiness);
 

@@ -13,9 +13,17 @@ class Reward {
   }
 
   static validateType(type) {
-    const validTypes = ['gold', 'powerup', 'profilePicture', 'profileBackground', 'profileAvatar'];
+    const validTypes = [
+      'gold',
+      'powerup',
+      'profilePicture',
+      'profileBackground',
+      'profileAvatar'
+    ];
     if (!validTypes.includes(type)) {
-      throw new Error(`Invalid reward type. Must be one of: ${validTypes.join(', ')}`);
+      throw new Error(
+        `Invalid reward type. Must be one of: ${validTypes.join(', ')}`
+      );
     }
     return true;
   }

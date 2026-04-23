@@ -5,8 +5,8 @@ const DialogRepository = require('../../src/repositories/DialogRepository');
 const PlayerPassiveRepository = require('../../src/repositories/PlayerPassiveRepository');
 
 describe('Heroes repositories', () => {
-  const createDbStub = (handlers) => {
-    const db = (table) => {
+  const createDbStub = handlers => {
+    const db = table => {
       const handler = handlers[table];
       if (!handler) {
         throw new Error(`Unexpected table: ${table}`);
@@ -22,7 +22,7 @@ describe('Heroes repositories', () => {
       let insertedPayload;
       const db = createDbStub({
         heroes: {
-          insert: async (payload) => {
+          insert: async payload => {
             insertedPayload = payload;
             return [7];
           }
@@ -87,16 +87,42 @@ describe('Heroes repositories', () => {
       const db = createDbStub({
         dialogs: {
           where: () => ({
-            first: async () => ({ id: 10, heroId: 'hero-001', title: 'Intro', metadata: { mood: 'warm' } })
+            first: async () => ({
+              id: 10,
+              heroId: 'hero-001',
+              title: 'Intro',
+              metadata: { mood: 'warm' }
+            })
           })
         },
         dialog_questions: {
           where: () => ({
-            first: async () => ({ id: 1, questionId: 'q1', dialogId: 10, question: 'First?', correct_answer: 'Yes', order_index: 1 }),
-            orderBy: async () => ([
-              { id: 1, questionId: 'q1', dialogId: 10, question: 'First?', correct_answer: 'Yes', order_index: 1 },
-              { id: 2, questionId: 'q2', dialogId: 10, question: 'Second?', correct_answer: 'No', order_index: 2 }
-            ])
+            first: async () => ({
+              id: 1,
+              questionId: 'q1',
+              dialogId: 10,
+              question: 'First?',
+              correct_answer: 'Yes',
+              order_index: 1
+            }),
+            orderBy: async () => [
+              {
+                id: 1,
+                questionId: 'q1',
+                dialogId: 10,
+                question: 'First?',
+                correct_answer: 'Yes',
+                order_index: 1
+              },
+              {
+                id: 2,
+                questionId: 'q2',
+                dialogId: 10,
+                question: 'Second?',
+                correct_answer: 'No',
+                order_index: 2
+              }
+            ]
           })
         }
       });
@@ -111,8 +137,20 @@ describe('Heroes repositories', () => {
         title: 'Intro',
         metadata: { mood: 'warm' },
         questions: [
-          { id: 1, questionId: 'q1', dialogId: 10, question: 'First?', order_index: 1 },
-          { id: 2, questionId: 'q2', dialogId: 10, question: 'Second?', order_index: 2 }
+          {
+            id: 1,
+            questionId: 'q1',
+            dialogId: 10,
+            question: 'First?',
+            order_index: 1
+          },
+          {
+            id: 2,
+            questionId: 'q2',
+            dialogId: 10,
+            question: 'Second?',
+            order_index: 2
+          }
         ]
       });
       expect(answerResult.valid).to.equal(true);
@@ -127,9 +165,9 @@ describe('Heroes repositories', () => {
         player_passives: {
           where: () => ({
             first: async () => null,
-            orderBy: async () => ([{ id: 1, playerId: 'player-001' }])
+            orderBy: async () => [{ id: 1, playerId: 'player-001' }]
           }),
-          insert: async (payload) => {
+          insert: async payload => {
             insertedPayload = payload;
             return [99];
           }
@@ -137,7 +175,11 @@ describe('Heroes repositories', () => {
       });
 
       const repository = new PlayerPassiveRepository(db);
-      const assigned = await repository.assignPassive('player-001', 'hero-001', 'passive-001');
+      const assigned = await repository.assignPassive(
+        'player-001',
+        'hero-001',
+        'passive-001'
+      );
       const passives = await repository.getByPlayerId('player-001');
 
       expect(insertedPayload.playerId).to.equal('player-001');

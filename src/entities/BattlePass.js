@@ -48,7 +48,7 @@ class BattlePass {
 
   addExperience(amount) {
     BattlePass.validateExperience(amount);
-    
+
     let newExperience = this.experience + amount;
     let newLevel = this.level;
     let levelUp = false;
