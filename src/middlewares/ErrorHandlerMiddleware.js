@@ -6,8 +6,13 @@ const { customLogger } = require('../../utils/logger');
 
 class ErrorHandlerMiddleware {
   static handle(error, req, res, next) {
-    // Log the error
-    customLogger.error({
+    // Choose log level: authorization/token errors are expected during tests
+    const isAuthError =
+      error.name === 'UnauthorizedError' ||
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError';
+
+    const logPayload = {
       message: error.message,
       stack: error.stack,
       url: req.url,
@@ -15,7 +20,14 @@ class ErrorHandlerMiddleware {
       ip: req.ip,
       userAgent: req.get('User-Agent'),
       timestamp: new Date().toISOString()
-    });
+    };
+
+    if (isAuthError) {
+      if (customLogger.warn) customLogger.warn(logPayload);
+      else customLogger.error(logPayload);
+    } else {
+      customLogger.error(logPayload);
+    }
 
     // Default error response
     let statusCode = 500;
