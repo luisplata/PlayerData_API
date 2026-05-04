@@ -32,6 +32,14 @@ class DialogRepository {
       return null;
     }
 
+    // If the stored question row contains an explicit node_sequence, prefer that.
+    if (question && question.node_sequence) {
+      const byNodeSequence = nodes.find(
+        node => node && node.sequence === question.node_sequence
+      );
+      if (byNodeSequence) return byNodeSequence;
+    }
+
     const bySequence = nodes.find(node => node && node.sequence === questionId);
     if (bySequence) {
       return bySequence;
@@ -96,15 +104,51 @@ class DialogRepository {
         .where({ dialogId: dialog.id })
         .orderBy('order_index', 'asc');
 
-      return {
-        ...dialog,
-        questions: questions.map(question => ({
+      const metadata = DialogRepository.parseMetadata(dialog.metadata);
+
+      const mappedQuestions = questions.map(question => {
+        const questionNode = DialogRepository.findQuestionNode(
+          metadata.nodes,
+          question,
+          question.questionId
+        );
+
+        const nodeSequence =
+          question.node_sequence || (questionNode ? questionNode.sequence : null);
+
+        const rawPossibleAnswers =
+          questionNode && Array.isArray(questionNode.possibleAnswers)
+            ? questionNode.possibleAnswers
+            : [];
+
+        const possibleAnswers = rawPossibleAnswers.map(opt => ({
+          optionKey: opt.optionKey,
+          optionText: opt.optionText,
+          nextSequence: opt.nextSequence || null
+        }));
+
+        return {
           id: question.id,
           questionId: question.questionId,
           dialogId: question.dialogId,
           question: question.question,
-          order_index: question.order_index
-        }))
+          order_index: question.order_index,
+          node_sequence: nodeSequence,
+          node: questionNode
+            ? {
+                sequence: questionNode.sequence,
+                emotion: questionNode.emotion,
+                text: questionNode.text,
+                possibleAnswers
+              }
+            : null
+        };
+      });
+
+      return {
+        ...dialog,
+        metadata,
+        questions: mappedQuestions
       };
     } catch (error) {
       throw new Error(`Failed to start dialog: ${error.message}`);

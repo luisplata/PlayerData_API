@@ -115,6 +115,7 @@ describe('Heroes Passives API Integration', () => {
     await db('dialog_questions').insert({
       questionId,
       dialogId,
+      node_sequence: 'test-seq-1',
       question: 'What powers the shield?',
       correct_answer: 'light',
       order_index: 1,
@@ -147,6 +148,11 @@ describe('Heroes Passives API Integration', () => {
     expect(startDialogResponse.body.data.questions[0]).to.not.have.property(
       'correct_answer'
     );
+    // Validate node_sequence delivered and node field present (may be null)
+    expect(startDialogResponse.body.data.questions[0]).to.have.property('node_sequence');
+    expect(startDialogResponse.body.data.questions[0].node_sequence).to.equal('test-seq-1');
+    expect(startDialogResponse.body.data.questions[0]).to.have.property('node');
+    expect(startDialogResponse.body.data.questions[0].node).to.be.null;
 
     const sendAnswerResponse = await chai
       .request(app)

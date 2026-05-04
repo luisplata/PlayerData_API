@@ -290,6 +290,10 @@ const options = {
             dialogId: {
               type: 'integer'
             },
+            node_sequence: {
+              type: 'string',
+              description: 'Sequence identifier of the dialog node this question belongs to'
+            },
             question: {
               type: 'string',
               maxLength: 280,
@@ -301,7 +305,8 @@ const options = {
             }
           },
           description:
-            'Public dialog question payload. Does not expose correct answer keys. The visible text is capped at 280 characters.'
+            'Public dialog question payload. Does not expose correct answer keys. The visible text is capped at 280 characters.',
+          additionalProperties: false
         },
         DialogStartRequest: {
           type: 'object',
@@ -336,7 +341,34 @@ const options = {
             questions: {
               type: 'array',
               items: {
-                $ref: '#/components/schemas/DialogQuestionPublic'
+                allOf: [
+                  { $ref: '#/components/schemas/DialogQuestionPublic' },
+                  {
+                    type: 'object',
+                    properties: {
+                      node: {
+                        type: ['object', 'null'],
+                        nullable: true,
+                        properties: {
+                          sequence: { type: 'string' },
+                          emotion: { type: 'string' },
+                          text: { type: 'string' },
+                          possibleAnswers: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                optionKey: { type: 'string' },
+                                optionText: { type: 'string' },
+                                nextSequence: { type: ['string', 'null'], 'nullable': true }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             }
           }

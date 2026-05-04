@@ -74,7 +74,7 @@ describe('Integration — Hero conversation points flow', () => {
     // Insert dialog and question directly in DB
     const [dialogId] = await db('dialogs').insert({ dialogId: dialogIdRef, heroId, title: 'SpecDialog', metadata: JSON.stringify({}), created_at: new Date(), updated_at: new Date() });
 
-    await db('dialog_questions').insert({ questionId, dialogId, question: 'Test?', correct_answer: 'a', order_index: 1, created_at: new Date(), updated_at: new Date() });
+    await db('dialog_questions').insert({ questionId, dialogId, node_sequence: 'test-seq-1', question: 'Test?', correct_answer: 'a', order_index: 1, created_at: new Date(), updated_at: new Date() });
 
     // Start dialog
     const startDialogResponse = await request()
@@ -86,6 +86,12 @@ describe('Integration — Hero conversation points flow', () => {
     expect(startDialogResponse.body.success).to.equal(true);
     expect(startDialogResponse.body.data.questions).to.be.an('array');
     expect(startDialogResponse.body.data.questions[0]).to.not.have.property('correct_answer');
+    // Ensure node_sequence is present and propagated from DB insert
+    expect(startDialogResponse.body.data.questions[0]).to.have.property('node_sequence');
+    expect(startDialogResponse.body.data.questions[0].node_sequence).to.equal('test-seq-1');
+    // When dialog metadata has no nodes, node may be null
+    expect(startDialogResponse.body.data.questions[0]).to.have.property('node');
+    expect(startDialogResponse.body.data.questions[0].node).to.be.null;
 
     // Prepare a near-level-up edge case: currentXp = 95 (xpPerLevel = 100)
     await db('player_hero_progress').insert({ playerId, heroId, level: 0, currentXp: 95, created_at: new Date(), updated_at: new Date() });

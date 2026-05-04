@@ -109,6 +109,7 @@ exports.seed = async function (knex) {
   await knex('dialog_questions').insert({
     questionId,
     dialogId: dialogDbId,
+    node_sequence: nodes[2].sequence,
     question: nodes[2].text,
     correct_answer: 'a',
     order_index: 1,

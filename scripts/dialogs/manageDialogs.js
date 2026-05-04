@@ -125,15 +125,40 @@ async function createOrUpdateDialog(payload) {
   const [dialogDbId] = await db('dialogs').insert(dialogPayload);
 
   // Insertar preguntas asociadas
-  const questionRows = questions.map((question, index) => ({
-    questionId: question.questionId || `${dialogId}-q${index + 1}`,
-    dialogId: dialogDbId,
-    question: question.question,
-    correct_answer: question.correct_answer,
-    order_index: question.order_index || index + 1,
-    created_at: now,
-    updated_at: now
-  }));
+  function findNodeSequenceForQuestion(questionObj, nodesList) {
+    if (questionObj.nodeSequence) return questionObj.nodeSequence;
+    if (questionObj.sequence) return questionObj.sequence;
+
+    const bySequence = nodesList.find(n => n.sequence && (n.sequence === questionObj.nodeSequence || n.sequence === questionObj.sequence));
+    if (bySequence) return bySequence.sequence;
+
+    if (questionObj.question) {
+      const byText = nodesList.find(n => n.isQuestion && n.text && n.text.trim() === questionObj.question.trim());
+      if (byText) return byText.sequence;
+    }
+
+    return null;
+  }
+
+  const questionRows = questions.map((question, index) => {
+    const nodeSequence = findNodeSequenceForQuestion(question, nodes);
+    if (!nodeSequence) {
+      throw new Error(
+        `Unable to associate question '${question.questionId || question.question || index + 1}' to a dialog node sequence`
+      );
+    }
+
+    return {
+      questionId: question.questionId || `${dialogId}-q${index + 1}`,
+      dialogId: dialogDbId,
+      node_sequence: nodeSequence,
+      question: question.question,
+      correct_answer: question.correct_answer,
+      order_index: question.order_index || index + 1,
+      created_at: now,
+      updated_at: now
+    };
+  });
 
   if (questionRows.length > 0) {
     await db('dialog_questions').insert(questionRows);

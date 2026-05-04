@@ -9,9 +9,11 @@ exports.up = function (knex) {
       .references('id')
       .inTable('dialogs')
       .onDelete('CASCADE');
+    table.string('node_sequence').notNullable();
     table.text('question').notNullable();
     table.string('correct_answer').notNullable();
     table.integer('order_index').notNullable();
+    table.index('node_sequence', 'idx_dialog_questions_node_sequence');
     table.timestamps(true, true);
   });
 };
