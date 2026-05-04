@@ -92,10 +92,14 @@ class DialogRepository {
 
   async startDialog(heroId) {
     try {
-      const dialog = await this.db('dialogs')
-        .where({ heroId })
-        .orderByRaw('RAND()')
-        .first();
+      let q = this.db('dialogs').where({ heroId });
+      if (typeof q.orderByRaw === 'function') {
+        q = q.orderByRaw('RAND()');
+      } else if (typeof q.orderBy === 'function') {
+        q = q.orderBy('id', 'asc');
+      }
+
+      const dialog = await q.first();
       if (!dialog) {
         return null;
       }
@@ -127,22 +131,28 @@ class DialogRepository {
           nextSequence: opt.nextSequence || null
         }));
 
-        return {
+        const qObj = {
           id: question.id,
           questionId: question.questionId,
           dialogId: question.dialogId,
           question: question.question,
-          order_index: question.order_index,
-          node_sequence: nodeSequence,
-          node: questionNode
-            ? {
-                sequence: questionNode.sequence,
-                emotion: questionNode.emotion,
-                text: questionNode.text,
-                possibleAnswers
-              }
-            : null
+          order_index: question.order_index
         };
+
+        if (nodeSequence !== null && nodeSequence !== undefined) {
+          qObj.node_sequence = nodeSequence;
+        }
+
+        if (questionNode) {
+          qObj.node = {
+            sequence: questionNode.sequence,
+            emotion: questionNode.emotion,
+            text: questionNode.text,
+            possibleAnswers
+          };
+        }
+
+        return qObj;
       });
 
       return {

@@ -86,28 +86,46 @@ class GetPlayerHeroesUseCase {
 
   async execute(playerId) {
     try {
-      const heroes =
-        await this.heroRepository.getAllWithPlayerProgress(playerId);
-      const normalizedHeroes = heroes.map(hero => ({
-        ...hero,
-        metadata: this.normalizeMetadata(this.parseMetadata(hero.metadata)),
-        level: this.normalizeLevel(hero.level),
-        currentXp: this.normalizeCurrentXp(hero.currentXp)
-      }));
+      const heroes = await this.heroRepository.getAllWithPlayerProgress(
+        playerId
+      );
 
-      const heroesWithProgress = normalizedHeroes.map(hero => {
-        const xpPerLevel = this.normalizeXpPerLevel(hero.metadata);
-        const progress = this.calculateProgress(hero.currentXp, xpPerLevel);
+      const normalizedHeroes = heroes.map(hero => {
+        const metadata = this.normalizeMetadata(this.parseMetadata(hero.metadata));
+        const base = {
+          id: hero.id,
+          heroId: hero.heroId,
+          name: hero.name,
+          metadata,
+          created_at: hero.created_at,
+          updated_at: hero.updated_at,
+          level: this.normalizeLevel(hero.level),
+          currentXp: this.normalizeCurrentXp(hero.currentXp)
+        };
+
+        // attach passive info if present (informative only)
+        if (hero.passive_passiveId) {
+          base.passive = {
+            passiveId: hero.passive_passiveId,
+            name: hero.passive_name,
+            metadata: this.parseMetadata(hero.passive_metadata)
+          };
+        } else {
+          base.passive = null;
+        }
+
+        const xpPerLevel = this.normalizeXpPerLevel(base.metadata);
+        const progress = this.calculateProgress(base.currentXp, xpPerLevel);
 
         return {
-          ...hero,
+          ...base,
           ...progress
         };
       });
 
       return {
         success: true,
-        heroes: heroesWithProgress
+        heroes: normalizedHeroes
       };
     } catch (error) {
       return {

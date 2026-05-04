@@ -26,10 +26,30 @@ class GetHeroListUseCase {
   async execute() {
     try {
       const heroes = await this.heroRepository.findAll();
-      const normalizedHeroes = heroes.map(hero => ({
-        ...hero,
-        metadata: this.parseMetadata(hero.metadata)
-      }));
+
+      const normalizedHeroes = heroes.map(hero => {
+        const base = {
+          id: hero.id,
+          heroId: hero.heroId,
+          name: hero.name,
+          metadata: this.parseMetadata(hero.metadata),
+          created_at: hero.created_at,
+          updated_at: hero.updated_at
+        };
+
+        // attach passive info if present (informative only)
+        if (hero.passive_passiveId) {
+          base.passive = {
+            passiveId: hero.passive_passiveId,
+            name: hero.passive_name,
+            metadata: this.parseMetadata(hero.passive_metadata)
+          };
+        } else {
+          base.passive = null;
+        }
+
+        return base;
+      });
 
       return {
         success: true,
